@@ -334,6 +334,7 @@
     }
 }
 
+// TODO: does not work for lower zoom scales
 -(CGPoint)pixelToHex:(CGPoint)pixel{
     // axial coordinates
     float q = (1.0/3.0*sqrt(3.0) * pixel.x - 1.0/3.0 * pixel.y) / [SettingsStore sharedStore].hexSize;
