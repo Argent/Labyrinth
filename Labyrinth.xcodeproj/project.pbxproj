@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B55596D618474D1500CC3A13 /* hex_gray.png in Resources */ = {isa = PBXBuildFile; fileRef = B55596D518474D1500CC3A13 /* hex_gray.png */; };
+		B55596D9184784FD00CC3A13 /* MazeObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B55596D8184784FD00CC3A13 /* MazeObject.m */; };
+		B58CA7C21848FBB000C06874 /* SettingsStore.m in Sources */ = {isa = PBXBuildFile; fileRef = B58CA7C11848FBB000C06874 /* SettingsStore.m */; };
+		B58CA7C41849337500C06874 /* hex_red.png in Resources */ = {isa = PBXBuildFile; fileRef = B58CA7C31849337500C06874 /* hex_red.png */; };
+		B5C283B518452080005A02B1 /* NSMutableArray+QueueAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B5C283B418452080005A02B1 /* NSMutableArray+QueueAdditions.m */; };
+		B5C283B818452571005A02B1 /* MazeNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B5C283B718452571005A02B1 /* MazeNode.m */; };
+		B5CB8A991848633F00CB8EA2 /* UIMazeControl.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CB8A981848633F00CB8EA2 /* UIMazeControl.m */; };
 		B5CED23B1844BC10004BC7CE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5CED23A1844BC10004BC7CE /* Foundation.framework */; };
 		B5CED23D1844BC10004BC7CE /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5CED23C1844BC10004BC7CE /* CoreGraphics.framework */; };
 		B5CED23F1844BC10004BC7CE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5CED23E1844BC10004BC7CE /* UIKit.framework */; };
@@ -19,6 +26,11 @@
 		B5CED2561844BC10004BC7CE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5CED23E1844BC10004BC7CE /* UIKit.framework */; };
 		B5CED25E1844BC10004BC7CE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B5CED25C1844BC10004BC7CE /* InfoPlist.strings */; };
 		B5CED2601844BC10004BC7CE /* LabyrinthTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CED25F1844BC10004BC7CE /* LabyrinthTests.m */; };
+		B5CED26B1844BD29004BC7CE /* LabyrinthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CED26A1844BD29004BC7CE /* LabyrinthViewController.m */; };
+		B5F41F7E18478BC900B36789 /* hex_brown.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F41F7B18478BC900B36789 /* hex_brown.png */; };
+		B5F41F7F18478BC900B36789 /* hex_petrol.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F41F7C18478BC900B36789 /* hex_petrol.png */; };
+		B5F41F8018478BC900B36789 /* hex_turquoise.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F41F7D18478BC900B36789 /* hex_turquoise.png */; };
+		B5F41F82184797FF00B36789 /* toolbar.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F41F81184797FF00B36789 /* toolbar.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,6 +44,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B55596D518474D1500CC3A13 /* hex_gray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hex_gray.png; sourceTree = "<group>"; };
+		B55596D7184784FD00CC3A13 /* MazeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MazeObject.h; sourceTree = "<group>"; };
+		B55596D8184784FD00CC3A13 /* MazeObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MazeObject.m; sourceTree = "<group>"; };
+		B58CA7C01848FBB000C06874 /* SettingsStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsStore.h; sourceTree = "<group>"; };
+		B58CA7C11848FBB000C06874 /* SettingsStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsStore.m; sourceTree = "<group>"; };
+		B58CA7C31849337500C06874 /* hex_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hex_red.png; sourceTree = "<group>"; };
+		B5C283B318452068005A02B1 /* NSMutableArray+QueueAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+QueueAdditions.h"; sourceTree = "<group>"; };
+		B5C283B418452080005A02B1 /* NSMutableArray+QueueAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+QueueAdditions.m"; sourceTree = "<group>"; };
+		B5C283B618452571005A02B1 /* MazeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MazeNode.h; sourceTree = "<group>"; };
+		B5C283B718452571005A02B1 /* MazeNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MazeNode.m; sourceTree = "<group>"; };
+		B5CB8A971848633F00CB8EA2 /* UIMazeControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIMazeControl.h; sourceTree = "<group>"; };
+		B5CB8A981848633F00CB8EA2 /* UIMazeControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIMazeControl.m; sourceTree = "<group>"; };
 		B5CED2371844BC10004BC7CE /* Labyrinth.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Labyrinth.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5CED23A1844BC10004BC7CE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B5CED23C1844BC10004BC7CE /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -48,6 +72,12 @@
 		B5CED25B1844BC10004BC7CE /* LabyrinthTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "LabyrinthTests-Info.plist"; sourceTree = "<group>"; };
 		B5CED25D1844BC10004BC7CE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B5CED25F1844BC10004BC7CE /* LabyrinthTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LabyrinthTests.m; sourceTree = "<group>"; };
+		B5CED2691844BD29004BC7CE /* LabyrinthViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabyrinthViewController.h; sourceTree = "<group>"; };
+		B5CED26A1844BD29004BC7CE /* LabyrinthViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LabyrinthViewController.m; sourceTree = "<group>"; };
+		B5F41F7B18478BC900B36789 /* hex_brown.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hex_brown.png; sourceTree = "<group>"; };
+		B5F41F7C18478BC900B36789 /* hex_petrol.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hex_petrol.png; sourceTree = "<group>"; };
+		B5F41F7D18478BC900B36789 /* hex_turquoise.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hex_turquoise.png; sourceTree = "<group>"; };
+		B5F41F81184797FF00B36789 /* toolbar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolbar.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,8 +139,26 @@
 			children = (
 				B5CED2491844BC10004BC7CE /* AppDelegate.h */,
 				B5CED24A1844BC10004BC7CE /* AppDelegate.m */,
+				B5CED2691844BD29004BC7CE /* LabyrinthViewController.h */,
+				B5CED26A1844BD29004BC7CE /* LabyrinthViewController.m */,
+				B5C283B318452068005A02B1 /* NSMutableArray+QueueAdditions.h */,
+				B5C283B418452080005A02B1 /* NSMutableArray+QueueAdditions.m */,
+				B5C283B618452571005A02B1 /* MazeNode.h */,
+				B5C283B718452571005A02B1 /* MazeNode.m */,
+				B55596D7184784FD00CC3A13 /* MazeObject.h */,
+				B55596D8184784FD00CC3A13 /* MazeObject.m */,
+				B5CB8A971848633F00CB8EA2 /* UIMazeControl.h */,
+				B5CB8A981848633F00CB8EA2 /* UIMazeControl.m */,
+				B5F41F81184797FF00B36789 /* toolbar.png */,
+				B58CA7C31849337500C06874 /* hex_red.png */,
+				B5F41F7B18478BC900B36789 /* hex_brown.png */,
+				B5F41F7C18478BC900B36789 /* hex_petrol.png */,
+				B5F41F7D18478BC900B36789 /* hex_turquoise.png */,
+				B55596D518474D1500CC3A13 /* hex_gray.png */,
 				B5CED24C1844BC10004BC7CE /* Images.xcassets */,
 				B5CED2411844BC10004BC7CE /* Supporting Files */,
+				B58CA7C01848FBB000C06874 /* SettingsStore.h */,
+				B58CA7C11848FBB000C06874 /* SettingsStore.m */,
 			);
 			path = Labyrinth;
 			sourceTree = "<group>";
@@ -219,8 +267,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B5F41F7F18478BC900B36789 /* hex_petrol.png in Resources */,
+				B5F41F7E18478BC900B36789 /* hex_brown.png in Resources */,
+				B55596D618474D1500CC3A13 /* hex_gray.png in Resources */,
+				B5F41F82184797FF00B36789 /* toolbar.png in Resources */,
 				B5CED2451844BC10004BC7CE /* InfoPlist.strings in Resources */,
+				B58CA7C41849337500C06874 /* hex_red.png in Resources */,
 				B5CED24D1844BC10004BC7CE /* Images.xcassets in Resources */,
+				B5F41F8018478BC900B36789 /* hex_turquoise.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,8 +293,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B58CA7C21848FBB000C06874 /* SettingsStore.m in Sources */,
+				B5CED26B1844BD29004BC7CE /* LabyrinthViewController.m in Sources */,
+				B55596D9184784FD00CC3A13 /* MazeObject.m in Sources */,
 				B5CED24B1844BC10004BC7CE /* AppDelegate.m in Sources */,
 				B5CED2471844BC10004BC7CE /* main.m in Sources */,
+				B5C283B518452080005A02B1 /* NSMutableArray+QueueAdditions.m in Sources */,
+				B5C283B818452571005A02B1 /* MazeNode.m in Sources */,
+				B5CB8A991848633F00CB8EA2 /* UIMazeControl.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -441,6 +501,7 @@
 				B5CED2651844BC10004BC7CE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B5CED2661844BC10004BC7CE /* Build configuration list for PBXNativeTarget "LabyrinthTests" */ = {
 			isa = XCConfigurationList;
@@ -449,6 +510,7 @@
 				B5CED2681844BC10004BC7CE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
