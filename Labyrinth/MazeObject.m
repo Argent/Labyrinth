@@ -133,6 +133,9 @@
 }
 
 
+-(NSArray *)objectCoordinates {
+    return [NSArray arrayWithArray:relativeCoords];
+}
 
 -(NSArray *)objectNodes{
     return [NSArray arrayWithArray:objectArray];

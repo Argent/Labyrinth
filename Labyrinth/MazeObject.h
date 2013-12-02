@@ -21,6 +21,7 @@ typedef enum {
 @interface MazeObject : NSObject
 
 @property (nonatomic, strong) NSArray *objectNodes;
+@property (nonatomic, readonly) NSArray *objectCoordinates;
 @property (nonatomic) ObjectType type;
 @property (nonatomic) bool isDraggable;
 @property (nonatomic, strong) UIView *containerView;

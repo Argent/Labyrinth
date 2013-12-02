@@ -11,6 +11,7 @@
 		B55596D9184784FD00CC3A13 /* MazeObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B55596D8184784FD00CC3A13 /* MazeObject.m */; };
 		B58CA7C21848FBB000C06874 /* SettingsStore.m in Sources */ = {isa = PBXBuildFile; fileRef = B58CA7C11848FBB000C06874 /* SettingsStore.m */; };
 		B58CA7C41849337500C06874 /* hex_red.png in Resources */ = {isa = PBXBuildFile; fileRef = B58CA7C31849337500C06874 /* hex_red.png */; };
+		B58CA7C7184BA46C00C06874 /* UIBezierView.m in Sources */ = {isa = PBXBuildFile; fileRef = B58CA7C6184BA46C00C06874 /* UIBezierView.m */; };
 		B5C283B518452080005A02B1 /* NSMutableArray+QueueAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B5C283B418452080005A02B1 /* NSMutableArray+QueueAdditions.m */; };
 		B5C283B818452571005A02B1 /* MazeNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B5C283B718452571005A02B1 /* MazeNode.m */; };
 		B5CB8A991848633F00CB8EA2 /* UIMazeControl.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CB8A981848633F00CB8EA2 /* UIMazeControl.m */; };
@@ -50,6 +51,8 @@
 		B58CA7C01848FBB000C06874 /* SettingsStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsStore.h; sourceTree = "<group>"; };
 		B58CA7C11848FBB000C06874 /* SettingsStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsStore.m; sourceTree = "<group>"; };
 		B58CA7C31849337500C06874 /* hex_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hex_red.png; sourceTree = "<group>"; };
+		B58CA7C5184BA46C00C06874 /* UIBezierView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIBezierView.h; sourceTree = "<group>"; };
+		B58CA7C6184BA46C00C06874 /* UIBezierView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIBezierView.m; sourceTree = "<group>"; };
 		B5C283B318452068005A02B1 /* NSMutableArray+QueueAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+QueueAdditions.h"; sourceTree = "<group>"; };
 		B5C283B418452080005A02B1 /* NSMutableArray+QueueAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+QueueAdditions.m"; sourceTree = "<group>"; };
 		B5C283B618452571005A02B1 /* MazeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MazeNode.h; sourceTree = "<group>"; };
@@ -149,6 +152,8 @@
 				B55596D8184784FD00CC3A13 /* MazeObject.m */,
 				B5CB8A971848633F00CB8EA2 /* UIMazeControl.h */,
 				B5CB8A981848633F00CB8EA2 /* UIMazeControl.m */,
+				B58CA7C5184BA46C00C06874 /* UIBezierView.h */,
+				B58CA7C6184BA46C00C06874 /* UIBezierView.m */,
 				B5F41F81184797FF00B36789 /* toolbar.png */,
 				B58CA7C31849337500C06874 /* hex_red.png */,
 				B5F41F7B18478BC900B36789 /* hex_brown.png */,
@@ -301,6 +306,7 @@
 				B5C283B518452080005A02B1 /* NSMutableArray+QueueAdditions.m in Sources */,
 				B5C283B818452571005A02B1 /* MazeNode.m in Sources */,
 				B5CB8A991848633F00CB8EA2 /* UIMazeControl.m in Sources */,
+				B58CA7C7184BA46C00C06874 /* UIBezierView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
