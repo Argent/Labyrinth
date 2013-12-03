@@ -81,7 +81,11 @@
     for (int i = 0; i < objectArray.count; i++) {
         MazeNode *node = objectArray[i];
         CGPoint relPoint = [relativeCoords[i] CGPointValue];
-        node.uiElement.center = CGPointMake(relPoint.x * node.width , relPoint.y * node.Size * 3);
+        
+        if ((int)relPoint.y % 2 == 0)
+            node.uiElement.center = CGPointMake(relPoint.x * node.width , relPoint.y * node.Size * 1.5);
+        else
+            node.uiElement.center = CGPointMake((node.width / 2) + (relPoint.x * node.width), relPoint.y * node.Size * 1.5);
         
         [self.containerView addSubview:node.uiElement];
         
