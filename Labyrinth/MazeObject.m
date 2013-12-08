@@ -55,10 +55,23 @@
                 self.isDraggable = NO;
                 break;
                 
+            case STARTEDIT:
+                self.imageName = @"hex_turquoise.png";
+                self.isDraggable = YES;
+                break;
+                
             case END:
                 self.imageName = @"hex_petrol.png";
                 self.isDraggable = NO;
                 break;
+                
+                
+            case ENDEDIT:
+                self.imageName = @"hex_petrol.png";
+                self.isDraggable = YES;
+                break;
+                
+                
             default:
                 break;
         }
