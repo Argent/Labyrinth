@@ -28,6 +28,7 @@
 		B5CED25E1844BC10004BC7CE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B5CED25C1844BC10004BC7CE /* InfoPlist.strings */; };
 		B5CED2601844BC10004BC7CE /* LabyrinthTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CED25F1844BC10004BC7CE /* LabyrinthTests.m */; };
 		B5CED26B1844BD29004BC7CE /* LabyrinthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5CED26A1844BD29004BC7CE /* LabyrinthViewController.m */; };
+		B5D5139F185311640085A838 /* GeometryHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = B5D5139E185311640085A838 /* GeometryHelper.m */; };
 		B5F41F7E18478BC900B36789 /* hex_brown.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F41F7B18478BC900B36789 /* hex_brown.png */; };
 		B5F41F7F18478BC900B36789 /* hex_petrol.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F41F7C18478BC900B36789 /* hex_petrol.png */; };
 		B5F41F8018478BC900B36789 /* hex_turquoise.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F41F7D18478BC900B36789 /* hex_turquoise.png */; };
@@ -77,6 +78,8 @@
 		B5CED25F1844BC10004BC7CE /* LabyrinthTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LabyrinthTests.m; sourceTree = "<group>"; };
 		B5CED2691844BD29004BC7CE /* LabyrinthViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabyrinthViewController.h; sourceTree = "<group>"; };
 		B5CED26A1844BD29004BC7CE /* LabyrinthViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LabyrinthViewController.m; sourceTree = "<group>"; };
+		B5D5139D185311640085A838 /* GeometryHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeometryHelper.h; sourceTree = "<group>"; };
+		B5D5139E185311640085A838 /* GeometryHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeometryHelper.m; sourceTree = "<group>"; };
 		B5F41F7B18478BC900B36789 /* hex_brown.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hex_brown.png; sourceTree = "<group>"; };
 		B5F41F7C18478BC900B36789 /* hex_petrol.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hex_petrol.png; sourceTree = "<group>"; };
 		B5F41F7D18478BC900B36789 /* hex_turquoise.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hex_turquoise.png; sourceTree = "<group>"; };
@@ -164,6 +167,8 @@
 				B5CED2411844BC10004BC7CE /* Supporting Files */,
 				B58CA7C01848FBB000C06874 /* SettingsStore.h */,
 				B58CA7C11848FBB000C06874 /* SettingsStore.m */,
+				B5D5139D185311640085A838 /* GeometryHelper.h */,
+				B5D5139E185311640085A838 /* GeometryHelper.m */,
 			);
 			path = Labyrinth;
 			sourceTree = "<group>";
@@ -299,6 +304,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B58CA7C21848FBB000C06874 /* SettingsStore.m in Sources */,
+				B5D5139F185311640085A838 /* GeometryHelper.m in Sources */,
 				B5CED26B1844BD29004BC7CE /* LabyrinthViewController.m in Sources */,
 				B55596D9184784FD00CC3A13 /* MazeObject.m in Sources */,
 				B5CED24B1844BC10004BC7CE /* AppDelegate.m in Sources */,

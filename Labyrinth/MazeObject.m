@@ -104,7 +104,15 @@
         center.y += node.Size;
         node.uiElement.center = center;
     }
-
+    
+    /*
+    CGRect fr = self.containerView.frame;
+    CGPoint tp = self.containerView.center;
+    
+    int blub = 0;
+    blub++;
+     */
+     
     /*
     for (MazeNode *node in objectArray ) {
         CGRect uiFrame = node.uiElement.frame;
