@@ -343,9 +343,8 @@ CGPoint scrollViewOffset;
     float hex_width = sqrt(3) / 2.0 * hex_height;
     
     grid_max_width = (int)sliderWidth.value;
-    
-    
     grid_max_height =(int)sliderHeight.value;
+
     
     /*if(fmod(2,roundf(sliderHeight.value)) == 0.0)
         grid_max_height=roundf(sliderHeight.value);
@@ -401,7 +400,10 @@ CGPoint scrollViewOffset;
             }
         }
         
-        currentX += hex_width;
+        if (grid_max_height%2 == 0)
+            currentX += hex_width;
+        else
+            currentX += hex_width * 1.5;
     }
     
     

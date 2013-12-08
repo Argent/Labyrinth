@@ -54,11 +54,7 @@
         MazeObject *obj = [MazeObject objectWithType:WALL andCenter:CGPointMake(50, 60)];
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,0)]];
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,0)]];
-        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,1)]];
-        /*[wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,2)]];
-        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,3)]];
-        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,4)]];
-        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,4)]];*/
+       
         for (MazeNode *wallNode in wallNodes) {
             [self addDragEventsToNode:wallNode];
         }
