@@ -15,7 +15,9 @@ typedef enum {
     WALL,
     COIN,
     START,
-    END
+    STARTEDIT,
+    END,
+    ENDEDIT
 } ObjectType;
 
 @interface MazeObject : NSObject

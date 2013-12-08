@@ -1,11 +1,12 @@
 //
-//  LabyrinthViewController.m
+//  EditorViewController.m
 //  Labyrinth
 //
-//  Created by Benjamin Otto on 26.11.13.
+//  Created by Corina Schemainda on 07.12.13.
 //  Copyright (c) 2013 Benjamin Otto. All rights reserved.
 //
 
+#import "EditorViewController.h"
 #import "LabyrinthViewController.h"
 #import "NSMutableArray+QueueAdditions.h"
 #import "MazeNode.h"
@@ -14,64 +15,166 @@
 #import "SettingsStore.h"
 
 
-@interface LabyrinthViewController () {
-    UIView *containerView;
-    NSMutableArray *matrix;
+
+@interface EditorViewController () {
+
+UIView *containerView;
+NSMutableArray *matrix;
+
+int grid_max_width;
+int grid_max_height;
+
+CGPoint lastDragPoint;
+bool touchedDown;
+bool overGameField;
+
+CGPoint scrollViewOffset;
     
-    int grid_max_width;
-    int grid_max_height;
+    UISlider *sliderWidth;
+    UISlider *sliderHeight;
     
-    CGPoint lastDragPoint;
-    bool touchedDown;
-    bool overGameField;
+    int widthValue;
+    int heightValue;
     
-    CGPoint scrollViewOffset;
 }
 @end
 
-@implementation LabyrinthViewController
+
+@implementation EditorViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         scrollViewOffset = CGPointMake(0.0, 0.0);
-        [self initGrid];
+        
         
         int toolbarHeight = 100;
         self.toolBarView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height - toolbarHeight, self.view.frame.size.width, toolbarHeight)];
         self.toolBarView.contentSize = CGSizeMake(self.view.frame.size.width * 2, toolbarHeight);
         self.toolBarView.backgroundColor = [UIColor clearColor];
+      
+        
+        int toolbar2Height = 55;
+        self.toolBarView2 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width,toolbar2Height)];
+        self.toolBarView.backgroundColor = [UIColor blackColor];
+
+        
+        
         UIImage *backgroundImg = [UIImage imageNamed:@"toolbar.png"];
         UIImageView *imgView = [[UIImageView alloc]initWithImage:backgroundImg];
         imgView.frame = CGRectMake(0 - 100, 0, self.toolBarView.contentSize.width + 200, self.toolBarView.contentSize.height);
         [self.toolBarView addSubview:imgView];
+        
+        UIImageView *imgView2 = [[UIImageView alloc]initWithImage:backgroundImg];
+        imgView2.frame = CGRectMake(0, 0, self.toolBarView2.frame.size.width, self.toolBarView2.frame.size.height);
+        imgView2.backgroundColor=[UIColor blackColor];
+        imgView2.transform=CGAffineTransformMakeRotation(M_PI);
+        
+        [self.toolBarView addSubview:imgView];
+        [self.toolBarView2 addSubview:imgView2];
+        
+        
+        /*UITextView *textWith = [[UITextView alloc] initWithFrame:CGRectMake(5,5,30,30);
+        [self.toolBarView2 addSubview:textWith];*/
+        
+      
+
+        sliderWidth = [[UISlider alloc] initWithFrame: CGRectMake(1,10,150,30)];
+        sliderWidth.maximumValue=30;
+        sliderWidth.minimumValue=2;
+        sliderWidth.value = 15;
+        [sliderWidth addTarget:self action:@selector(sliderChanged:) forControlEvents:UIControlEventValueChanged];
+        [self.toolBarView2 addSubview:sliderWidth];
+        widthValue=(int)sliderWidth.value;
+        
+        
+        sliderHeight= [[UISlider alloc] initWithFrame: CGRectMake(160,10,150,30)];
+        sliderHeight.maximumValue=30;
+        sliderHeight.minimumValue=2;
+        sliderHeight.value = 16;
+        [sliderHeight addTarget:self action:@selector(sliderChanged:) forControlEvents:UIControlEventValueChanged];
+        [self.toolBarView2 addSubview:sliderHeight];
+    
+        
+
+        
         [self.view addSubview:self.toolBarView];
+        [self.view addSubview:self.toolBarView2];
         
         NSMutableArray *wallNodes = [NSMutableArray array];
         MazeObject *obj = [MazeObject objectWithType:WALL andCenter:CGPointMake(50, 60)];
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,0)]];
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,0)]];
-       
+        
         for (MazeNode *wallNode in wallNodes) {
             [self addDragEventsToNode:wallNode];
         }
         
         [self.toolBarView addSubview:obj.containerView];
         
+    
+        
+        NSMutableArray *startNodes = [NSMutableArray array];
+        MazeObject *start = [MazeObject objectWithType:STARTEDIT andCenter:CGPointMake(170,60)];
+        [startNodes addObject:[start generateAndAddNodeRelative:CGPointMake(0,0)]];
+         
+         for (MazeNode *startNode in startNodes) {
+             [self addDragEventsToNode:startNode];
+         }
+
+        
+        NSMutableArray *endNodes = [NSMutableArray array];
+        MazeObject *end = [MazeObject objectWithType:ENDEDIT andCenter:CGPointMake(240,60)];
+        [endNodes addObject:[end generateAndAddNodeRelative:CGPointMake(0,0)]];
+        
+        for (MazeNode *endNode in endNodes) {
+            [self addDragEventsToNode:endNode];
+        }
+
+        
+        [self.toolBarView addSubview:start.containerView];
+        [self.toolBarView addSubview:end.containerView];
+
+        
+         [self initGrid];
+        
     }
     return self;
+}
+
+
+//init new grid only if values change
+
+- (void)sliderChanged:(UISlider *)slider
+{
+    if (slider == sliderWidth) {
+        NSLog(@"Width: %i", (int)sliderWidth.value);
+        if (!(widthValue == (int)sliderWidth.value)){
+            NSLog(@"oldWidth: %i", widthValue);
+            [self initGrid];
+            widthValue=(int)sliderWidth.value;
+        }
+    }
+    if (slider==sliderHeight) {
+        NSLog (@"Height: %i", (int)sliderHeight.value);
+        if (!(heightValue == (int)sliderHeight.value)){
+            NSLog(@"oldHeight: %i", widthValue);
+            [self initGrid];
+            heightValue=(int)sliderHeight.value;
+    }
+    }
 }
 
 - (IBAction) itemDragBegan:(id) sender withEvent:(UIEvent *) event {
     NSLog(@"Drag began");
     lastDragPoint = [[[event allTouches] anyObject] locationInView:self.view];
     touchedDown = YES;
-            if (lastDragPoint.y > self.view.frame.size.height - 100){
-                overGameField = NO;
-            }else{
-                overGameField = YES;
-            }
+    if (lastDragPoint.y > self.view.frame.size.height - 100){
+        overGameField = NO;
+    }else{
+        overGameField = YES;
+    }
 }
 
 - (IBAction) itemMoved:(id) sender withEvent:(UIEvent *) event {
@@ -139,10 +242,10 @@
                                      ((UIView*)imgView).transform = CGAffineTransformMakeScale(scaleFactor, scaleFactor);
                                  }];
             }
-
+            
         }
         overGameField = YES;
-
+        
     }
     
     // if the object is on the gamefield, round its position to the underlaying grid
@@ -150,7 +253,7 @@
         UIMazeControl *mazeControl = (UIMazeControl*)control;
         float nodeHeightOffset = [SettingsStore sharedStore].hexSize;
         float nodeWidthOffset = sqrtf(3)/2 * nodeHeightOffset;
-
+        
         CGRect rect = mazeControl.mazeObject.containerView.frame;
         // multiply with inverse zoomscale to find the right game coordinates
         CGPoint roundedPoint = [self pixelToHex:CGPointMake((rect.origin.x * 1/self.scrollView.zoomScale )+ nodeWidthOffset, (rect.origin.y * 1/self.scrollView.zoomScale )+ nodeHeightOffset)];
@@ -204,7 +307,23 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+
 	// Do any additional setup after loading the view.
+    // Custom initialization
+    self.view.backgroundColor = [UIColor whiteColor];
+    self.scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 50, self.view.frame.size.width, self.view.frame.size.height- self.toolBarView.frame.size.height - self.toolBarView2.frame.size.height)];
+    self.scrollView.backgroundColor = [UIColor blackColor];
+    self.scrollView.delegate = self;
+    self.scrollView.minimumZoomScale=0.25;
+    self.scrollView.maximumZoomScale=1.0;
+    [self.view addSubview:self.scrollView];
+    self.scrollView.contentSize = CGSizeZero;
+    containerView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.scrollView.contentSize.width, self.scrollView.contentSize.height)];
+    [self.scrollView addSubview:containerView];
+    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapGestureCaptured:)];
+    [self.scrollView addGestureRecognizer:singleTap];
+   
 }
 
 -(void)viewDidAppear:(BOOL)animated {
@@ -213,31 +332,32 @@
 }
 
 
--(void)initGrid{
+-(void)initGrid
+{
+    
+    for (UIView *view in containerView.subviews) {
+        [view removeFromSuperview];
+    }
+    
     float hex_height = [SettingsStore sharedStore].hexSize * 2;
     float hex_width = sqrt(3) / 2.0 * hex_height;
     
-    grid_max_width = 20;
-    grid_max_height = 20;
+    grid_max_width = (int)sliderWidth.value;
     
-    // Custom initialization
-    self.view.backgroundColor = [UIColor whiteColor];
-    self.scrollView = [[UIScrollView alloc]initWithFrame:self.view.frame];
-    self.scrollView.backgroundColor = [UIColor blackColor];
+    
+    grid_max_height =(int)sliderHeight.value;
+    
+    /*if(fmod(2,roundf(sliderHeight.value)) == 0.0)
+        grid_max_height=roundf(sliderHeight.value);
+    else{
+        grid_max_height=roundf(sliderHeight.value)+1;
+    }*/
+
     
     self.scrollView.contentSize = CGSizeMake((hex_width * grid_max_width) - (hex_width/2), hex_height * grid_max_height);
-    self.scrollView.delegate = self;
-    self.scrollView.minimumZoomScale=0.25;
-    self.scrollView.maximumZoomScale=1.0;
     
-    [self.view addSubview:self.scrollView];
+    containerView.frame = CGRectMake(3.0f , 5.0f, self.scrollView.contentSize.width, self.scrollView.contentSize.height);
     
-    containerView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.scrollView.contentSize.width, self.scrollView.contentSize.height)];
-    [self.scrollView addSubview:containerView];
-    
-    
-    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapGestureCaptured:)];
-    [self.scrollView addGestureRecognizer:singleTap];
     
     matrix = [NSMutableArray array];
     
@@ -265,7 +385,7 @@
                 UIImageView *uiImage = [[UIImageView alloc]initWithFrame:node.Frame];
                 [uiImage setImage:[UIImage imageNamed:@"hex_gray.png"]];
                 [containerView addSubview:uiImage];
-
+                
                 node.uiElement = uiImage;
                 
                 [matrix[x] addObject:node];
@@ -301,14 +421,14 @@
         }
     }
     
-    while (true) {
+  /*  while (true) {
         CGPoint startP =  CGPointMake(arc4random()%grid_max_width,arc4random()%grid_max_height);
         CGPoint endP =  CGPointMake(arc4random()%grid_max_width,arc4random()%grid_max_height);
         
         MazeNode *nodeStart = (MazeNode*)matrix[(int)startP.x][(int)startP.y];
         MazeNode *nodeEnd = (MazeNode*)matrix[(int)endP.x][(int)endP.y];
         
-
+        
         if (![nodeStart isEqual:[NSNull null]] && ![nodeEnd isEqual:[NSNull null]] && !(startP.x == endP.x && startP.y == endP.y)){
             
             MazeObject *start = [MazeObject objectWithType:START andCenter:CGPointMake(nodeStart.center.x, nodeStart.center.y)];
@@ -323,7 +443,7 @@
             break;
         }
         
-    }
+    }*/
     
 }
 
@@ -349,19 +469,20 @@
         [self addDragEventsToNode:nn];
         [containerView addSubview:start.containerView];
         
+        
         //NSLog(@"Touch GenNode Center: (x:%.2f,y:%.2f)", nn.uiElement.center.x, nn.uiElement.center.y);
         //NSLog(@"Touch Container Center: (x:%.2f,y:%.2f)", start.containerView.center.x, start.containerView.center.y);
         //NSLog(@"Touch Container Frame: (x:%.2f,y:%.2f,width:%.2f,height:%.2f)", start.containerView.frame.origin.x, start.containerView.frame.origin.y, start.containerView.frame.size.width, start.containerView.frame.size.height);
         
         /*
-        NSArray *neighbours =  [self getNeighboursFrom:matrixCoords];
-        for (NSValue *neighbour in neighbours) {
-            CGPoint coords = [neighbour CGPointValue];
-            MazeNode *node = matrix[(int)coords.x][(int)coords.y];
-            if (![node isEqual:[NSNull null]]) {
-            [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_red.png"]];
-            };
-        }*/
+         NSArray *neighbours =  [self getNeighboursFrom:matrixCoords];
+         for (NSValue *neighbour in neighbours) {
+         CGPoint coords = [neighbour CGPointValue];
+         MazeNode *node = matrix[(int)coords.x][(int)coords.y];
+         if (![node isEqual:[NSNull null]]) {
+         [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_red.png"]];
+         };
+         }*/
     }
 }
 
@@ -539,10 +660,30 @@
 }
 
 
-- (void)didReceiveMemoryWarning
+/*- (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView{
+    return 2;
+}
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
+    switch (component) {
+        case 0:
+            return 10;
+            break;
+        case 1:
+            return 5;
+            break;
+        default:
+            break;
+            
+    }
+    return 0;
+}*/
 
 @end

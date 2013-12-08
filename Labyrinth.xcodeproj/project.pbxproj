@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		020373FA18531FC5000CD00C /* EditorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 020373F918531FC5000CD00C /* EditorViewController.m */; };
+		020373FD185323B1000CD00C /* TestMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 020373FC185323B1000CD00C /* TestMenuViewController.m */; };
 		B55596D618474D1500CC3A13 /* hex_gray.png in Resources */ = {isa = PBXBuildFile; fileRef = B55596D518474D1500CC3A13 /* hex_gray.png */; };
 		B55596D9184784FD00CC3A13 /* MazeObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B55596D8184784FD00CC3A13 /* MazeObject.m */; };
 		B58CA7C21848FBB000C06874 /* SettingsStore.m in Sources */ = {isa = PBXBuildFile; fileRef = B58CA7C11848FBB000C06874 /* SettingsStore.m */; };
@@ -44,6 +46,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		020373F818531FC5000CD00C /* EditorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditorViewController.h; sourceTree = "<group>"; };
+		020373F918531FC5000CD00C /* EditorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditorViewController.m; sourceTree = "<group>"; };
+		020373FB185323B1000CD00C /* TestMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestMenuViewController.h; sourceTree = "<group>"; };
+		020373FC185323B1000CD00C /* TestMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestMenuViewController.m; sourceTree = "<group>"; };
 		B55596D518474D1500CC3A13 /* hex_gray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hex_gray.png; sourceTree = "<group>"; };
 		B55596D7184784FD00CC3A13 /* MazeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MazeObject.h; sourceTree = "<group>"; };
 		B55596D8184784FD00CC3A13 /* MazeObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MazeObject.m; sourceTree = "<group>"; };
@@ -140,6 +146,10 @@
 				B5CED2491844BC10004BC7CE /* AppDelegate.h */,
 				B5CED24A1844BC10004BC7CE /* AppDelegate.m */,
 				B5CED2691844BD29004BC7CE /* LabyrinthViewController.h */,
+				020373F818531FC5000CD00C /* EditorViewController.h */,
+				020373F918531FC5000CD00C /* EditorViewController.m */,
+				020373FB185323B1000CD00C /* TestMenuViewController.h */,
+				020373FC185323B1000CD00C /* TestMenuViewController.m */,
 				B5CED26A1844BD29004BC7CE /* LabyrinthViewController.m */,
 				B5C283B318452068005A02B1 /* NSMutableArray+QueueAdditions.h */,
 				B5C283B418452080005A02B1 /* NSMutableArray+QueueAdditions.m */,
@@ -294,12 +304,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				B58CA7C21848FBB000C06874 /* SettingsStore.m in Sources */,
+				020373FD185323B1000CD00C /* TestMenuViewController.m in Sources */,
 				B5CED26B1844BD29004BC7CE /* LabyrinthViewController.m in Sources */,
 				B55596D9184784FD00CC3A13 /* MazeObject.m in Sources */,
 				B5CED24B1844BC10004BC7CE /* AppDelegate.m in Sources */,
 				B5CED2471844BC10004BC7CE /* main.m in Sources */,
 				B5C283B518452080005A02B1 /* NSMutableArray+QueueAdditions.m in Sources */,
 				B5C283B818452571005A02B1 /* MazeNode.m in Sources */,
+				020373FA18531FC5000CD00C /* EditorViewController.m in Sources */,
 				B5CB8A991848633F00CB8EA2 /* UIMazeControl.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
