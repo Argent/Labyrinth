@@ -98,11 +98,18 @@
     
     self.containerView.frame = CGRectMake(self.containerView.center.x +  minX, self.containerView.center.y + minY, maxX - minX, maxY - minY);
     
+
+    
     for (MazeNode *node in objectArray) {
-        CGPoint center = node.uiElement.center;
+        /*CGPoint center = node.uiElement.center;
         center.x += node.width / 2;
         center.y += node.Size;
-        node.uiElement.center = center;
+        node.uiElement.center = center;*/
+        
+        CGRect frame = node.uiElement.frame;
+        frame.origin.x -= minX;
+        frame.origin.y -= minY;
+        node.uiElement.frame = frame;
     }
     
     /*

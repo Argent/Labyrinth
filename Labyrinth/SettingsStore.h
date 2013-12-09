@@ -13,5 +13,7 @@
 +(SettingsStore*)sharedStore;
 
 @property (nonatomic) int hexSize;
+@property (nonatomic, readonly) float width;
+@property (nonatomic, readonly) float height;
 
 @end

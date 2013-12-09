@@ -56,9 +56,10 @@
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,0)]];
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,1)]];
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,2)]];
-       /* [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,3)]];
-        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,4)]];
-        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,4)]];*/
+        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,3)]];
+       /* [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,4)]];
+        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,4)]];
+        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,-1)]];*/
         for (MazeNode *wallNode in wallNodes) {
             [self addDragEventsToNode:wallNode];
         }
@@ -359,9 +360,10 @@
     containerView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.scrollView.contentSize.width, self.scrollView.contentSize.height)];
     [self.scrollView addSubview:containerView];
     
-    
+    /*
     UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapGestureCaptured:)];
     [self.scrollView addGestureRecognizer:singleTap];
+     */
     
     matrix = [NSMutableArray array];
     
@@ -461,10 +463,10 @@
     touchPoint.y -= scrollViewOffset.y;
     touchPoint = CGPointMake(touchPoint.x* 1/self.scrollView.zoomScale, touchPoint.y* 1/self.scrollView.zoomScale);
     
-    //NSLog(@"Touch Point: (x:%.2f,y:%.2f)", touchPoint.x, touchPoint.y);
+   // NSLog(@"Touch Point: (x:%.2f,y:%.2f)", touchPoint.x, touchPoint.y);
     
     CGPoint matrixCoords = [GeometryHelper pixelToHex:touchPoint gridSize:gridSize];
-    //NSLog(@"Touch Matrix: (x:%.2f,y:%.2f)", matrixCoords.x, matrixCoords.y);
+   // NSLog(@"Touch Matrix: (x:%.2f,y:%.2f)", matrixCoords.x, matrixCoords.y);
     
     MazeNode *node = matrix[(int)matrixCoords.x][(int)matrixCoords.y];
     

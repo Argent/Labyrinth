@@ -183,7 +183,7 @@
 
     CGSize gridSize = CGSizeMake(matrix.count, ((NSArray*)matrix[0]).count);
     
-    CGPoint matrixCoords = [GeometryHelper pixelToHex:point gridSize:gridSize];
+    CGPoint matrixCoords = [GeometryHelper pixelToHex:CGPointMake(point.x + [[SettingsStore sharedStore]width] /2.0, point.y + [[SettingsStore sharedStore]height] /2.0) gridSize:gridSize];
     MazeNode *node = matrix[(int)matrixCoords.x][(int)matrixCoords.y];
     
     
@@ -213,8 +213,9 @@
     NSMutableArray *coordsToCheck = [NSMutableArray array];
     
     CGPoint mostLeftNodeCoords = CGPointMake(rect.origin.x, (rect.origin.y + node.Size) + mostLeftNode.y * node.Size * 1.5);
-    if ((int)mostLeftNode.y % 2 == 0)
-        mostLeftNodeCoords.x -= node.width / 2;
+    //if ((int)mostLeftNode.y % 2 == 0)
+    //    mostLeftNodeCoords.x -= node.width / 2;
+    mostLeftNodeCoords.x += node.Size / 2;
     CGPoint mostLeftNodeMatrixCoords = [GeometryHelper pixelToHex:mostLeftNodeCoords gridSize:gridSize];
     
     [coordsToCheck addObject:[NSValue valueWithCGPoint:mostLeftNodeMatrixCoords]];
@@ -280,13 +281,13 @@
     for (NSValue *val in matrixCoords) {
         CGPoint matrixOffset = [val CGPointValue];
         if ((matrixOffset.x < mostLeftNode.x )||
-            (matrixOffset.x == mostLeftNode.x && (int)matrixOffset.y%2 == 0)){
+            (matrixOffset.x == mostLeftNode.x && (int)matrixOffset.y%2 == 1)){
             mostLeftNode.x = matrixOffset.x;
             mostLeftNode.y = matrixOffset.y;
         }
         
         if ((matrixOffset.x > mostRightNode.x )||
-            (matrixOffset.x == mostRightNode.x && (int)matrixOffset.y%2 == 1)){
+            (matrixOffset.x == mostRightNode.x && (int)matrixOffset.y%2 == 0)){
             mostRightNode.x = matrixOffset.x;
             mostRightNode.y = matrixOffset.y;
         }
