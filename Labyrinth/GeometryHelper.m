@@ -13,6 +13,18 @@
 @implementation GeometryHelper
 
 +(CGPoint)pixelToHex:(CGPoint)pixel gridSize:(CGSize)size{
+    CGPoint notRounded = [self pixelToHexNoRound:pixel gridSize:size];
+    
+    float q = notRounded.x;
+    float r = notRounded.y;
+    
+    q = MIN(MAX(q, 0), size.width -1);
+    r = MIN(MAX(r, 0), size.height -1);
+    
+    return CGPointMake(q, r);
+}
+
++(CGPoint)pixelToHexNoRound:(CGPoint)pixel gridSize:(CGSize)size{
     // axial coordinates
     float q = (1.0/3.0*sqrt(3.0) * pixel.x - 1.0/3.0 * pixel.y) / [SettingsStore sharedStore].hexSize;
     float r = 2.0/3.0 * pixel.y / [SettingsStore sharedStore].hexSize;
@@ -45,10 +57,18 @@
     q = rx + (rz - ((int)rz&1)) / 2;
     r = rz - 1;
     
-    q = MIN(MAX(q, 0), size.width -1);
-    r= MIN(MAX(r, 0), size.height -1);
-    
     return CGPointMake(q, r);
+}
+
++(CGPoint)hexToPixel:(CGPoint)hex{
+    float size = [[SettingsStore sharedStore]hexSize];
+    int r = (int)hex.y;
+    int q = (int)hex.x;
+    
+    float x = (size * sqrt(3) * (q + 0.5 * (r&1))) + ((int)hex.y%2 == 1? -1 *([[SettingsStore sharedStore]width] / 2.0) : [[SettingsStore sharedStore]width] / 2.0);// - ([[SettingsStore sharedStore]width] / 2.0);
+    float y = (size * 3/2 * r) + size;
+    
+    return CGPointMake(x, y);
 }
 
 +(NSArray*)getShortestPathFrom:(MazeNode*)startPoint To:(MazeNode*)endPoint{
@@ -155,6 +175,18 @@
     return neighboursTmp;
 }
 
++(NSArray*)getPixelNeighboursFrom:(CGPoint)point{
+    NSMutableArray *neighboursTmp = [NSMutableArray array];
+    [neighboursTmp addObject:[NSValue valueWithCGPoint:CGPointMake(point.x - ([[SettingsStore sharedStore]width] / 2.0), point.y +([[SettingsStore sharedStore]height] * 3.0/4.0))]];
+    [neighboursTmp addObject:[NSValue valueWithCGPoint:CGPointMake(point.x + ([[SettingsStore sharedStore]width] / 2.0), point.y + ([[SettingsStore sharedStore]height] * 3.0/4.0))]];
+    [neighboursTmp addObject:[NSValue valueWithCGPoint:CGPointMake(point.x + [[SettingsStore sharedStore]width], point.y)]];
+    [neighboursTmp addObject:[NSValue valueWithCGPoint:CGPointMake(point.x - [[SettingsStore sharedStore]width], point.y)]];
+    [neighboursTmp addObject:[NSValue valueWithCGPoint:CGPointMake(point.x - ([[SettingsStore sharedStore]width] / 2.0), point.y -([[SettingsStore sharedStore]height] * 3.0/4.0))]];
+    [neighboursTmp addObject:[NSValue valueWithCGPoint:CGPointMake(point.x + ([[SettingsStore sharedStore]width] / 2.0), point.y - ([[SettingsStore sharedStore]height] * 3.0/4.0))]];
+    
+    return neighboursTmp;
+}
+
 +(bool)isValidMatrixCoord:(CGPoint)coord Matrix:(NSArray*)matrix {
     if (coord.x < 0 || coord.y < 0 || coord.x >= matrix.count || coord.y >= ((NSArray*)matrix[0]).count)
         return NO;
@@ -173,8 +205,8 @@
 
 +(CGPoint)addOffset:(CGPoint)offset toPoint:(CGPoint)point {
     CGPoint newPoint = CGPointMake(point.x + offset.x, point.y + offset.y);
-    if ((int)offset.y % 2 == 1 && (int)point.y % 2 == 1)
-        newPoint.x += 1;
+   // if ((int)offset.y % 2 == 1 /*&& (int)point.y % 2 == 1*/)
+   //     newPoint.x += 1;
     
     return newPoint;
 }
@@ -184,6 +216,11 @@
     CGSize gridSize = CGSizeMake(matrix.count, ((NSArray*)matrix[0]).count);
     
     CGPoint matrixCoords = [GeometryHelper pixelToHex:CGPointMake(point.x + [[SettingsStore sharedStore]width] /2.0, point.y + [[SettingsStore sharedStore]height] /2.0) gridSize:gridSize];
+    if ((int)matrixCoords.y % 2 == 1 && matrixCoords.x == 0.0)
+        matrixCoords.x = matrixCoords.x + 1;
+    if ((int)matrixCoords.y % 2 == 0 && matrixCoords.x == matrix.count - 1)
+        matrixCoords.x = matrixCoords.x - 1;
+        
     MazeNode *node = matrix[(int)matrixCoords.x][(int)matrixCoords.y];
     
     
@@ -238,12 +275,14 @@
     }
     
     if (allValid) {
+        //NSLog(@"%@", mazeObject.objectCoordinates);
+        //NSLog(@"%@", coordsToCheck);
         return coordsToCheck;
     }
     
-    
+    // ab hier fehler..
     NSMutableArray *tmpVals = [NSMutableArray array];
-    NSMutableArray *neighbourOffsets = (NSMutableArray*)[self getNeighboursFrom:CGPointMake(0, 0)];
+    NSMutableArray *neighbourOffsets = (NSMutableArray*)[self getPixelNeighboursFrom:CGPointMake(0, 0)];
     
     for (int i = 0; i < 100 && neighbourOffsets.count > 0 && !allValid ; i++) {
         CGPoint offset = [[neighbourOffsets dequeue]CGPointValue];
@@ -251,19 +290,25 @@
         
         bool outOfBounds = false;
         for (NSValue *val in coordsToCheck) {
-            CGPoint tmpPoint = [self addOffset:offset toPoint: [val CGPointValue]];
-            outOfBounds = outOfBounds && [self isValidMatrixCoord:tmpPoint Matrix:matrix];
-            allValid =  allValid && [self isValidDropPoint:tmpPoint Matrix:matrix];
+            CGPoint tmpCoords = [self hexToPixel:[val CGPointValue]];
+            CGPoint tmpPoint = [self addOffset:offset toPoint: tmpCoords];
+            CGPoint matrPoint = [self pixelToHexNoRound:tmpPoint gridSize:gridSize];
+            outOfBounds = outOfBounds && [self isValidMatrixCoord:matrPoint Matrix:matrix];
+            allValid =  allValid && [self isValidDropPoint:matrPoint Matrix:matrix];
             if(allValid)
-                [ tmpVals addObject:[NSValue valueWithCGPoint:tmpPoint]];
+                [ tmpVals addObject:[NSValue valueWithCGPoint:matrPoint]];
         }
         
         if (!allValid && !outOfBounds)
-            [neighbourOffsets addObjectsFromArray:[self getNeighboursFrom:offset]];
+            [neighbourOffsets addObjectsFromArray:[self getPixelNeighboursFrom:offset]];
         
         if (tmpVals.count > 0 && !allValid)
             [tmpVals removeAllObjects];
     }
+    
+    //NSLog(@"%@", mazeObject.objectCoordinates);
+    //NSLog(@"%@", coordsToCheck);
+    //NSLog(@"%@", tmpVals);
     
     if (allValid)
         return tmpVals;
@@ -310,6 +355,75 @@
     CGRect rect = CGRectMake(leftNode.Anchor.x , yVal, (rightNode.Anchor.x + rightNode.width ) - leftNode.Anchor.x, (2.0 * size) +  (((maxY - minY) * 1.5 *size)));
     
     return rect;
+}
+
++(NSMutableArray *)generateMatrixWithWidth:(int)width Height:(int)height withImageName:(NSString*)name inContainerView:(UIView*)containerView{
+    NSMutableArray *matrix = [NSMutableArray array];
+    
+    float currentX =  [[SettingsStore sharedStore]width] / 2;
+    float currentY = [[SettingsStore sharedStore]height] / 2;
+    bool even;
+    for (int x = 0; x < width; x++) {
+        [matrix addObject:[NSMutableArray array]];
+        currentY = [[SettingsStore sharedStore]height]  / 2;
+        for (int y = 0; y < height; y++) {
+            if(y%2 == 0){
+                even = true;
+            }else{
+                even = false;
+            }
+            
+            if ((even && x < width-1) ||
+                (!even && x > 0)){
+                
+                MazeNode *node = [MazeNode node];
+                node.Size = [SettingsStore sharedStore].hexSize;
+                node.center = CGPointMake(currentX, currentY);
+                node.MatrixCoords = CGPointMake(x, y);
+                
+                UIImageView *uiImage = [[UIImageView alloc]initWithFrame:node.Frame];
+                [uiImage setImage:[UIImage imageNamed:name]];
+                [containerView addSubview:uiImage];
+                
+                node.uiElement = uiImage;
+                
+                [matrix[x] addObject:node];
+            } else {
+                [matrix[x] addObject:[NSNull null]];
+            }
+            currentY += [[SettingsStore sharedStore]height]  * 3/4;
+            
+            if (!even) {
+                currentX += [[SettingsStore sharedStore]width]  / 2;
+            } else {
+                currentX -= [[SettingsStore sharedStore]width]  / 2;
+            }
+        }
+        
+        if ((int)height%2 == 0)
+            currentX += [[SettingsStore sharedStore]width] ;
+        else
+            currentX += [[SettingsStore sharedStore]width]  * 1.5;
+    }
+    
+    
+    for (int x = 0; x < matrix.count; x++) {
+        for (int y = 0; y < ((NSArray*)matrix[0]).count; y++) {
+            MazeNode *node = matrix[x][y];
+            if (![node isEqual:[NSNull null]]) {
+                CGSize gridSize  = CGSizeMake(width, height);
+                NSArray *neigbours = [GeometryHelper getNeighboursFrom:CGPointMake(x, y) GridSize:gridSize];
+                for (NSValue *val in neigbours) {
+                    CGPoint neigbour = [val CGPointValue];
+                    
+                    MazeNode *node2 = matrix[(int)neigbour.x][(int)neigbour.y];
+                    if (![node2 isEqual:[NSNull null]])
+                        [node addNeighbours:node2];
+                }
+            }
+        }
+    }
+    return matrix;
 }
 
 @end

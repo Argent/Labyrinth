@@ -13,6 +13,7 @@
 @interface GeometryHelper : NSObject
 
 +(CGPoint)pixelToHex:(CGPoint)pixel gridSize:(CGSize)size;
++(CGPoint)hexToPixel:(CGPoint)hex;
 +(NSArray*)getShortestPathFrom:(MazeNode*)startPoint To:(MazeNode*)endPoint;
 +(void)solveMazeFrom:(MazeNode*)startPoint To:(MazeNode*)endPoint Matrix:(NSArray*)matrix;
 +(NSArray*)getNeighboursFrom:(CGPoint) point GridSize:(CGSize)gridSize;
@@ -21,5 +22,6 @@
 +(CGPoint)addOffset:(CGPoint)offset toPoint:(CGPoint)point;
 +(NSArray*)alignToGrid:(MazeObject*)object Matrix:(NSArray*)matrix TopLeft:(CGPoint)point;
 +(CGRect)rectForObject:(NSArray*)matrixCoords Matrix:(NSArray*)matrix;
++(NSMutableArray *)generateMatrixWithWidth:(int)width Height:(int)height withImageName:(NSString*)name inContainerView:(UIView*)containerView;
 
 @end
