@@ -19,4 +19,13 @@
     return sharedStore;
 }
 
+-(float)width {
+    return sqrt(3) / 2.0 * self.height;
+}
+
+-(float)height {
+    return self.hexSize * 2;
+}
+
+
 @end

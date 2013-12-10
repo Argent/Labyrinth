@@ -13,6 +13,7 @@
 #import "UIMazeControl.h"
 #import "UIBezierView.h"
 #import "SettingsStore.h"
+#import "GeometryHelper.h"
 
 
 @interface LabyrinthViewController () {
@@ -20,9 +21,8 @@
     UIBezierView *pathView;
     NSMutableArray *matrix;
     
-    int grid_max_width;
-    int grid_max_height;
-    
+    CGSize gridSize;
+
     CGPoint lastDragPoint;
     bool touchedDown;
     bool overGameField;
@@ -39,6 +39,8 @@
     if (self) {
         scrollViewOffset = CGPointMake(0.0, 0.0);
         [self initGrid];
+        UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapGestureCaptured:)];
+        [self.scrollView addGestureRecognizer:singleTap];
         
         int toolbarHeight = 100;
         self.toolBarView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height - toolbarHeight, self.view.frame.size.width, toolbarHeight)];
@@ -54,19 +56,26 @@
         MazeObject *obj = [MazeObject objectWithType:WALL andCenter:CGPointMake(50, 60)];
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,0)]];
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,0)]];
-       
+        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,1)]];
+        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,2)]];
+        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,3)]];
+       /* [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,4)]];
+        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,4)]];
+        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,-1)]];*/
         for (MazeNode *wallNode in wallNodes) {
             [self addDragEventsToNode:wallNode];
         }
         
         [self.toolBarView addSubview:obj.containerView];
-       /* CGRect frame =  obj.containerView.frame;
+       CGRect frame =  obj.containerView.frame;
         frame.origin.y = 0;
-        obj.containerView.frame = frame;*/
+        obj.containerView.frame = frame;
         
     }
     return self;
 }
+
+//TODO: Remove object from grid when dragging..
 
 // Called when a drag on a maze object started
 - (IBAction) itemDragBegan:(id) sender withEvent:(UIEvent *) event {
@@ -155,26 +164,6 @@
         overGameField = YES;
         
     }
-    
-    // if the object is on the gamefield, round its position to the underlaying grid
-    /*
-     if (overGameField && [control isKindOfClass:[UIMazeControl class]]){
-     UIMazeControl *mazeControl = (UIMazeControl*)control;
-     float nodeHeightOffset = [SettingsStore sharedStore].hexSize;
-     float nodeWidthOffset = sqrtf(3)/2 * nodeHeightOffset;
-     
-     CGRect rect = mazeControl.mazeObject.containerView.frame;
-     // multiply with inverse zoomscale to find the right game coordinates
-     CGPoint roundedPoint = [self pixelToHex:CGPointMake((rect.origin.x  * 1/self.scrollView.zoomScale )+ nodeWidthOffset, (rect.origin.y * 1/self.scrollView.zoomScale )+ nodeHeightOffset)];
-     MazeNode *node = matrix[(int)roundedPoint.x][(int)roundedPoint.y];
-     // multiply with zoomscale again because the object is not on the gamefield yet but on the container view bellow
-     rect.origin.x = node.Anchor.x * self.scrollView.zoomScale;
-     rect.origin.y = node.Anchor.y * self.scrollView.zoomScale;
-     
-     mazeControl.mazeObject.containerView.frame = rect;
-     }
-     */
-    
     lastDragPoint = point;
     
 }
@@ -193,102 +182,36 @@
             [self.toolBarView addSubview:mazeControl.mazeObject.containerView];
         } else {
             NSLog(@"Dropped on game field");
+            // first scale the object to the gamefield size
             mazeControl.mazeObject.containerView.center = point;
             point = [[[event allTouches] anyObject] locationInView:self.scrollView];
             point.x -= scrollViewOffset.x;
             point.y -= scrollViewOffset.y;
-            point = CGPointMake(point.x* 1/self.scrollView.zoomScale + 10, point.y* 1/self.scrollView.zoomScale + 10);
-            
-            float centerOffsetX = mazeControl.mazeObject.containerView.center.x - mazeControl.mazeObject.containerView.frame.origin.x;
-            float centerOffsetY = mazeControl.mazeObject.containerView.center.y - mazeControl.mazeObject.containerView.frame.origin.y;
-            
-            point.x -= centerOffsetX;
-            point.y -= centerOffsetY;
-            
-            CGPoint matrixCoords = [self pixelToHex:point];
-            MazeNode *node = matrix[(int)matrixCoords.x][(int)matrixCoords.y];
-            
-            CGRect rect = mazeControl.mazeObject.containerView.frame;
-            rect.origin.x = node.Anchor.x;
-            rect.origin.y = node.Anchor.y;
-            
+            point = CGPointMake(point.x* 1/self.scrollView.zoomScale , point.y* 1/self.scrollView.zoomScale );
             [containerView addSubview:mazeControl.mazeObject.containerView];
             UIView *imgView = mazeControl.mazeObject.containerView;
             if ([imgView isKindOfClass:[UIView class]]){
                 ((UIView*)imgView).transform = CGAffineTransformMakeScale(1.0, 1.0);
+                mazeControl.mazeObject.containerView.center = point;
+            }
+            
+            CGRect containerRect = mazeControl.mazeObject.containerView.frame;
+            
+            // than get the coordinates of the unterlaying grid nodes
+            NSArray *alignedCoords = [GeometryHelper alignToGrid:mazeControl.mazeObject Matrix:matrix TopLeft:CGPointMake(containerRect.origin.x, containerRect.origin.y)];
+            CGRect rect = [GeometryHelper rectForObject:alignedCoords Matrix:matrix];
+            
+            if ([imgView isKindOfClass:[UIView class]]){
+                ((UIView*)imgView).transform = CGAffineTransformMakeScale(1.0, 1.0);
                 rect.size = mazeControl.mazeObject.containerView.frame.size;
                 mazeControl.mazeObject.containerView.frame = rect;
-                
             }
             
-            //once the item has been put on the gamefield, update the grid to recognize the new object
-            CGPoint mostLeftNode = CGPointMake(FLT_MAX, FLT_MAX);
-            for (NSValue *val in mazeControl.mazeObject.objectCoordinates) {
-                CGPoint matrixOffset = [val CGPointValue];
-                if ((matrixOffset.x < mostLeftNode.x )||
-                    (matrixOffset.x == mostLeftNode.x && (int)matrixOffset.y%2 == 0)){
-                    mostLeftNode.x = matrixOffset.x;
-                    mostLeftNode.y = matrixOffset.y;
-                }
-                
+            // set the the object variable of the grid nodes
+            for (NSValue *val in alignedCoords) {
+                CGPoint coords = [val CGPointValue];
+                ((MazeNode*) matrix[(int)coords.x][(int)coords.y]).object = mazeControl.mazeObject;
             }
-            
-            
-            CGPoint mostLeftNodeCoords = CGPointMake(rect.origin.x, (rect.origin.y + node.Size) + mostLeftNode.y * node.Size * 1.5);
-            if ((int)mostLeftNode.y % 2 == 0)
-                mostLeftNodeCoords.x -= node.width / 2;
-            CGPoint mostLeftNodeMatrixCoords = [self pixelToHex:mostLeftNodeCoords];
-            MazeNode *mostLeftMazeNode = matrix[(int)mostLeftNodeMatrixCoords.x][(int)mostLeftNodeMatrixCoords.y];
-            
-            
-            mostLeftMazeNode.object = mazeControl.mazeObject;
-            for (NSValue *val in mazeControl.mazeObject.objectCoordinates) {
-                CGPoint matrixOffset = [val CGPointValue];
-                if (!(mostLeftNode.x == matrixOffset.x && mostLeftNode.y == matrixOffset.y)){
-                    CGPoint newMatrixCoords = CGPointMake(mostLeftNodeMatrixCoords.x - (mostLeftNode.x - matrixOffset.x), mostLeftNodeMatrixCoords.y - (mostLeftNode.y - matrixOffset.y));
-                    MazeNode *objectNode;
-                    if ((int)newMatrixCoords.y % 2 == 1 && (int)matrixOffset.y % 2 == 1)
-                        objectNode = matrix[(int)newMatrixCoords.x + 1][(int)newMatrixCoords.y];
-                    else
-                        objectNode = matrix[(int)newMatrixCoords.x][(int)newMatrixCoords.y];
-                    
-                    objectNode.object =  mazeControl.mazeObject;
-                    
-                    /*
-                    MazeObject *wall = [MazeObject objectWithType:START andCenter:CGPointMake(objectNode.center.x, objectNode.center.y)];
-                    [wall generateAndAddNodeRelative:CGPointMake(0,0)];
-                    [containerView addSubview:wall.containerView];
-                    */
-                }
-            }
-            /*
-            
-            
-            MazeObject *wall = [MazeObject objectWithType:START andCenter:CGPointMake(mostLeftMazeNode.center.x, mostLeftMazeNode.center.y)];
-            [wall generateAndAddNodeRelative:CGPointMake(0,0)];
-            [containerView addSubview:wall.containerView];
-            */
-            
-            /*
-             // calculate the position of the object before the scale transform
-             CGRect rect = mazeControl.mazeObject.containerView.frame;
-             rect.origin.x -= scrollViewOffset.x;
-             rect.origin.y -= scrollViewOffset.y;
-             
-             rect.origin.x *= 1/self.scrollView.zoomScale;
-             rect.origin.y *= 1/self.scrollView.zoomScale;
-             
-             
-             [containerView addSubview:mazeControl.mazeObject.containerView];
-             UIView *imgView = mazeControl.mazeObject.containerView;
-             if ([imgView isKindOfClass:[UIView class]]){
-             ((UIView*)imgView).transform = CGAffineTransformMakeScale(1.0, 1.0);
-             // after the transformation, position the object at the coordinates we calculated before
-             rect.size =mazeControl.mazeObject.containerView.frame.size;
-             
-             mazeControl.mazeObject.containerView.frame = rect;
-             
-             }*/
             
         }
     }
@@ -312,15 +235,15 @@
     float hex_height = [SettingsStore sharedStore].hexSize * 2;
     float hex_width = sqrt(3) / 2.0 * hex_height;
     
-    grid_max_width = 20;
-    grid_max_height = 20;
     
+    gridSize = CGSizeMake(20, 20);
+
     // Custom initialization
     self.view.backgroundColor = [UIColor whiteColor];
     self.scrollView = [[UIScrollView alloc]initWithFrame:self.view.frame];
     self.scrollView.backgroundColor = [UIColor blackColor];
     
-    self.scrollView.contentSize = CGSizeMake((hex_width * grid_max_width) - (hex_width/2), hex_height * grid_max_height);
+    self.scrollView.contentSize = CGSizeMake((hex_width * gridSize.width) - (hex_width/2), hex_height * gridSize.height);
     self.scrollView.delegate = self;
     self.scrollView.minimumZoomScale=0.25;
     self.scrollView.maximumZoomScale=1.0;
@@ -330,75 +253,10 @@
     containerView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.scrollView.contentSize.width, self.scrollView.contentSize.height)];
     [self.scrollView addSubview:containerView];
     
-    
-    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapGestureCaptured:)];
-    [self.scrollView addGestureRecognizer:singleTap];
-    
-    matrix = [NSMutableArray array];
-    
-    float currentX =  hex_width / 2;
-    float currentY = hex_height / 2;
-    bool even;
-    for (int x = 0; x < grid_max_width; x++) {
-        [matrix addObject:[NSMutableArray array]];
-        currentY = hex_height / 2;
-        for (int y = 0; y < grid_max_height; y++) {
-            if(y%2 == 0){
-                even = true;
-            }else{
-                even = false;
-            }
-            
-            if ((even && x < grid_max_width-1) ||
-                (!even && x > 0)){
-                
-                MazeNode *node = [MazeNode node];
-                node.Size = [SettingsStore sharedStore].hexSize;
-                node.center = CGPointMake(currentX, currentY);
-                node.MatrixCoords = CGPointMake(x, y);
-                
-                UIImageView *uiImage = [[UIImageView alloc]initWithFrame:node.Frame];
-                [uiImage setImage:[UIImage imageNamed:@"hex_gray.png"]];
-                [containerView addSubview:uiImage];
-                
-                node.uiElement = uiImage;
-                
-                [matrix[x] addObject:node];
-            } else {
-                [matrix[x] addObject:[NSNull null]];
-            }
-            currentY += hex_height * 3/4;
-            
-            if (!even) {
-                currentX += hex_width / 2;
-            } else {
-                currentX -= hex_width / 2;
-            }
-        }
-        
-        currentX += hex_width;
-    }
-    
-    
-    for (int x = 0; x < matrix.count; x++) {
-        for (int y = 0; y < ((NSArray*)matrix[0]).count; y++) {
-            MazeNode *node = matrix[x][y];
-            if (![node isEqual:[NSNull null]]) {
-                NSArray *neigbours = [self getNeighboursFrom:CGPointMake(x, y)];
-                for (NSValue *val in neigbours) {
-                    CGPoint neigbour = [val CGPointValue];
-                    
-                    MazeNode *node2 = matrix[(int)neigbour.x][(int)neigbour.y];
-                    if (![node2 isEqual:[NSNull null]])
-                        [node addNeighbours:node2];
-                }
-            }
-        }
-    }
-    
-    while (true) {
-        CGPoint startP =  CGPointMake(arc4random()%grid_max_width,arc4random()%grid_max_height);
-        CGPoint endP =  CGPointMake(arc4random()%grid_max_width,arc4random()%grid_max_height);
+    matrix = [GeometryHelper generateMatrixWithWidth:gridSize.width Height:gridSize.height withImageName:@"hex_gray.png" inContainerView:containerView];
+     while (true) {
+        CGPoint startP =  CGPointMake(arc4random()%(int)gridSize.width,arc4random()%(int)gridSize.height);
+        CGPoint endP =  CGPointMake(arc4random()%(int)gridSize.width,arc4random()%(int)gridSize.height);
         
         MazeNode *nodeStart = (MazeNode*)matrix[(int)startP.x][(int)startP.y];
         MazeNode *nodeEnd = (MazeNode*)matrix[(int)endP.x][(int)endP.y];
@@ -434,8 +292,11 @@
     
     //NSLog(@"Touch Point: (x:%.2f,y:%.2f)", touchPoint.x, touchPoint.y);
     
-    CGPoint matrixCoords = [self pixelToHex:touchPoint];
+    CGPoint matrixCoords = [GeometryHelper pixelToHex:touchPoint gridSize:gridSize];
     //NSLog(@"Touch Matrix: (x:%.2f,y:%.2f)", matrixCoords.x, matrixCoords.y);
+    
+    //CGPoint pixelCoords = [GeometryHelper hexToPixel:matrixCoords];
+    // NSLog(@"Touch Point calculated: (x:%.2f,y:%.2f)", pixelCoords.x, pixelCoords.y);
     
     MazeNode *node = matrix[(int)matrixCoords.x][(int)matrixCoords.y];
     
@@ -449,13 +310,13 @@
         
         
         if (node.object == nil) {
-            
+            /*
             MazeObject *wall = [MazeObject objectWithType:WALL andCenter:CGPointMake(node.center.x, node.center.y)];
             MazeNode *nn = [wall generateAndAddNodeRelative:CGPointMake(0,0)];
             [self addDragEventsToNode:nn];
             node.object = wall;
             [containerView addSubview:wall.containerView];
-            
+            */
         }else if (node.object.type == START){
             
             MazeNode *endNode = nil;
@@ -469,8 +330,8 @@
                 }
             }
             
-            [self solveMazeFrom:node To:endNode];
-            NSArray *shortestPath = [self getShortestPathFrom:node To:endNode];
+            [GeometryHelper solveMazeFrom:node To:endNode Matrix:matrix];
+            NSArray *shortestPath = [GeometryHelper getShortestPathFrom:node To:endNode];
             NSLog(@"shortest path: %i steps", shortestPath.count);
             pathView = [[UIBezierView alloc]initWithFrame:CGRectMake(0, 0, self.scrollView.contentSize.width * 1/self.scrollView.zoomScale, self.scrollView.contentSize.height * 1/self.scrollView.zoomScale)];
             
@@ -494,7 +355,7 @@
         //NSLog(@"Touch Container Frame: (x:%.2f,y:%.2f,width:%.2f,height:%.2f)", start.containerView.frame.origin.x, start.containerView.frame.origin.y, start.containerView.frame.size.width, start.containerView.frame.size.height);
         
         /*
-         NSArray *neighbours =  [self getNeighboursFrom:matrixCoords];
+         NSArray *neighbours =  [GeometryHelper getNeighboursFrom:matrixCoords GridSize:gridSize];
          for (NSValue *neighbour in neighbours) {
          CGPoint coords = [neighbour CGPointValue];
          MazeNode *node = matrix[(int)coords.x][(int)coords.y];
@@ -504,47 +365,6 @@
          }*/
     }
 }
-
-// TODO: does not work for lower zoom scales
--(CGPoint)pixelToHex:(CGPoint)pixel{
-    // axial coordinates
-    float q = (1.0/3.0*sqrt(3.0) * pixel.x - 1.0/3.0 * pixel.y) / [SettingsStore sharedStore].hexSize;
-    float r = 2.0/3.0 * pixel.y / [SettingsStore sharedStore].hexSize;
-    
-    // convert to cube coordinates
-    float x = q;
-    float z = r;
-    float y = -x-z;
-    
-    // hex rounding
-    
-    float rx = round(x);
-    float ry = round(y);
-    float rz = round(z);
-    
-    float x_diff = abs(rx - x);
-    float y_diff = abs(ry - y);
-    float z_diff = abs(rz - z);
-    
-    if (x_diff > y_diff && x_diff > z_diff){
-        rx = -ry-rz;
-    }else if (y_diff > z_diff){
-        ry = -rx-rz;
-    }else{
-        rz = -rx-ry;
-    }
-    
-    // convert cube to odd-r offset
-    
-    q = rx + (rz - ((int)rz&1)) / 2;
-    r = rz - 1;
-    
-    q = MIN(MAX(q, 0), grid_max_width -1);
-    r= MIN(MAX(r, 0), grid_max_height -1);
-    
-    return CGPointMake(q, r);
-}
-
 -(void)addDragEventsToNode:(MazeNode*)node{
     [(UIMazeControl*)node.uiElement addTarget:self action:@selector(itemDragBegan:withEvent:) forControlEvents:UIControlEventTouchDown];
     [(UIMazeControl*)node.uiElement addTarget:self action:@selector(itemMoved:withEvent:) forControlEvents:UIControlEventTouchDragInside];
@@ -553,110 +373,8 @@
 }
 
 
--(NSArray*)getShortestPathFrom:(MazeNode*)startPoint To:(MazeNode*)endPoint{
-    
-    NSMutableArray *path = [NSMutableArray array];
-    [path addObject:startPoint];
-    MazeNode *currentNode = startPoint;
-    while (!(currentNode.MatrixCoords.x == endPoint.MatrixCoords.x && currentNode.MatrixCoords.y == endPoint.MatrixCoords.y)) {
-        MazeNode *minStepsNode = nil;
-        for (MazeNode *neighbour in currentNode.neighbours) {
-            if (neighbour.steps > -1) {
-                if (!minStepsNode || minStepsNode.steps > neighbour.steps)
-                    minStepsNode = neighbour;
-            }
-        }
-        if (!minStepsNode){
-            NSLog(@"no path found");
-            return [NSArray array];
-        }
-        
-        [path addObject:minStepsNode];
-        currentNode = minStepsNode;
-    }
-    
-    return path;
-    
-}
 
-
--(void)solveMazeFrom:(MazeNode*)startPoint To:(MazeNode*)endPoint{
-    for (int x = 0; x < matrix.count; x++) {
-        for (int y = 0; y < ((NSArray*)matrix[0]).count; y++) {
-            MazeNode *node = matrix[x][y];
-            if (![node isEqual:[NSNull null]]){
-                node.steps = -1;
-            }
-        }
-    }
-    
-    endPoint.steps = 0;
-    
-    // MazeNode *currentNode = endPoint;
-    
-    NSMutableArray *nodeList = [NSMutableArray array];
-    [nodeList addObject:endPoint];
-    
-    while (nodeList.count > 0) {
-        
-        MazeNode *currentNode = [nodeList dequeue];
-        NSArray *neighbours = currentNode.neighbours;
-        for (MazeNode *node in neighbours) {
-            int nextStepValue = currentNode.steps + 1;
-            if (!node.isWall && (node.steps == -1 || nextStepValue < node.steps)) {
-                node.steps = nextStepValue;
-                [nodeList enqueue:node];
-            }
-        }
-    }
-    
-    NSLog(@"solved");
-    
-}
-
--(NSArray*)getNeighboursFrom:(CGPoint) point {
-    
-    bool even = ((int)point.y) % 2 != 0;
-    NSMutableArray *neighboursTmp = [NSMutableArray array];
-    if (even) {
-        [neighboursTmp addObject:[NSValue valueWithCGPoint:CGPointMake(point.x + 1, point.y)]];
-        [neighboursTmp addObject:[NSValue valueWithCGPoint:CGPointMake(point.x, point.y - 1)]];
-        [neighboursTmp addObject:[NSValue valueWithCGPoint:CGPointMake(point.x - 1, point.y - 1)]];
-        [neighboursTmp addObject:[NSValue valueWithCGPoint:CGPointMake(point.x - 1, point.y)]];
-        [neighboursTmp addObject:[NSValue valueWithCGPoint:CGPointMake(point.x - 1, point.y + 1)]];
-        [neighboursTmp addObject:[NSValue valueWithCGPoint:CGPointMake(point.x, point.y + 1)]];
-        
-    }else {
-        [neighboursTmp addObject:[NSValue valueWithCGPoint:CGPointMake(point.x + 1, point.y)]];
-        [neighboursTmp addObject:[NSValue valueWithCGPoint:CGPointMake(point.x + 1, point.y - 1)]];
-        [neighboursTmp addObject:[NSValue valueWithCGPoint:CGPointMake(point.x, point.y - 1)]];
-        [neighboursTmp addObject:[NSValue valueWithCGPoint:CGPointMake(point.x - 1, point.y)]];
-        [neighboursTmp addObject:[NSValue valueWithCGPoint:CGPointMake(point.x, point.y + 1)]];
-        [neighboursTmp addObject:[NSValue valueWithCGPoint:CGPointMake(point.x + 1, point.y + 1)]];
-    }
-    
-    NSMutableArray *neighbours = [NSMutableArray array];
-    
-    for (NSValue *val in neighboursTmp) {
-        CGPoint point = [val CGPointValue];
-        if ((point.x >= 0 && point.x < grid_max_width) &&
-            (point.y >= 0 && point.y < grid_max_height)) {
-            bool even = (int)point.y % 2 == 0;
-            if ((even && point.x >= 0 && point.x < grid_max_width -1) ||
-                (!even && point.x > 0 && point.x < grid_max_width)) {
-                [neighbours addObject:val];
-            }
-        }
-    }
-    
-    return neighbours;
-    
-}
-
-
-
-- (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
-{
+- (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
     return containerView;
 }
 

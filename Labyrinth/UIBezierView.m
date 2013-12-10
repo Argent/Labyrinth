@@ -37,5 +37,10 @@
     }
 }
 
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
+    //NSLog(@"Passing all touches to the next view (if any), in the view stack.");
+    return NO;
+}
+
 
 @end
