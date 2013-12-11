@@ -1,0 +1,59 @@
+- Grafiken
+	- Hintergrundbild
+	- Hex Felder
+	- Toolbar
+	- "Spielfigur"
+	- Screen Design
+
+
+- Level Editor:
+	- Abspeichern
+	- Laden
+	- Toolbar mit allen Elementen
+	- Editor braucht möglichkeit um Toolbar Elemente anzugeben
+	- evtl 2 Toolbars, eine für Pinsel, eine für Spielerelemente
+	- Exitbutton
+
+
+- Labyrinth:
+	- Toolbar:
+		- gleiche Elemente gruppieren
+		- Elemente je nach Größe skalieren
+		- Badge mit Anzahl für gestapelte Elemente
+		- evtl noch mehrere Wandtypen
+			- Wände mit Timer, verblassen bis zum Verschwinden
+	- Spielfeld:
+		- Spielfigur
+		- Spielfigur animieren
+		- Levelschiwerigkeit durch Spielergeschwindigkeit
+		- Wände dürfen nicht auf Spielfigur gelegt werden
+!!!!!	- Wände beim hochheben vom Spielfeld löschen!!!!!
+		- Es muss immer ein Pfad verfügbar bleiben
+		- Unterschied zwischen festen und veränderbaren Wänden
+		- Beim ablegen einer Wand, Weg neuberechnen
+		- Overlay mit Playbutton als Startscreen
+		- vergangene Zeit/Schritte anzeigen (als Overlay am oberen Rand)
+		- Münzen geben Bonusschritte
+		- Pausebutton
+		- Pause Screen
+			- Menü
+			- Retry
+			- Abbrechen
+		- Ende Screen
+			- Ergebnis anzeigen
+			- Highscore Liste des Levels
+			- Nächster Level
+			- Retry
+	- Highscore:
+		- Highscore screen
+		- Highscores abspeichern
+		- Highscore Liste pro Level
+	- Startscreen:
+		- Highscore
+		- Levelauswahl
+			- Speed-Multiplier
+		- Editor
+		- Spielregeln
+		- Name eingeben (Textfeld reicht)
+		- aktueller Name
+
