@@ -426,4 +426,35 @@
     return matrix;
 }
 
++(NSArray *)cropMatrix:(NSArray *)matrix {
+    int minX = INT32_MAX;
+    int maxX = 0;
+    int minY = INT32_MAX;
+    int maxY = 0;
+    
+    for (int x = 0; x < matrix.count; x++) {
+        for (int y = 0; y < ((NSArray*)matrix[0]).count; y++) {
+            id obj = matrix[x][y];
+            if (![obj isEqual:[NSNull null]] && [obj isKindOfClass:[MazeNode class]]) {
+                minX = MIN(minX, x);
+                minY = MIN(minY, y);
+                maxX = MAX(maxX, x);
+                maxY = MAX(maxY, y);
+            }
+        }
+    }
+    
+    NSMutableArray *newMatrix = [NSMutableArray array];
+    for (int x = minX; x <= maxX; x++) {
+        [newMatrix addObject:[NSMutableArray array]];
+        for (int y = minY; y <= maxY; y++) {
+            MazeNode *node = matrix[x][y];
+            node.MatrixCoords = CGPointMake(x, y);
+            [newMatrix[x] addObject:node];
+        }
+    }
+    
+    return newMatrix;
+}
+
 @end

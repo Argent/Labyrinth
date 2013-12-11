@@ -39,18 +39,10 @@
     if (self) {
         scrollViewOffset = CGPointMake(0.0, 0.0);
         [self initGrid];
+        [self initToolbar];
+        
         UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapGestureCaptured:)];
         [self.scrollView addGestureRecognizer:singleTap];
-        
-        int toolbarHeight = 100;
-        self.toolBarView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height - toolbarHeight, self.view.frame.size.width, toolbarHeight)];
-        self.toolBarView.contentSize = CGSizeMake(self.view.frame.size.width * 2, toolbarHeight);
-        self.toolBarView.backgroundColor = [UIColor clearColor];
-        UIImage *backgroundImg = [UIImage imageNamed:@"toolbar.png"];
-        UIImageView *imgView = [[UIImageView alloc]initWithImage:backgroundImg];
-        imgView.frame = CGRectMake(0 - 100, 0, self.toolBarView.contentSize.width + 200, self.toolBarView.contentSize.height);
-        [self.toolBarView addSubview:imgView];
-        [self.view addSubview:self.toolBarView];
         
         NSMutableArray *wallNodes = [NSMutableArray array];
         MazeObject *obj = [MazeObject objectWithType:WALL andCenter:CGPointMake(50, 60)];
@@ -281,6 +273,19 @@
         
     }
     
+}
+
+-(void)initToolbar{
+    int toolbarHeight = 100;
+    self.toolBarView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height - toolbarHeight, self.view.frame.size.width, toolbarHeight)];
+    self.toolBarView.contentSize = CGSizeMake(self.view.frame.size.width * 2, toolbarHeight);
+    self.toolBarView.backgroundColor = [UIColor clearColor];
+    UIImage *backgroundImg = [UIImage imageNamed:@"toolbar.png"];
+    UIImageView *imgView = [[UIImageView alloc]initWithImage:backgroundImg];
+    imgView.frame = CGRectMake(0 - 100, 0, self.toolBarView.contentSize.width + 200, self.toolBarView.contentSize.height);
+    
+    [self.toolBarView addSubview:imgView];
+    [self.view addSubview:self.toolBarView];
 }
 
 - (void)singleTapGestureCaptured:(UITapGestureRecognizer *)gesture

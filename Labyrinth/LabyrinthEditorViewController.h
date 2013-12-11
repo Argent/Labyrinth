@@ -8,6 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface LabyrinthEditorViewController : UIViewController
+@interface LabyrinthEditorViewController : UIViewController <UIScrollViewDelegate>
+
+@property (nonatomic,strong) UIScrollView *scrollView;
+@property (nonatomic,strong) UIScrollView *toolBarView;
+
 
 @end

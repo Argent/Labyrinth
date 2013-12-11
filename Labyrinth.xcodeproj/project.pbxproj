@@ -12,6 +12,7 @@
 		B58CA7C21848FBB000C06874 /* SettingsStore.m in Sources */ = {isa = PBXBuildFile; fileRef = B58CA7C11848FBB000C06874 /* SettingsStore.m */; };
 		B58CA7C41849337500C06874 /* hex_red.png in Resources */ = {isa = PBXBuildFile; fileRef = B58CA7C31849337500C06874 /* hex_red.png */; };
 		B58CA7C7184BA46C00C06874 /* UIBezierView.m in Sources */ = {isa = PBXBuildFile; fileRef = B58CA7C6184BA46C00C06874 /* UIBezierView.m */; };
+		B590F354185885B700BDFDE1 /* TwoFingerScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = B590F353185885B700BDFDE1 /* TwoFingerScrollView.m */; };
 		B5ACF816185783CF007F58DD /* hex_empty.png in Resources */ = {isa = PBXBuildFile; fileRef = B5ACF815185783CF007F58DD /* hex_empty.png */; };
 		B5ACF81918578476007F58DD /* LabyrinthEditorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5ACF81818578476007F58DD /* LabyrinthEditorViewController.m */; };
 		B5C283B518452080005A02B1 /* NSMutableArray+QueueAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B5C283B418452080005A02B1 /* NSMutableArray+QueueAdditions.m */; };
@@ -60,6 +61,8 @@
 		B58CA7C31849337500C06874 /* hex_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hex_red.png; sourceTree = "<group>"; };
 		B58CA7C5184BA46C00C06874 /* UIBezierView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIBezierView.h; sourceTree = "<group>"; };
 		B58CA7C6184BA46C00C06874 /* UIBezierView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIBezierView.m; sourceTree = "<group>"; };
+		B590F352185885B700BDFDE1 /* TwoFingerScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TwoFingerScrollView.h; sourceTree = "<group>"; };
+		B590F353185885B700BDFDE1 /* TwoFingerScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TwoFingerScrollView.m; sourceTree = "<group>"; };
 		B5ACF815185783CF007F58DD /* hex_empty.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hex_empty.png; sourceTree = "<group>"; };
 		B5ACF81718578476007F58DD /* LabyrinthEditorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabyrinthEditorViewController.h; sourceTree = "<group>"; };
 		B5ACF81818578476007F58DD /* LabyrinthEditorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LabyrinthEditorViewController.m; sourceTree = "<group>"; };
@@ -172,6 +175,8 @@
 				B5CB8A981848633F00CB8EA2 /* UIMazeControl.m */,
 				B58CA7C5184BA46C00C06874 /* UIBezierView.h */,
 				B58CA7C6184BA46C00C06874 /* UIBezierView.m */,
+				B590F352185885B700BDFDE1 /* TwoFingerScrollView.h */,
+				B590F353185885B700BDFDE1 /* TwoFingerScrollView.m */,
 				B5F41F81184797FF00B36789 /* toolbar.png */,
 				B5ACF815185783CF007F58DD /* hex_empty.png */,
 				B58CA7C31849337500C06874 /* hex_red.png */,
@@ -323,6 +328,7 @@
 				B58CA7C21848FBB000C06874 /* SettingsStore.m in Sources */,
 				B5D5139F185311640085A838 /* GeometryHelper.m in Sources */,
 				B5ACF81918578476007F58DD /* LabyrinthEditorViewController.m in Sources */,
+				B590F354185885B700BDFDE1 /* TwoFingerScrollView.m in Sources */,
 				B5CED26B1844BD29004BC7CE /* LabyrinthViewController.m in Sources */,
 				B55596D9184784FD00CC3A13 /* MazeObject.m in Sources */,
 				B5CED24B1844BC10004BC7CE /* AppDelegate.m in Sources */,

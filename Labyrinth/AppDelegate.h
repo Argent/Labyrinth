@@ -8,12 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "LabyrinthViewController.h"
+#import "LabyrinthEditorViewController.h"
 //#import "EditorViewController.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-@property (nonatomic, strong) LabyrinthViewController *rootViewController;
+//@property (nonatomic, strong) LabyrinthViewController *rootViewController;
+@property (nonatomic, strong) LabyrinthEditorViewController *rootViewController;
 //@property (nonatomic, strong) EditorViewController *rootViewController;
 
 @end
