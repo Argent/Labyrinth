@@ -25,8 +25,11 @@
 // An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect
 {
+
     // Drawing code
     [super drawRect:rect];
+    //CGContextRef ctx = UIGraphicsGetCurrentContext();
+    //CGContextClearRect(ctx, rect);
     UIBezierPath *path = self.curvePath;
     if(path){
         path.lineCapStyle = kCGLineCapRound;

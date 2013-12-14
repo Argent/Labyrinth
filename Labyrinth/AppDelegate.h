@@ -14,8 +14,8 @@
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-//@property (nonatomic, strong) LabyrinthViewController *rootViewController;
-@property (nonatomic, strong) LabyrinthEditorViewController *rootViewController;
-//@property (nonatomic, strong) EditorViewController *rootViewController;
+@property (nonatomic, strong) LabyrinthViewController *rootViewController;
+//@property (nonatomic, strong) LabyrinthEditorViewController *rootViewController;
+
 
 @end

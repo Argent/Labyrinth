@@ -28,6 +28,12 @@
     bool overGameField;
     
     CGPoint scrollViewOffset;
+    
+    UIImageView *movingView;
+    bool animationComplete;
+    bool animationStarted;
+    NSMutableArray *movingPath;
+    bool interrupted;
 }
 @end
 
@@ -51,17 +57,31 @@
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,1)]];
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,2)]];
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,3)]];
+         MazeObject *obj2 = [MazeObject objectWithType:WALL andCenter:CGPointMake(150, 60)];
+        [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,0)]];
+        [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(1,0)]];
+        [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(-1,1)]];
+         MazeObject *obj3 = [MazeObject objectWithType:WALL andCenter:CGPointMake(250, 60)];
+        [wallNodes addObject:[obj3 generateAndAddNodeRelative:CGPointMake(0,0)]];
+        [wallNodes addObject:[obj3 generateAndAddNodeRelative:CGPointMake(1,0)]];
+        
        /* [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,4)]];
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,4)]];
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,-1)]];*/
+        
+    
         for (MazeNode *wallNode in wallNodes) {
             [self addDragEventsToNode:wallNode];
         }
         
         [self.toolBarView addSubview:obj.containerView];
-       CGRect frame =  obj.containerView.frame;
+        [self.toolBarView addSubview:obj2.containerView];
+        [self.toolBarView addSubview:obj3.containerView];
+        CGRect frame =  obj.containerView.frame;
         frame.origin.y = 0;
         obj.containerView.frame = frame;
+        
+        //[obj2 flashView:[UIColor redColor] times:5];
         
     }
     return self;
@@ -99,6 +119,11 @@
                 if ([imgView isKindOfClass:[UIView class]]){
                     ((UIView*)imgView).transform = CGAffineTransformMakeScale(scaleFactor, scaleFactor);
                 }
+                
+                for (MazeNode *node in mazeControl.mazeObject.gridNodes) {
+                    node.object = nil;
+                }
+                [mazeControl.mazeObject.gridNodes removeAllObjects];
             }
         }
         touchedDown = NO;
@@ -113,6 +138,45 @@
         //point.y -= scrollViewOffset.y;
         
         mazeControl.mazeObject.containerView.center = point;
+        
+        /*
+        CGPoint tmpPoint = [[[event allTouches] anyObject] locationInView:self.scrollView];
+        tmpPoint.x -= scrollViewOffset.x;
+        tmpPoint.y -= scrollViewOffset.y;
+        tmpPoint = CGPointMake(tmpPoint.x* 1/self.scrollView.zoomScale , tmpPoint.y* 1/self.scrollView.zoomScale );
+        
+        CGRect containerRect = mazeControl.mazeObject.containerView.frame;
+        CGAffineTransform t = CGAffineTransformMakeScale(1.0,1.0);
+        CGRect rect2 = CGRectApplyAffineTransform(containerRect,t);
+        
+        NSArray *dropCoords = [GeometryHelper alignToGrid:mazeControl.mazeObject Matrix:matrix TopLeft:CGPointMake(rect2.origin.x, rect2.origin.y)];
+    
+        NSLog(@"dings");
+        bool flash = NO;
+        for (NSValue *val in dropCoords) {
+            CGPoint p = [val CGPointValue];
+            MazeNode *node = matrix[(int)p.x][(int)p.y];
+            
+            if (node && !node.object){
+                if (animationStarted){
+                    CGPoint matrixPoint = [GeometryHelper pixelToHex:[movingView.layer.presentationLayer position]gridSize:gridSize];
+                    if (p.x == matrixPoint.x && p.y == matrixPoint.y) {
+                        flash = YES;
+                        break;
+                    }
+                }
+            }else {
+                flash = YES;
+                break;
+            }
+           
+        }
+        if(flash){
+            [mazeControl.mazeObject overlayWithColor:[UIColor redColor] alpha:0.7];
+        }else {
+            [mazeControl.mazeObject removeOverlay];
+        }
+        */
     }
     /*
      [self.view addSubview:control];
@@ -189,9 +253,33 @@
             
             CGRect containerRect = mazeControl.mazeObject.containerView.frame;
             
+            NSArray *dropCoords = [GeometryHelper alignToGrid:mazeControl.mazeObject Matrix:matrix TopLeft:CGPointMake(containerRect.origin.x, containerRect.origin.y)];
+            for (NSValue *val in dropCoords) {
+                CGPoint point = [val CGPointValue];
+                MazeNode *node = matrix[(int)point.x][(int)point.y];
+                bool flash = NO;
+                if (node && !node.object){
+                    if (animationStarted){
+                        CGPoint matrixPoint = [GeometryHelper pixelToHex:[movingView.layer.presentationLayer position]gridSize:gridSize];
+                        if (point.x == matrixPoint.x && point.y == matrixPoint.y) {
+                            flash = YES;
+                        }
+                    }
+                }else {
+                    flash = YES;
+                }
+                if(flash){
+                    [mazeControl.mazeObject flashView:[UIColor redColor] times:1];
+                    
+                    return;
+                }
+            }
+            
             // than get the coordinates of the unterlaying grid nodes
-            NSArray *alignedCoords = [GeometryHelper alignToGrid:mazeControl.mazeObject Matrix:matrix TopLeft:CGPointMake(containerRect.origin.x, containerRect.origin.y)];
+            NSArray *alignedCoords = [GeometryHelper alignToValidGrid:mazeControl.mazeObject Matrix:matrix TopLeft:CGPointMake(containerRect.origin.x, containerRect.origin.y)];
             CGRect rect = [GeometryHelper rectForObject:alignedCoords Matrix:matrix];
+            
+            NSLog(@"%@",alignedCoords);
             
             if ([imgView isKindOfClass:[UIView class]]){
                 ((UIView*)imgView).transform = CGAffineTransformMakeScale(1.0, 1.0);
@@ -203,8 +291,27 @@
             for (NSValue *val in alignedCoords) {
                 CGPoint coords = [val CGPointValue];
                 ((MazeNode*) matrix[(int)coords.x][(int)coords.y]).object = mazeControl.mazeObject;
+                [mazeControl.mazeObject.gridNodes addObject:matrix[(int)coords.x][(int)coords.y] ];
             }
             
+            if (!animationComplete && animationStarted){
+                CGPoint playerCoords = [GeometryHelper pixelToHex:[movingView.layer.presentationLayer position] gridSize:gridSize];
+                NSLog(@"Matrix: (%.2f,%.2f)",playerCoords.x, playerCoords.y);
+                
+                MazeNode *endNode = nil;
+                for (int x = 0; x < matrix.count; x++) {
+                    for (int y = 0; y < ((NSArray*)matrix[0]).count; y++) {
+                        MazeNode *tmpNode = matrix[x][y];
+                        if (![tmpNode isEqual:[NSNull null]]) {
+                            if (tmpNode.object != nil && tmpNode.object.type == END)
+                                endNode = tmpNode;
+                        }
+                    }
+                }
+                
+                [self recalculateAnimationFromStart:matrix[(int)playerCoords.x][(int)playerCoords.y] toEnd:endNode withStepDuration:1];
+
+            }
         }
     }
     
@@ -258,9 +365,11 @@
             
             MazeObject *start = [MazeObject objectWithType:START andCenter:CGPointMake(nodeStart.center.x, nodeStart.center.y)];
             [start generateAndAddNodeRelative:CGPointMake(0,0)];
+            [start.gridNodes addObject:nodeStart];
             
             MazeObject *end = [MazeObject objectWithType:END andCenter:CGPointMake(nodeEnd.center.x, nodeEnd.center.y)];
             [end generateAndAddNodeRelative:CGPointMake(0,0)];
+            [end.gridNodes addObject:nodeEnd];
             
             nodeStart.object = start;
             nodeEnd.object = end;
@@ -298,7 +407,7 @@
     //NSLog(@"Touch Point: (x:%.2f,y:%.2f)", touchPoint.x, touchPoint.y);
     
     CGPoint matrixCoords = [GeometryHelper pixelToHex:touchPoint gridSize:gridSize];
-    //NSLog(@"Touch Matrix: (x:%.2f,y:%.2f)", matrixCoords.x, matrixCoords.y);
+    NSLog(@"Touch Matrix: (x:%.2f,y:%.2f)", matrixCoords.x, matrixCoords.y);
     
     //CGPoint pixelCoords = [GeometryHelper hexToPixel:matrixCoords];
     // NSLog(@"Touch Point calculated: (x:%.2f,y:%.2f)", pixelCoords.x, pixelCoords.y);
@@ -308,6 +417,8 @@
     if (pathView) {
         [pathView removeFromSuperview];
         pathView = nil;
+       // movingView.frame = [[movingView.layer presentationLayer] frame];
+       // [movingView.layer removeAnimationForKey:@"movingAnimation"];
     }
     
     if (![node isEqual:[NSNull null]]) {
@@ -335,24 +446,8 @@
                 }
             }
             
-            [GeometryHelper solveMazeFrom:node To:endNode Matrix:matrix];
-            NSArray *shortestPath = [GeometryHelper getShortestPathFrom:node To:endNode];
-            NSLog(@"shortest path: %i steps", shortestPath.count);
-            pathView = [[UIBezierView alloc]initWithFrame:CGRectMake(0, 0, self.scrollView.contentSize.width * 1/self.scrollView.zoomScale, self.scrollView.contentSize.height * 1/self.scrollView.zoomScale)];
+            [self animatePathFromStart:node toEnd:endNode withStepDuration:1];
             
-            UIBezierPath *bezierPath = [UIBezierPath bezierPath];
-            for (int i = 0; i < shortestPath.count; i++) {
-                
-                MazeNode *node = shortestPath[i];
-                if (i == 0)
-                    [bezierPath moveToPoint:node.center];
-                else
-                    [bezierPath addLineToPoint:node.center];
-                
-            }
-            pathView.curvePath = bezierPath;
-            [containerView addSubview:pathView];
-            [pathView setNeedsDisplay];
         }
         
         //NSLog(@"Touch GenNode Center: (x:%.2f,y:%.2f)", nn.uiElement.center.x, nn.uiElement.center.y);
@@ -370,14 +465,161 @@
          }*/
     }
 }
+
+-(void)animatePathFromStart:(MazeNode*)start toEnd:(MazeNode*)end withStepDuration:(float)duration{
+    animationStarted = YES;
+    animationComplete = YES;
+    pathView = [[UIBezierView alloc]initWithFrame:CGRectMake(0, 0, self.scrollView.contentSize.width * 1/self.scrollView.zoomScale, self.scrollView.contentSize.height * 1/self.scrollView.zoomScale)];
+    
+    movingPath = [NSMutableArray array];
+    UIImage *movingImage = [UIImage imageNamed:@"hex_small_red.png"];
+    movingView = [[UIImageView alloc]initWithImage:movingImage];
+    [pathView addSubview:movingView];
+    
+    [self recalculateAnimationFromStart:start toEnd:end withStepDuration:duration];
+}
+
+-(void)recalculateAnimationFromStart:(MazeNode*)start toEnd:(MazeNode*)end withStepDuration:(float)duration{
+    NSLog(@"start: (%.1f,%.1f)",start.MatrixCoords.x,start.MatrixCoords.y);
+    if (!animationComplete){
+        movingView.frame = [[movingView.layer presentationLayer] frame];
+        [movingView.layer removeAnimationForKey:@"movingAnimation"];
+    }
+    
+    [GeometryHelper solveMazeFrom:start To:end Matrix:matrix];
+    NSArray *shortestPath = [GeometryHelper getShortestPathFrom:start To:end];
+    NSLog(@"shortest path: %i steps", shortestPath.count);
+    
+    UIBezierPath *bezierMovingPath = [UIBezierPath bezierPath];
+    for (int i = 0; i < shortestPath.count; i++) {
+        
+        MazeNode *node = shortestPath[i];
+        if (i == 0)
+            [bezierMovingPath moveToPoint:node.center];
+        else
+            [bezierMovingPath addLineToPoint:node.center];
+        
+    }
+    
+    int delIndex = 0;
+    for (NSMutableArray *array in movingPath) {
+        if ([array[1] boolValue] == NO){
+            if ([array[0] CGPointValue].x == start.MatrixCoords.x && [array[0] CGPointValue].y == start.MatrixCoords.y){
+                array[1] = [NSNumber numberWithBool:YES];
+                delIndex++;
+            }
+            break;
+        }
+        delIndex++;
+    }
+    
+    [movingPath removeObjectsInRange:NSMakeRange(delIndex, movingPath.count - delIndex)];
+    
+    UIBezierPath *bezierDrawingPath = [UIBezierPath bezierPath];
+    for (int i = 0; i < ((movingPath.count > 0?(movingPath.count -1):0) + shortestPath.count); i++) {
+        if (i == 0 && movingPath.count > 0){
+            NSArray *array = movingPath[i];
+            MazeNode *node = matrix[(int)[array[0] CGPointValue].x][(int)[array[0] CGPointValue].y];
+            [bezierDrawingPath moveToPoint:node.center];
+            NSLog(@"start: (%.1f,%.1f)",[array[0] CGPointValue].x,[array[0] CGPointValue].y);
+        }else if (i < movingPath.count){
+            NSArray *array = movingPath[i];
+            MazeNode *node = matrix[(int)[array[0] CGPointValue].x][(int)[array[0] CGPointValue].y];
+            [bezierDrawingPath addLineToPoint:node.center];
+            NSLog(@"(%.1f,%.1f)",[array[0] CGPointValue].x,[array[0] CGPointValue].y);
+        }else {
+            MazeNode *node = shortestPath[i - (movingPath.count > 0?(movingPath.count - 1):0)];
+            if (i == 0)
+                [bezierDrawingPath moveToPoint:node.center];
+            else
+                [bezierDrawingPath addLineToPoint:node.center];
+            NSLog(@"(%.1f,%.1f)",node.MatrixCoords.x,node.MatrixCoords.y);
+        }
+    }
+    /*
+     pathView.curvePath = nil;
+     [pathView setNeedsDisplay];
+     [pathView removeFromSuperview];
+     pathView = nil;
+     pathView = [[UIBezierView alloc]initWithFrame:CGRectMake(0, 0, self.scrollView.contentSize.width * 1/self.scrollView.zoomScale, self.scrollView.contentSize.height * 1/self.scrollView.zoomScale)];
+     */
+    pathView.curvePath = bezierDrawingPath;
+    [containerView addSubview:pathView];
+    //[containerView addSubview:movingView];
+    [pathView setNeedsDisplay];
+    
+
+    for (MazeNode *val in shortestPath) {
+        [movingPath addObject:[NSMutableArray arrayWithObjects:[NSValue valueWithCGPoint:val.MatrixCoords], [NSNumber numberWithBool:NO], nil]];
+    }
+    
+    animationComplete = NO;
+    interrupted = YES;
+    
+    CAKeyframeAnimation *pathAnimation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
+    pathAnimation.duration = shortestPath.count * 1;
+    pathAnimation.path = bezierMovingPath.CGPath;
+    pathAnimation.calculationMode = kCAAnimationLinear;
+    
+    [CATransaction begin];
+    [CATransaction setCompletionBlock:^{
+        if (!interrupted) {
+            animationComplete = YES;
+            
+            for (int i = 0; i < movingPath.count; i++) {
+                if ([movingPath[i][1] boolValue] == NO || i == movingPath.count -1){
+                    MazeNode *node = matrix[(int)[movingPath[i][0] CGPointValue].x][(int)[movingPath[i][0] CGPointValue].y];
+                    
+                    movingView.center = node.center;
+                    break;
+                }
+            }
+        }else {
+            interrupted = NO;
+        }
+        // [movingView.layer removeFromSuperlayer];
+    }];
+    [movingView.layer addAnimation:pathAnimation forKey:@"movingAnimation"];
+    [CATransaction commit];
+    
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,                                     (unsigned long)NULL), ^(void) {
+        while (!animationComplete) {
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                @try {
+                    //NSLog(@"(%.2f,%.2f)",[movingView.layer.presentationLayer position].x, [movingView.layer.presentationLayer position].y);
+                    CGPoint matrixPoint = [GeometryHelper pixelToHex:[movingView.layer.presentationLayer position] gridSize:gridSize];
+                    // NSLog(@"dings");
+                    for (NSMutableArray *array in movingPath) {
+                        if ([array[1] boolValue] == NO){
+                            if ([array[0] CGPointValue].x == matrixPoint.x && [array[0] CGPointValue].y == matrixPoint.y){
+                                array[1] = [NSNumber numberWithBool:YES];
+                              //  NSLog(@"(%.2f,%.2f)",matrixPoint.x, matrixPoint.y);
+                            }
+                            break;
+                        }
+                    }
+                    if (matrixPoint.x == end.MatrixCoords.x && matrixPoint.y == end.MatrixCoords.y){
+                        animationStarted = NO;
+                    }
+                }
+                @catch (NSError *error) {
+                    NSLog(@"error: %@",error);
+                }
+            });
+            usleep(pathAnimation.duration / shortestPath.count / 4.0 * 1000 * 1000);
+        }
+    });
+    
+
+}
+
 -(void)addDragEventsToNode:(MazeNode*)node{
     [(UIMazeControl*)node.uiElement addTarget:self action:@selector(itemDragBegan:withEvent:) forControlEvents:UIControlEventTouchDown];
     [(UIMazeControl*)node.uiElement addTarget:self action:@selector(itemMoved:withEvent:) forControlEvents:UIControlEventTouchDragInside];
     [(UIMazeControl*)node.uiElement addTarget:self action:@selector(itemDragExit:withEvent:) forControlEvents:UIControlEventTouchUpInside];
     [(UIMazeControl*)node.uiElement addTarget:self action:@selector(itemDragExit:withEvent:) forControlEvents:UIControlEventTouchUpOutside];
 }
-
-
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
     return containerView;

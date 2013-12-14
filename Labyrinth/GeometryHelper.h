@@ -21,6 +21,8 @@
 +(bool)isValidDropPoint:(CGPoint)coord Matrix:(NSArray*)matrix;
 +(CGPoint)addOffset:(CGPoint)offset toPoint:(CGPoint)point;
 +(NSArray*)alignToGrid:(MazeObject*)object Matrix:(NSArray*)matrix TopLeft:(CGPoint)point;
++(NSArray*)alignToValidGrid:(MazeObject*)object Matrix:(NSArray*)matrix TopLeft:(CGPoint)point;
++(NSArray*)alignToValidGrid:(MazeObject *)mazeObject Matrix:(NSArray *)matrix TopLeft:(CGPoint)point searchRadius:(int)radius;
 +(CGRect)rectForObject:(NSArray*)matrixCoords Matrix:(NSArray*)matrix;
 +(NSMutableArray *)generateMatrixWithWidth:(int)width Height:(int)height withImageName:(NSString*)name inContainerView:(UIView*)containerView;
 +(NSArray*)cropMatrix:(NSArray*)matrix;

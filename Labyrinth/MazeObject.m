@@ -31,6 +31,7 @@
         relativeCoords = [NSMutableArray array];
         self.isDraggable = NO;
         self.containerView = [[UIView alloc]init];
+        _gridNodes = [NSMutableArray array];
     }
     return self;
 }
@@ -156,12 +157,31 @@
     UIMazeControl *uiControl = [[UIMazeControl alloc] initWithFrame:imgView.frame];
     node.uiElement = uiControl;
     uiControl.mazeObject = self;
+    uiControl.view = imgView;
     uiControl.userInteractionEnabled = self.isDraggable;
     [uiControl addSubview:imgView];
     
     [self addObjectNode:node withCoords:coords];
 
     return node;
+}
+
+-(void)flashView:(UIColor *)color times:(float)times {
+    for (MazeNode *node in self.objectNodes) {
+        [node flashView:color times:times];
+    }
+}
+
+-(void)overlayWithColor:(UIColor *)color alpha:(float)alpha{
+    for (MazeNode *node in self.objectNodes) {
+        [node overlayWithColor:color alpha:alpha];
+    }
+}
+
+-(void)removeOverlay{
+    for (MazeNode *node in self.objectNodes) {
+        [node removeOverlay];
+    }
 }
 
 

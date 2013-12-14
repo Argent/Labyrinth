@@ -7,9 +7,11 @@
 //
 
 #import "MazeNode.h"
+#import "UIMazeControl.h"
 
 @interface MazeNode(){
     NSMutableArray *neigbours;
+    UIView *overlay;
 }
 @end
 
@@ -79,6 +81,76 @@
 
 -(float)height {
     return self.Size * 2;
+}
+
+-(void)flashView:(UIColor *)color times:(float)times{
+    if (self.uiElement){
+        UIImageView *imgView;
+        if ([self.uiElement isKindOfClass:[UIImageView class]]){
+            imgView = (UIImageView*)self.uiElement;
+        }else if ([self.uiElement isKindOfClass:[UIMazeControl class]]){
+            imgView = (UIImageView*)((UIMazeControl*)self.uiElement).view;
+        }else {
+            return;
+        }
+        
+        UIView *flashOverlay = [[UIView alloc] initWithFrame:[imgView frame]];
+        flashOverlay.userInteractionEnabled = NO;
+        
+        UIImageView *maskImageView = [[UIImageView alloc] initWithImage:imgView.image];
+        [maskImageView setFrame:[flashOverlay bounds]];
+        
+        [[flashOverlay layer] setMask:[maskImageView layer]];
+        
+        [flashOverlay setBackgroundColor:color];
+        
+        [self.uiElement addSubview:flashOverlay];
+        
+        flashOverlay.alpha = 0.7f;
+        [UIView animateWithDuration:0.25f delay:0.0f options:UIViewAnimationOptionAutoreverse animations:^{
+            [UIView setAnimationRepeatCount:times / 2.0];
+            flashOverlay.alpha = 0.0f;
+        } completion:^(BOOL finished) {
+            [flashOverlay removeFromSuperview];
+        }];
+    }
+}
+
+-(void)overlayWithColor:(UIColor *)color alpha:(float)alpha {
+    if (self.uiElement){
+        UIImageView *imgView;
+        if ([self.uiElement isKindOfClass:[UIImageView class]]){
+            imgView = (UIImageView*)self.uiElement;
+        }else if ([self.uiElement isKindOfClass:[UIMazeControl class]]){
+            imgView = (UIImageView*)((UIMazeControl*)self.uiElement).view;
+        }else {
+            return;
+        }
+        
+        if (overlay){
+            [overlay removeFromSuperview];
+        }
+        overlay = [[UIView alloc] initWithFrame:[imgView frame]];
+        overlay.userInteractionEnabled = NO;
+        
+        UIImageView *maskImageView = [[UIImageView alloc] initWithImage:imgView.image];
+        [maskImageView setFrame:[overlay bounds]];
+        
+        [[overlay layer] setMask:[maskImageView layer]];
+        
+        [overlay setBackgroundColor:color];
+        
+        [self.uiElement addSubview:overlay];
+        
+        overlay.alpha = alpha;
+    }
+}
+
+-(void)removeOverlay {
+    if (overlay){
+        [overlay removeFromSuperview];
+        overlay = nil;
+    }
 }
 
 @end

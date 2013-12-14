@@ -24,6 +24,7 @@ typedef enum {
 
 @property (nonatomic, strong) NSArray *objectNodes;
 @property (nonatomic, readonly) NSArray *objectCoordinates;
+@property (nonatomic, strong, readonly) NSMutableArray *gridNodes;
 @property (nonatomic) ObjectType type;
 @property (nonatomic) bool isDraggable;
 @property (nonatomic, strong) UIView *containerView;
@@ -36,5 +37,9 @@ typedef enum {
 -(id)initWithType:(ObjectType)type andCenter:(CGPoint)center;
 
 -(MazeNode*)generateAndAddNodeRelative:(CGPoint)coords;
+-(void)flashView:(UIColor*)color times:(float)times;
+-(void)overlayWithColor:(UIColor*)color alpha:(float)alpha;
+-(void)removeOverlay;
+
 
 @end

@@ -35,5 +35,8 @@
 -(id)initWithSize:(float)size;
 
 -(void)addNeighbours:(MazeNode*)node;
+-(void)flashView:(UIColor*)color times:(float)times;
+-(void)overlayWithColor:(UIColor*)color alpha:(float)alpha;
+-(void)removeOverlay;
 
 @end

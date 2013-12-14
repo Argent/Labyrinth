@@ -12,5 +12,7 @@
 @interface UIMazeControl : UIControl
 
 @property (nonatomic,strong) MazeObject* mazeObject;
+@property (nonatomic,strong) UIView *view;
+
 
 @end

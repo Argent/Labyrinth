@@ -211,8 +211,7 @@
     return newPoint;
 }
 
-+(NSArray *)alignToGrid:(MazeObject *)mazeObject Matrix:(NSArray *)matrix TopLeft:(CGPoint)point {
-
++(NSArray *)alignToGrid:(MazeObject *)mazeObject Matrix:(NSArray *)matrix TopLeft:(CGPoint)point{
     CGSize gridSize = CGSizeMake(matrix.count, ((NSArray*)matrix[0]).count);
     
     CGPoint matrixCoords = [GeometryHelper pixelToHex:CGPointMake(point.x + [[SettingsStore sharedStore]width] /2.0, point.y + [[SettingsStore sharedStore]height] /2.0) gridSize:gridSize];
@@ -220,7 +219,7 @@
         matrixCoords.x = matrixCoords.x + 1;
     if ((int)matrixCoords.y % 2 == 0 && matrixCoords.x == matrix.count - 1)
         matrixCoords.x = matrixCoords.x - 1;
-        
+    
     MazeNode *node = matrix[(int)matrixCoords.x][(int)matrixCoords.y];
     
     
@@ -228,13 +227,13 @@
     rect.origin.x = node.Anchor.x;
     rect.origin.y = node.Anchor.y;
     /*
-    UIView *imgView = mazeObject.containerView;
-    if ([imgView isKindOfClass:[UIView class]]){
-        ((UIView*)imgView).transform = CGAffineTransformMakeScale(1.0, 1.0);
-        rect.size = mazeObject.containerView.frame.size;
-        mazeObject.containerView.frame = rect;
-        
-    }
+     UIView *imgView = mazeObject.containerView;
+     if ([imgView isKindOfClass:[UIView class]]){
+     ((UIView*)imgView).transform = CGAffineTransformMakeScale(1.0, 1.0);
+     rect.size = mazeObject.containerView.frame.size;
+     mazeObject.containerView.frame = rect;
+     
+     }
      */
     
     CGPoint mostLeftNode = CGPointMake(FLT_MAX, FLT_MAX);
@@ -268,6 +267,13 @@
             
         }
     }
+
+    return coordsToCheck;
+}
+
++(NSArray *)alignToValidGrid:(MazeObject *)mazeObject Matrix:(NSArray *)matrix TopLeft:(CGPoint)point searchRadius:(int)radius{
+        CGSize gridSize = CGSizeMake(matrix.count, ((NSArray*)matrix[0]).count);
+    NSArray *coordsToCheck = [self alignToGrid:mazeObject Matrix:matrix TopLeft:point];
     
     bool allValid = YES;
     for (NSValue *val in coordsToCheck) {
@@ -280,11 +286,10 @@
         return coordsToCheck;
     }
     
-    // ab hier fehler..
     NSMutableArray *tmpVals = [NSMutableArray array];
     NSMutableArray *neighbourOffsets = (NSMutableArray*)[self getPixelNeighboursFrom:CGPointMake(0, 0)];
     
-    for (int i = 0; i < 100 && neighbourOffsets.count > 0 && !allValid ; i++) {
+    for (int i = 0; i < radius && neighbourOffsets.count > 0 && !allValid ; i++) {
         CGPoint offset = [[neighbourOffsets dequeue]CGPointValue];
         allValid = YES;
         
@@ -315,6 +320,11 @@
     
     return [NSArray array];
     
+
+}
+
++(NSArray *)alignToValidGrid:(MazeObject *)mazeObject Matrix:(NSArray *)matrix TopLeft:(CGPoint)point {
+    return [self alignToValidGrid:mazeObject Matrix:matrix TopLeft:point searchRadius:100];
 }
 
 +(CGRect)rectForObject:(NSArray *)matrixCoords Matrix:(NSArray *)matrix {
