@@ -51,6 +51,10 @@
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,1)]];
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,2)]];
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,3)]];
+        MazeObject *obj2 = [MazeObject objectWithType:WALL andCenter:CGPointMake(150, 60)];
+        [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,0)]];
+        [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(1,0)]];
+        [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(-1,1)]];
        /* [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,4)]];
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,4)]];
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,-1)]];*/
@@ -59,6 +63,7 @@
         }
         
         [self.toolBarView addSubview:obj.containerView];
+        [self.toolBarView addSubview:obj2.containerView];
        CGRect frame =  obj.containerView.frame;
         frame.origin.y = 0;
         obj.containerView.frame = frame;

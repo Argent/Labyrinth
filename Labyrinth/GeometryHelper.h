@@ -24,5 +24,6 @@
 +(CGRect)rectForObject:(NSArray*)matrixCoords Matrix:(NSArray*)matrix;
 +(NSMutableArray *)generateMatrixWithWidth:(int)width Height:(int)height withImageName:(NSString*)name inContainerView:(UIView*)containerView;
 +(NSArray*)cropMatrix:(NSArray*)matrix;
++(bool)compareWallObject:(MazeObject*)object1 compareWith:(MazeObject*)object2;
 
 @end

@@ -457,4 +457,14 @@
     return newMatrix;
 }
 
++(bool)compareWallObject:(MazeObject *)object1 compareWith:(MazeObject *)object2{
+    if(!(object1.type == object2.type)){
+        return NO;
+    }else{
+        return YES;
+    }
+    return YES;
+}
+
+
 @end
