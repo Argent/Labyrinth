@@ -14,11 +14,13 @@
 #import "UIBezierView.h"
 #import "SettingsStore.h"
 #import "GeometryHelper.h"
+#import "UILabyrinthMenu.h"
 
 
 @interface LabyrinthViewController () {
     UIView *containerView;
     UIBezierView *pathView;
+    UILabyrinthMenu *menubar;
     NSMutableArray *matrix;
     
     CGSize gridSize;
@@ -34,6 +36,7 @@
     bool animationStarted;
     NSMutableArray *movingPath;
     bool interrupted;
+    bool paused;
 }
 @end
 
@@ -46,6 +49,50 @@
         scrollViewOffset = CGPointMake(0.0, 0.0);
         [self initGrid];
         [self initToolbar];
+        menubar = [[UILabyrinthMenu alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 40)];
+        [menubar setStartPauseBlock:^(bool start) {
+            if (start){
+                if (!paused) {
+                MazeNode *startNode = nil;
+                MazeNode *endNode = nil;
+                for (int x = 0; x < matrix.count; x++) {
+                    for (int y = 0; y < ((NSArray*)matrix[0]).count; y++) {
+                        MazeNode *tmpNode = matrix[x][y];
+                        if (![tmpNode isEqual:[NSNull null]]) {
+                            if (tmpNode.object != nil && tmpNode.object.type == END)
+                                endNode = tmpNode;
+                            if (tmpNode.object != nil && tmpNode.object.type == START)
+                                startNode = tmpNode;
+                        }
+                    }
+                }
+                
+                [self animatePathFromStart:startNode toEnd:endNode withStepDuration:1];
+                }else {
+                    movingView.layer.speed = 1.0;
+                    movingView.layer.timeOffset = 0.0;
+                    movingView.layer.beginTime = 0.0;
+                }
+            }else {
+                CFTimeInterval mediaTime = CACurrentMediaTime();
+                CFTimeInterval pausedTime = [movingView.layer convertTime: mediaTime fromLayer: nil];
+                movingView.layer.speed = 0.0;
+                movingView.layer.timeOffset = pausedTime;
+                paused = YES;
+            }
+        }];
+        [menubar setStopBlock:^{
+            paused = NO;
+            interrupted = YES;
+            if (pathView) {
+                pathView.curvePath = nil;
+                [pathView removeFromSuperview];
+                pathView = nil;
+                animationComplete = YES;
+            }
+ 
+        }];
+        [self.view addSubview:menubar];
         
         UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapGestureCaptured:)];
         [self.scrollView addGestureRecognizer:singleTap];
@@ -139,44 +186,87 @@
         
         mazeControl.mazeObject.containerView.center = point;
         
-        /*
+        
         CGPoint tmpPoint = [[[event allTouches] anyObject] locationInView:self.scrollView];
         tmpPoint.x -= scrollViewOffset.x;
         tmpPoint.y -= scrollViewOffset.y;
         tmpPoint = CGPointMake(tmpPoint.x* 1/self.scrollView.zoomScale , tmpPoint.y* 1/self.scrollView.zoomScale );
         
         CGRect containerRect = mazeControl.mazeObject.containerView.frame;
-        CGAffineTransform t = CGAffineTransformMakeScale(1.0,1.0);
+        CGAffineTransform t = CGAffineTransformMakeScale(1.0* 1/self.scrollView.zoomScale,1.0* 1/self.scrollView.zoomScale);
         CGRect rect2 = CGRectApplyAffineTransform(containerRect,t);
         
+        rect2.origin.x = tmpPoint.x - rect2.size.width / 2;
+        rect2.origin.y = tmpPoint.y - rect2.size.height / 2;
+        
+        NSArray *nodeRects = [GeometryHelper getNodeRectsFromObject:mazeControl.mazeObject TopLeft:CGPointMake(rect2.origin.x, rect2.origin.y)];
+        
+       // NSLog(@"%@",nodeRects);
+        
+        bool intersects = NO;
+        
+        if (animationStarted){
+            CGRect playerFrame = [movingView.layer.presentationLayer frame];
+            for (NSValue *rect in nodeRects) {
+                intersects = intersects || [GeometryHelper hexIntersectsHex:playerFrame Hex:[rect CGRectValue]];
+            }
+        }
+        
+        for (int x = 0; x < matrix.count; x++) {
+            for (int y = 0; y < ((NSArray*)matrix[0]).count; y++) {
+                MazeNode *node = matrix[x][y];
+                if (![node isEqual:[NSNull null]] && node.object &&
+                    (node.object.type == WALL ||
+                     node.object.type == START ||
+                     node.object.type == END ) ){
+                        for (NSValue *rect in nodeRects) {
+                           // intersects = intersects || CGRectIntersectsRect(node.Frame, [rect CGRectValue]);
+                            intersects = intersects || [GeometryHelper hexIntersectsHex:node.Frame Hex:[rect CGRectValue]];
+                        }
+                    }
+            }
+        }
+        
+        if (intersects){
+            [mazeControl.mazeObject overlayWithColor:[UIColor redColor] alpha:0.6];
+        }else {
+            [mazeControl.mazeObject removeOverlay];
+        }
+        
+        /*
         NSArray *dropCoords = [GeometryHelper alignToGrid:mazeControl.mazeObject Matrix:matrix TopLeft:CGPointMake(rect2.origin.x, rect2.origin.y)];
-    
-        NSLog(@"dings");
+        
+        NSLog(@"%@",dropCoords);
         bool flash = NO;
         for (NSValue *val in dropCoords) {
             CGPoint p = [val CGPointValue];
-            MazeNode *node = matrix[(int)p.x][(int)p.y];
-            
-            if (node && !node.object){
-                if (animationStarted){
-                    CGPoint matrixPoint = [GeometryHelper pixelToHex:[movingView.layer.presentationLayer position]gridSize:gridSize];
-                    if (p.x == matrixPoint.x && p.y == matrixPoint.y) {
-                        flash = YES;
-                        break;
+            if ([GeometryHelper isValidMatrixCoord:p Matrix:matrix]){
+                
+                
+                MazeNode *node = matrix[(int)p.x][(int)p.y];
+                
+                if (node && !node.object){
+                    if (animationStarted){
+                        CGPoint matrixPoint = [GeometryHelper pixelToHex:[movingView.layer.presentationLayer position]gridSize:gridSize];
+                        if (p.x == matrixPoint.x && p.y == matrixPoint.y) {
+                            flash = YES;
+                            break;
+                        }
                     }
+                }else {
+                    flash = YES;
+                    break;
                 }
             }else {
                 flash = YES;
-                break;
             }
-           
         }
         if(flash){
             [mazeControl.mazeObject overlayWithColor:[UIColor redColor] alpha:0.7];
         }else {
             [mazeControl.mazeObject removeOverlay];
-        }
-        */
+        }*/
+        
     }
     /*
      [self.view addSubview:control];
@@ -280,6 +370,7 @@
             CGRect rect = [GeometryHelper rectForObject:alignedCoords Matrix:matrix];
             
             NSLog(@"%@",alignedCoords);
+            [mazeControl.mazeObject removeOverlay];
             
             if ([imgView isKindOfClass:[UIView class]]){
                 ((UIView*)imgView).transform = CGAffineTransformMakeScale(1.0, 1.0);
@@ -326,6 +417,7 @@
 
 -(void)viewDidAppear:(BOOL)animated {
     self.scrollView.zoomScale = 0.48;
+    [[UIApplication sharedApplication] setStatusBarHidden:YES];
     return [super viewDidAppear:animated];
 }
 
@@ -426,13 +518,13 @@
         
         
         if (node.object == nil) {
-            /*
-            MazeObject *wall = [MazeObject objectWithType:WALL andCenter:CGPointMake(node.center.x, node.center.y)];
+            
+            MazeObject *wall = [MazeObject objectWithType:COIN andCenter:CGPointMake(node.center.x, node.center.y)];
             MazeNode *nn = [wall generateAndAddNodeRelative:CGPointMake(0,0)];
             [self addDragEventsToNode:nn];
             node.object = wall;
             [containerView addSubview:wall.containerView];
-            */
+            
         }else if (node.object.type == START){
             
             MazeNode *endNode = nil;
@@ -469,6 +561,7 @@
 -(void)animatePathFromStart:(MazeNode*)start toEnd:(MazeNode*)end withStepDuration:(float)duration{
     animationStarted = YES;
     animationComplete = YES;
+    menubar.steps = 0;
     pathView = [[UIBezierView alloc]initWithFrame:CGRectMake(0, 0, self.scrollView.contentSize.width * 1/self.scrollView.zoomScale, self.scrollView.contentSize.height * 1/self.scrollView.zoomScale)];
     
     movingPath = [NSMutableArray array];
@@ -554,7 +647,7 @@
     }
     
     animationComplete = NO;
-    interrupted = YES;
+    interrupted = NO;
     
     CAKeyframeAnimation *pathAnimation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
     pathAnimation.duration = shortestPath.count * 1;
@@ -574,6 +667,7 @@
                     break;
                 }
             }
+            paused = NO;
         }else {
             interrupted = NO;
         }
@@ -583,13 +677,16 @@
     [CATransaction commit];
     
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,                                     (unsigned long)NULL), ^(void) {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, (unsigned long)NULL), ^(void) {
         while (!animationComplete) {
             dispatch_sync(dispatch_get_main_queue(), ^{
                 @try {
                     //NSLog(@"(%.2f,%.2f)",[movingView.layer.presentationLayer position].x, [movingView.layer.presentationLayer position].y);
                     CGPoint matrixPoint = [GeometryHelper pixelToHex:[movingView.layer.presentationLayer position] gridSize:gridSize];
                     // NSLog(@"dings");
+                    int steps = 0;
+                    int coins = 0;
+                    int i = 0;
                     for (NSMutableArray *array in movingPath) {
                         if ([array[1] boolValue] == NO){
                             if ([array[0] CGPointValue].x == matrixPoint.x && [array[0] CGPointValue].y == matrixPoint.y){
@@ -597,8 +694,19 @@
                               //  NSLog(@"(%.2f,%.2f)",matrixPoint.x, matrixPoint.y);
                             }
                             break;
+                        }else if (i > 0)
+                            steps++;
+                        
+                        if (![matrix[(int)[array[0] CGPointValue].x][(int)[array[0] CGPointValue].y] isEqual:[NSNull null]] && ((MazeNode*)matrix[(int)[array[0] CGPointValue].x][(int)[array[0] CGPointValue].y]).object && ((MazeNode*)matrix[(int)[array[0] CGPointValue].x][(int)[array[0] CGPointValue].y]).object.type == COIN){
+                            coins++;
                         }
+                        
+                        i++;
                     }
+                    
+                    menubar.steps = steps;
+                    menubar.coins = coins;
+                    
                     if (matrixPoint.x == end.MatrixCoords.x && matrixPoint.y == end.MatrixCoords.y){
                         animationStarted = NO;
                     }

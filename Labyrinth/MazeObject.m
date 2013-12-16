@@ -47,7 +47,7 @@
                 break;
                 
             case COIN:
-                self.imageName = @"hex_turquoise.png";
+                self.imageName = @"hex_coin.png";
                 self.isDraggable = NO;
                 break;
                 

@@ -19,7 +19,9 @@
 +(NSArray*)getNeighboursFrom:(CGPoint) point GridSize:(CGSize)gridSize;
 +(bool)isValidMatrixCoord:(CGPoint)coord Matrix:(NSArray*)matrix;
 +(bool)isValidDropPoint:(CGPoint)coord Matrix:(NSArray*)matrix;
++(bool)hexIntersectsHex:(CGRect)hex1 Hex:(CGRect)hex2;
 +(CGPoint)addOffset:(CGPoint)offset toPoint:(CGPoint)point;
++(NSArray*)getNodeRectsFromObject:(MazeObject*)mazeObject TopLeft:(CGPoint)point;
 +(NSArray*)alignToGrid:(MazeObject*)object Matrix:(NSArray*)matrix TopLeft:(CGPoint)point;
 +(NSArray*)alignToValidGrid:(MazeObject*)object Matrix:(NSArray*)matrix TopLeft:(CGPoint)point;
 +(NSArray*)alignToValidGrid:(MazeObject *)mazeObject Matrix:(NSArray *)matrix TopLeft:(CGPoint)point searchRadius:(int)radius;

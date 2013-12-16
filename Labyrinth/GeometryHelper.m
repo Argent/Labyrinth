@@ -211,6 +211,99 @@
     return newPoint;
 }
 
++ (bool)lineIntersects:(CGPoint)p1 to:(CGPoint)p2 withLineFrom:(CGPoint)p3 to:(CGPoint)p4
+{
+    CGFloat d = (p2.x - p1.x)*(p4.y - p3.y) - (p2.y - p1.y)*(p4.x - p3.x);
+    if (d == 0)
+        return nil; // parallel lines
+    CGFloat u = ((p3.x - p1.x)*(p4.y - p3.y) - (p3.y - p1.y)*(p4.x - p3.x))/d;
+    CGFloat v = ((p3.x - p1.x)*(p2.y - p1.y) - (p3.y - p1.y)*(p2.x - p1.x))/d;
+    if (u < 0.0 || u > 1.0)
+        return NO; // intersection point not between p1 and p2
+    if (v < 0.0 || v > 1.0)
+        return NO; // intersection point not between p3 and p4
+    
+    return YES;
+    /*
+    CGPoint intersection;
+    intersection.x = p1.x + u * (p2.x - p1.x);
+    intersection.y = p1.y + u * (p2.y - p1.y);
+    
+    return [NSValue valueWithCGPoint:intersection];*/
+}
+
++(bool)hexIntersectsHex:(CGRect)hex1 Hex:(CGRect)hex2{
+    float width = [[SettingsStore sharedStore]width];
+    float height = [[SettingsStore sharedStore] height];
+    
+    CGRect base1 = CGRectMake(hex1.origin.x, hex1.origin.y + height / 4.0, width, height / 2.0);
+    CGRect base2 = CGRectMake(hex2.origin.x, hex2.origin.y + height / 4.0, width, height / 2.0);
+    
+    if (CGRectIntersectsRect(base1, base2))
+        return YES;
+    /*
+    NSArray *hex1Lines = @[@[[NSValue valueWithCGPoint:CGPointMake(base1.origin.x, base1.origin.y)], [NSValue valueWithCGPoint:CGPointMake(base1.origin.x + width / 2.0, base1.origin.y - (height * 1.0/4.0))]],
+                           @[[NSValue valueWithCGPoint:CGPointMake(base1.origin.x + width, base1.origin.y)], [NSValue valueWithCGPoint:CGPointMake(base1.origin.x + width / 2.0, base1.origin.y - (height * 1.0/4.0))]],
+                           @[[NSValue valueWithCGPoint:CGPointMake(base1.origin.x, base1.origin.y + height / 2.0)], [NSValue valueWithCGPoint:CGPointMake(base1.origin.x + width / 2.0, base1.origin.y + (height * 3.0/4.0))]],
+                           @[[NSValue valueWithCGPoint:CGPointMake(base1.origin.x + width, base1.origin.y + height / 2.0)], [NSValue valueWithCGPoint:CGPointMake(base1.origin.x + width / 2.0, base1.origin.y + height)]]];
+    
+    NSArray *hex2Lines = @[@[[NSValue valueWithCGPoint:CGPointMake(base2.origin.x, base2.origin.y)], [NSValue valueWithCGPoint:CGPointMake(base2.origin.x + width / 2.0, base2.origin.y - (height * 1.0/4.0))]],
+                           @[[NSValue valueWithCGPoint:CGPointMake(base2.origin.x + width, base2.origin.y)], [NSValue valueWithCGPoint:CGPointMake(base2.origin.x + width / 2.0, base2.origin.y - (height * 1.0/4.0))]],
+                           @[[NSValue valueWithCGPoint:CGPointMake(base2.origin.x, base2.origin.y + height / 2.0)], [NSValue valueWithCGPoint:CGPointMake(base2.origin.x + width / 2.0, base2.origin.y + (height * 3.0/4.0))]],
+                           @[[NSValue valueWithCGPoint:CGPointMake(base2.origin.x + width, base2.origin.y + height / 2.0)], [NSValue valueWithCGPoint:CGPointMake(base2.origin.x + width / 2.0, base2.origin.y + height)]]];
+    
+    for (NSArray *pointsH1 in hex1Lines) {
+        for (NSArray* pointsH2 in hex2Lines) {
+            if ([self lineIntersects:[pointsH1[0] CGPointValue] to:[pointsH1[1] CGPointValue] withLineFrom:[pointsH2[0] CGPointValue] to:[pointsH2[1] CGPointValue]]){
+                return YES;
+            }
+        }
+    }
+     */
+    
+    return NO;
+    
+}
+
++(NSArray*)getNodeRectsFromObject:(MazeObject*)mazeObject TopLeft:(CGPoint)point{
+    CGPoint mostLeftNode = CGPointMake(FLT_MAX, FLT_MAX);
+    for (NSValue *val in mazeObject.objectCoordinates) {
+        CGPoint matrixOffset = [val CGPointValue];
+        if ((matrixOffset.x < mostLeftNode.x )||
+            (matrixOffset.x == mostLeftNode.x && (int)matrixOffset.y%2 == 0)){
+            mostLeftNode.x = matrixOffset.x;
+            mostLeftNode.y = matrixOffset.y;
+        }
+    }
+    float width = [[SettingsStore sharedStore]width];
+    float height = [[SettingsStore sharedStore]height];
+    
+    //CGRect topLeftRect = CGRectMake(0, 0, width, height);
+    CGRect mostLeftNodeRect = CGRectMake(0, mostLeftNode.y * 3.0/4.0 * height, width, height);
+    
+    NSMutableArray *array = [NSMutableArray arrayWithObject:[NSValue valueWithCGRect:mostLeftNodeRect]];
+    
+    for (NSValue *val in mazeObject.objectCoordinates) {
+        CGPoint matrixOffset = [val CGPointValue];
+        if (!(mostLeftNode.x == matrixOffset.x && mostLeftNode.y == matrixOffset.y)){
+            float x;
+            if ((int)mostLeftNode.y %  2 == (int)matrixOffset.y % 2)
+                x = matrixOffset.x * width - (mostLeftNode.x * width);
+            else
+                x = (matrixOffset.x * width + (width / 2.0)) - (mostLeftNode.x * width);
+            CGRect rect = CGRectMake(x, matrixOffset.y * 3.0/4.0 * height, width, height);
+            [array addObject:[NSValue valueWithCGRect:rect]];
+        }
+    }
+    
+    for (int i = 0; i < array.count; i++) {
+        CGRect rect = [array[i] CGRectValue];
+        array[i] = [NSValue valueWithCGRect:CGRectMake(rect.origin.x + point.x , rect.origin.y + point.y, width, height)];
+    }
+    
+    return array;
+}
+
 +(NSArray *)alignToGrid:(MazeObject *)mazeObject Matrix:(NSArray *)matrix TopLeft:(CGPoint)point{
     CGSize gridSize = CGSizeMake(matrix.count, ((NSArray*)matrix[0]).count);
     
