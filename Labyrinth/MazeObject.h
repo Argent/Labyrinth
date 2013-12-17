@@ -29,6 +29,8 @@ typedef enum {
 @property (nonatomic) bool isDraggable;
 @property (nonatomic, strong) UIView *containerView;
 @property (nonatomic, strong) NSString *imageName;
+@property (nonatomic) int category;
+@property (nonatomic) bool toolbarItem;
 
 
 +(MazeObject*)objectWithType:(ObjectType)type andCenter:(CGPoint)center;

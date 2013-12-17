@@ -595,4 +595,43 @@
     return newMatrix;
 }
 
++(bool)compareWallObject:(MazeObject *)object1 compareWith:(MazeObject *)object2{
+    if((object1.type != object2.type) ||
+       (object1.objectNodes.count != object2.objectNodes.count) ||
+       (object1.containerView.frame.size.height != object2.containerView.frame.size.height) ||
+       (object1.containerView.frame.size.width != object2.containerView.frame.size.width)
+       ){
+        return NO;
+    }else{
+        int sameCoord = 0;
+        for(int i = 0; i < object1.objectNodes.count; i++){
+            CGPoint pointObj1 = [object1.objectCoordinates[i] CGPointValue];
+            for(int j = 0; j < object2.objectCoordinates.count; j++){
+                CGPoint pointObj2 = [object2.objectCoordinates[j] CGPointValue];
+                if((pointObj1.x == pointObj2.x) && (pointObj1.y == pointObj2.y)){
+                    sameCoord++;
+                }
+            }
+        }
+        if(sameCoord == object1.objectNodes.count)
+            return YES;
+    }
+    return NO;
+}
+
++(MazeObject *)scaleToToolbar:(MazeObject *)object withLength:(NSString *)length{
+    float itemSize = [SettingsStore sharedStore].toolbarHeight-40;
+    float size = 1;
+    if([length isEqualToString:@"width"]){
+        size = object.containerView.frame.size.width;
+    }else{
+        size = object.containerView.frame.size.height;
+    }
+    if(size > itemSize){
+        float scaleFactor = itemSize / size;
+        object.containerView.transform = CGAffineTransformMakeScale(object.containerView.transform.a*scaleFactor, object.containerView.transform.a*scaleFactor);
+    }
+    return object;
+}
+
 @end

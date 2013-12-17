@@ -27,5 +27,9 @@
     return self.hexSize * 2;
 }
 
+-(int)toolbarHeight {
+    return 100;
+}
+
 
 @end
