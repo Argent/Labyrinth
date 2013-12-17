@@ -123,6 +123,7 @@
         MazeObject *obj4 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
         [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(0,0)]];
         [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(0,1)]];
+        [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(-1,1)]];
         [objNodes addObject:obj4];
         
        /* [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,4)]];
@@ -178,9 +179,9 @@
         [self.toolBarView addSubview:obj3.containerView];
         [self.toolBarView addSubview:obj4.containerView];
          
-        CGRect frame =  obj1.containerView.frame;
-        frame.origin.y = 0;
-        obj1.containerView.frame = frame;
+        //CGRect frame =  obj1.containerView.frame;
+        //frame.origin.y = 0;
+        //obj1.containerView.frame = frame;
         
         //[obj2 flashView:[UIColor redColor] times:5];
         
@@ -308,7 +309,7 @@
             [mazeControl.mazeObject removeOverlay];
         }
         
-        /*
+        
         for (UIView *view in overlayRects) {
             [view removeFromSuperview];
         }
@@ -322,7 +323,7 @@
             [containerView addSubview:view];
             [overlayRects addObject:view];
         }
-        *
+        
         /*
         NSArray *dropCoords = [GeometryHelper alignToGrid:mazeControl.mazeObject Matrix:matrix TopLeft:CGPointMake(rect2.origin.x, rect2.origin.y)];
         
@@ -412,12 +413,15 @@
         UIMazeControl *mazeControl = (UIMazeControl*)control;
         if (point.y > self.view.frame.size.height - 100){
             NSLog(@"Dropped on toolbar");
-            point = [[[event allTouches] anyObject] locationInView:self.toolBarView];
-            point.y = 60;
-            mazeControl.mazeObject.containerView.center = point;
-           // [self.toolBarView addSubview:mazeControl.mazeObject.containerView];
+            int itemSize = [SettingsStore sharedStore].toolbarHeight-30 ;
+           // point = [[[event allTouches] anyObject] locationInView:self.toolBarView];
             [GeometryHelper scaleToToolbar:mazeControl.mazeObject withLength:@"height"];
             [GeometryHelper scaleToToolbar:mazeControl.mazeObject withLength:@"width"];
+            point = CGPointMake(((UIView*)toolbarItems[mazeControl.mazeObject.category]).frame.size.width/2+10+mazeControl.mazeObject.category*(itemSize+10), ((UIView*)toolbarItems[mazeControl.mazeObject.category]).frame.size.height/2+self.toolBarView.frame.size.height/2-itemSize/2+10);
+            NSLog(@"point: (x:%.0f,y:%.0f)",point.x,point.y);
+            mazeControl.mazeObject.containerView.center = point;
+            [self.toolBarView addSubview:mazeControl.mazeObject.containerView];
+
             if(!mazeControl.mazeObject.toolbarItem){
                 mazeControl.mazeObject.toolbarItem = YES;
                 [(UIView*)toolbarItems[mazeControl.mazeObject.category] addSubview:mazeControl.mazeObject.containerView];
@@ -614,6 +618,7 @@
             if(items.category == i){
                 objCounts[i] = [NSNumber numberWithInt:[objCounts[i] intValue]+1];
                 items.containerView.center = CGPointMake(((UIView*)toolbarItems[items.category]).frame.size.width/2+10+items.category*(itemSize+10), ((UIView*)toolbarItems[items.category]).frame.size.height/2+self.toolBarView.frame.size.height/2-itemSize/2+10);
+                //NSLog(@"center: (x:%.0f,y:%.0f)",items.containerView.center.x,items.containerView.center.y);
             }
         }
         [label setText:[NSString stringWithFormat:@"%@", [NSNumber numberWithInt:[objCounts[i] intValue]]]];
