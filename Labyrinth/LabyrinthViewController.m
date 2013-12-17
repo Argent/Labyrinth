@@ -43,6 +43,7 @@
     bool paused;
     
     NSMutableArray *overlayRects;
+    int differentObjectsCounter;
 }
 @end
 
@@ -104,19 +105,18 @@
         [self.scrollView addGestureRecognizer:singleTap];
         
         NSMutableArray *wallNodes = [NSMutableArray array];
-        MazeObject *obj = [MazeObject objectWithType:WALL andCenter:CGPointMake(50, 60)];
-        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,0)]];
-        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,0)]];
-        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,1)]];
-        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,2)]];
-        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-2,3)]];
-         MazeObject *obj2 = [MazeObject objectWithType:WALL andCenter:CGPointMake(150, 60)];
+        objCounts = [NSMutableArray array];
+        objNodes = [NSMutableArray array];
+        MazeObject *obj1 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+        [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(0,0)]];
+        [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(-1,1)]];
+        [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(1,0)]];        [objNodes addObject:obj1];
+         MazeObject *obj2 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
         [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,0)]];
         [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(-1,1)]];
-        [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,2)]];
-        [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(-1,3)]];
-        [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,4)]];
-         MazeObject *obj3 = [MazeObject objectWithType:WALL andCenter:CGPointMake(250, 60)];
+        [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(1,0)]];
+        [objNodes addObject:obj2];
+         MazeObject *obj3 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
         [wallNodes addObject:[obj3 generateAndAddNodeRelative:CGPointMake(0,0)]];
         [wallNodes addObject:[obj3 generateAndAddNodeRelative:CGPointMake(1,0)]];
         [objNodes addObject:obj3];
@@ -181,10 +181,6 @@
         CGRect frame =  obj1.containerView.frame;
         frame.origin.y = 0;
         obj1.containerView.frame = frame;
-        
-        CGRect frame2 =  obj2.containerView.frame;
-        frame2.origin.y = 0;
-        obj2.containerView.frame = frame2;
         
         //[obj2 flashView:[UIColor redColor] times:5];
         
