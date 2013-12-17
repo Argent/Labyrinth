@@ -20,6 +20,10 @@
     UIView *containerView;
     UIBezierView *pathView;
     NSMutableArray *matrix;
+    NSMutableArray *objNodes;
+    NSMutableArray *objCounts;
+    NSMutableArray* toolbarItems;
+    NSMutableArray *toolbarItemsLabel;
     
     CGSize gridSize;
 
@@ -34,6 +38,8 @@
     bool animationStarted;
     NSMutableArray *movingPath;
     bool interrupted;
+    
+    int differentObjectsCounter;
 }
 @end
 
@@ -51,19 +57,25 @@
         [self.scrollView addGestureRecognizer:singleTap];
         
         NSMutableArray *wallNodes = [NSMutableArray array];
-        MazeObject *obj = [MazeObject objectWithType:WALL andCenter:CGPointMake(50, 60)];
-        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,0)]];
-        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,0)]];
-        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,1)]];
-        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,2)]];
-        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,3)]];
-         MazeObject *obj2 = [MazeObject objectWithType:WALL andCenter:CGPointMake(150, 60)];
+        objCounts = [NSMutableArray array];
+        objNodes = [NSMutableArray array];
+        MazeObject *obj1 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+        [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(0,0)]];
+        [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(-1,1)]];
+        [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(1,0)]];        [objNodes addObject:obj1];
+         MazeObject *obj2 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
         [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,0)]];
-        [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(1,0)]];
         [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(-1,1)]];
-         MazeObject *obj3 = [MazeObject objectWithType:WALL andCenter:CGPointMake(250, 60)];
+        [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(1,0)]];
+        [objNodes addObject:obj2];
+         MazeObject *obj3 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
         [wallNodes addObject:[obj3 generateAndAddNodeRelative:CGPointMake(0,0)]];
         [wallNodes addObject:[obj3 generateAndAddNodeRelative:CGPointMake(1,0)]];
+        [objNodes addObject:obj3];
+        MazeObject *obj4 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+        [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(0,0)]];
+        [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(0,1)]];
+        [objNodes addObject:obj4];
         
        /* [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,4)]];
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,4)]];
@@ -74,12 +86,53 @@
             [self addDragEventsToNode:wallNode];
         }
         
-        [self.toolBarView addSubview:obj.containerView];
+        differentObjectsCounter = objNodes.count;
+        for(int i = 0; i < objNodes.count; i++){
+           for(int j = i+1; j < objNodes.count; j++){
+                if([GeometryHelper compareWallObject:(MazeObject*)objNodes[i] compareWith:(MazeObject*)objNodes[j]]){
+                    differentObjectsCounter--;
+                    break;
+                }
+                
+            }
+        }
+        int categoryCounter = 0;
+        for(int i = 0; i <= differentObjectsCounter; i++){
+            if(i == 0){
+                ((MazeObject*)objNodes[i]).category = categoryCounter;
+            }else{
+                bool sameCategory = NO;
+                for(int j = i-1; j >= 0; j--){
+                    if(i >= differentObjectsCounter){
+                        break;
+                    }
+                    if([GeometryHelper compareWallObject:(MazeObject*)objNodes[j] compareWith:(MazeObject*)objNodes[i]]){
+                        ((MazeObject*)objNodes[i]).category = ((MazeObject*)objNodes[j]).category;
+                        sameCategory = YES;
+                    }
+                }
+                if(!sameCategory){
+                    categoryCounter++;
+                    if(i < objNodes.count){
+                        ((MazeObject*)objNodes[i]).category = categoryCounter;
+                    }
+                }
+                
+            }
+        }
+        for (MazeObject* objects in objNodes) {
+            [GeometryHelper scaleToToolbar:objects withLength:@"height"];
+            [GeometryHelper scaleToToolbar:objects withLength:@"width"];
+        }
+        [self initToolbarItems];
+        [self.toolBarView addSubview:obj1.containerView];
         [self.toolBarView addSubview:obj2.containerView];
         [self.toolBarView addSubview:obj3.containerView];
-        CGRect frame =  obj.containerView.frame;
+        [self.toolBarView addSubview:obj4.containerView];
+         
+        CGRect frame =  obj1.containerView.frame;
         frame.origin.y = 0;
-        obj.containerView.frame = frame;
+        obj1.containerView.frame = frame;
         
         //[obj2 flashView:[UIColor redColor] times:5];
         
@@ -235,11 +288,25 @@
             point = [[[event allTouches] anyObject] locationInView:self.toolBarView];
             point.y = 60;
             mazeControl.mazeObject.containerView.center = point;
-            [self.toolBarView addSubview:mazeControl.mazeObject.containerView];
+           // [self.toolBarView addSubview:mazeControl.mazeObject.containerView];
+            [GeometryHelper scaleToToolbar:mazeControl.mazeObject withLength:@"height"];
+            [GeometryHelper scaleToToolbar:mazeControl.mazeObject withLength:@"width"];
+            if(!mazeControl.mazeObject.toolbarItem){
+                mazeControl.mazeObject.toolbarItem = YES;
+                [(UIView*)toolbarItems[mazeControl.mazeObject.category] addSubview:mazeControl.mazeObject.containerView];
+                int tmpCount = [((UILabel*)toolbarItemsLabel[mazeControl.mazeObject.category]).text intValue];
+                [(UILabel*)toolbarItemsLabel[mazeControl.mazeObject.category] setText:[NSString stringWithFormat:@"%@", [NSNumber numberWithInt:tmpCount+1]]];
+            }
         } else {
             NSLog(@"Dropped on game field");
             // first scale the object to the gamefield size
             mazeControl.mazeObject.containerView.center = point;
+            if(mazeControl.mazeObject.toolbarItem){
+                mazeControl.mazeObject.toolbarItem = NO;
+                [(UIView*)toolbarItems[mazeControl.mazeObject.category] addSubview:mazeControl.mazeObject.containerView];
+                int tmpCount = [((UILabel*)toolbarItemsLabel[mazeControl.mazeObject.category]).text intValue];
+                [(UILabel*)toolbarItemsLabel[mazeControl.mazeObject.category] setText:[NSString stringWithFormat:@"%@", [NSNumber numberWithInt:tmpCount-1]]];
+            }
             point = [[[event allTouches] anyObject] locationInView:self.scrollView];
             point.x -= scrollViewOffset.x;
             point.y -= scrollViewOffset.y;
@@ -385,7 +452,7 @@
 }
 
 -(void)initToolbar{
-    int toolbarHeight = 100;
+    int toolbarHeight = [SettingsStore sharedStore].toolbarHeight;
     self.toolBarView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height - toolbarHeight, self.view.frame.size.width, toolbarHeight)];
     self.toolBarView.contentSize = CGSizeMake(self.view.frame.size.width * 2, toolbarHeight);
     self.toolBarView.backgroundColor = [UIColor clearColor];
@@ -395,6 +462,34 @@
     
     [self.toolBarView addSubview:imgView];
     [self.view addSubview:self.toolBarView];
+}
+
+-(void)initToolbarItems{
+    toolbarItems = [NSMutableArray array];
+    toolbarItemsLabel = [NSMutableArray array];
+    int itemSize = [SettingsStore sharedStore].toolbarHeight-30 ;
+    for(int i = 0; i < differentObjectsCounter; i++){
+        objCounts[i] = [NSNumber numberWithInt:0];
+        
+        toolbarItems[i] = [[UIView alloc] initWithFrame:CGRectMake(10+i*(itemSize+10), self.toolBarView.frame.size.height/2-itemSize/2+10, itemSize, itemSize)];
+        [((UIView*)toolbarItems[i]).layer setBorderWidth:1.0];
+        [((UIView*)toolbarItems[i]).layer setBorderColor:[UIColor blackColor].CGColor];
+        [self.toolBarView addSubview:toolbarItems[i]];
+        UILabel* label = [[UILabel alloc]initWithFrame:CGRectMake(((UIView*)toolbarItems[i]).frame.size.width-15, ((UIView*)toolbarItems[i]).frame.size.height-15, 15, 15)];
+        [label setBackgroundColor:[UIColor blackColor]];
+        [label setTextColor:[UIColor whiteColor]];
+        [label setFont:[UIFont boldSystemFontOfSize:12]];
+        label.textAlignment = NSTextAlignmentCenter;
+        for (MazeObject* items in objNodes) {
+            if(items.category == i){
+                objCounts[i] = [NSNumber numberWithInt:[objCounts[i] intValue]+1];
+                items.containerView.center = CGPointMake(((UIView*)toolbarItems[items.category]).frame.size.width/2+10+items.category*(itemSize+10), ((UIView*)toolbarItems[items.category]).frame.size.height/2+self.toolBarView.frame.size.height/2-itemSize/2+10);
+            }
+        }
+        [label setText:[NSString stringWithFormat:@"%@", [NSNumber numberWithInt:[objCounts[i] intValue]]]];
+        [toolbarItemsLabel addObject:label];
+        [((UIView*)toolbarItems[i]) addSubview:label];
+    }
 }
 
 - (void)singleTapGestureCaptured:(UITapGestureRecognizer *)gesture

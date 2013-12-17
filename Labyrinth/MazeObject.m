@@ -78,6 +78,7 @@
         }
         initCenter = center;
         self.containerView.center = center;
+        self.toolbarItem = YES;
 
     }
     return self;
