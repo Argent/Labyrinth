@@ -182,6 +182,25 @@
                     node.object = nil;
                 }
                 [mazeControl.mazeObject.gridNodes removeAllObjects];
+                
+                if (!animationComplete && animationStarted){
+                    CGPoint playerCoords = [GeometryHelper pixelToHex:[movingView.layer.presentationLayer position] gridSize:gridSize];
+                    NSLog(@"Matrix: (%.2f,%.2f)",playerCoords.x, playerCoords.y);
+                    
+                    MazeNode *endNode = nil;
+                    for (int x = 0; x < matrix.count; x++) {
+                        for (int y = 0; y < ((NSArray*)matrix[0]).count; y++) {
+                            MazeNode *tmpNode = matrix[x][y];
+                            if (![tmpNode isEqual:[NSNull null]]) {
+                                if (tmpNode.object != nil && tmpNode.object.type == END)
+                                    endNode = tmpNode;
+                            }
+                        }
+                    }
+                    
+                    [self recalculateAnimationFromStart:matrix[(int)playerCoords.x][(int)playerCoords.y] toEnd:endNode withStepDuration:1];
+                    
+                }
             }
         }
         touchedDown = NO;
