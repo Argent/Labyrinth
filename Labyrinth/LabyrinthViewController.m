@@ -110,11 +110,13 @@
         MazeObject *obj1 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
         [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(0,0)]];
         [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(-1,1)]];
-        [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(1,0)]];        [objNodes addObject:obj1];
+        [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(0,1)]];
+        //[wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(-1,2)]];
+        [objNodes addObject:obj1];
          MazeObject *obj2 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
         [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,0)]];
         [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(-1,1)]];
-        [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(1,0)]];
+        [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,1)]];
         [objNodes addObject:obj2];
          MazeObject *obj3 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
         [wallNodes addObject:[obj3 generateAndAddNodeRelative:CGPointMake(0,0)]];
@@ -123,7 +125,9 @@
         MazeObject *obj4 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
         [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(0,0)]];
         [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(0,1)]];
-        [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(-1,1)]];
+        [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(-1,2)]];
+       // [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(-1,3)]];
+        //[wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(-2,4)]];
         [objNodes addObject:obj4];
         
        /* [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,4)]];
@@ -310,6 +314,7 @@
         }
         
         
+        /*
         for (UIView *view in overlayRects) {
             [view removeFromSuperview];
         }
@@ -323,6 +328,7 @@
             [containerView addSubview:view];
             [overlayRects addObject:view];
         }
+         */
         
         /*
         NSArray *dropCoords = [GeometryHelper alignToGrid:mazeControl.mazeObject Matrix:matrix TopLeft:CGPointMake(rect2.origin.x, rect2.origin.y)];

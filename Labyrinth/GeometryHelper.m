@@ -280,6 +280,19 @@
 }
 
 +(NSArray*)getNodeRectsFromObject:(MazeObject*)mazeObject TopLeft:(CGPoint)point{
+    NSMutableArray *array = [NSMutableArray array];
+    
+    for (MazeNode *node in mazeObject.objectNodes) {
+        CGRect rect =  node.uiElement.frame;
+        rect.origin.x += point.x;
+        rect.origin.y += point.y;
+        [array addObject:[NSValue valueWithCGRect:rect]];
+    }
+    
+    return array;
+    
+    
+    /*
     CGPoint mostLeftNode = CGPointMake(FLT_MAX, FLT_MAX);
     for (NSValue *val in mazeObject.objectCoordinates) {
         CGPoint matrixOffset = [val CGPointValue];
@@ -304,9 +317,17 @@
             if ((int)mostLeftNode.y %  2 == (int)matrixOffset.y % 2)
                 x = matrixOffset.x * width - (mostLeftNode.x * width);
             else
-                x = (matrixOffset.x * width + (width / 2.0)) - (mostLeftNode.x * width) - width;
+                x = (matrixOffset.x * width + (width / 2.0)) - (mostLeftNode.x * width) ;
+            
+            if ((int)mostLeftNode.y % 2 == 0 && (int)mostLeftNode.y != 0 && (int)matrixOffset.y % 2 == 1)
+                x -= width / 2.0;
+            else if ((int)mostLeftNode.y % 2 == 0 && (int)mostLeftNode.y != 0 && (int)matrixOffset.y % 2 == 0)
+                 x += width / 2.0;
+            
             CGRect rect = CGRectMake(x, matrixOffset.y * 3.0/4.0 * height, width, height);
             [array addObject:[NSValue valueWithCGRect:rect]];
+            
+            
         }
     }
     
@@ -316,6 +337,7 @@
     }
     
     return array;
+    */
 }
 
 +(NSArray *)alignToGrid:(MazeObject *)mazeObject Matrix:(NSArray *)matrix TopLeft:(CGPoint)point{

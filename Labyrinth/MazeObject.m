@@ -100,7 +100,7 @@
         if ((int)relPoint.y % 2 == 0)
             node.uiElement.center = CGPointMake(relPoint.x * node.width , relPoint.y * node.Size * 1.5);
         else
-            node.uiElement.center = CGPointMake((node.width / 2) + (relPoint.x * node.width), relPoint.y * node.Size * 1.5);
+            node.uiElement.center = CGPointMake( (relPoint.x * node.width) -(node.width / 2) , relPoint.y * node.Size * 1.5);
         
         [self.containerView addSubview:node.uiElement];
         
