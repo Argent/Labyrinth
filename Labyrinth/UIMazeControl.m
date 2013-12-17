@@ -28,4 +28,16 @@
 }
 */
 
+-(id)copyWithZone:(NSZone *)zone {
+    id copy = [[[self class] alloc] initWithFrame:self.frame];
+    
+    if (copy) {
+        // Copy NSObject subclasses
+        [copy setMazeObject:self.mazeObject];
+        [copy setView:self.view];
+    }
+    
+    return copy;
+}
+
 @end

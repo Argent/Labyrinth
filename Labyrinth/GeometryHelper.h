@@ -12,6 +12,7 @@
 
 @interface GeometryHelper : NSObject
 
++(float)distanceFromHex:(CGPoint)hex1 toHex:(CGPoint)hex2;
 +(CGPoint)pixelToHex:(CGPoint)pixel gridSize:(CGSize)size;
 +(CGPoint)hexToPixel:(CGPoint)hex;
 +(NSArray*)getShortestPathFrom:(MazeNode*)startPoint To:(MazeNode*)endPoint;

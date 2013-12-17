@@ -232,6 +232,20 @@
     return [NSValue valueWithCGPoint:intersection];*/
 }
 
++(float)distanceFromHex:(CGPoint)hex1 toHex:(CGPoint)hex2{    
+    // convert to cube coordinates
+    int x1 = hex1.x - (hex1.y - ((int)hex1.y&1)) / 2;
+    int z1 = hex1.y;
+    int y1 = -x1-z1;
+    
+    int x2 = hex2.x - (hex2.y - ((int)hex2.y&1)) / 2;
+    int z2 = hex2.y;
+    int y2 = -x2-z2;
+    
+  return (abs(x1 - x2) + abs(y1 - y2) + abs(z1 - z2)) / 2.0;
+    
+}
+
 +(bool)hexIntersectsHex:(CGRect)hex1 Hex:(CGRect)hex2{
     float width = [[SettingsStore sharedStore]width];
     float height = [[SettingsStore sharedStore] height];
@@ -290,7 +304,7 @@
             if ((int)mostLeftNode.y %  2 == (int)matrixOffset.y % 2)
                 x = matrixOffset.x * width - (mostLeftNode.x * width);
             else
-                x = (matrixOffset.x * width + (width / 2.0)) - (mostLeftNode.x * width);
+                x = (matrixOffset.x * width + (width / 2.0)) - (mostLeftNode.x * width) - width;
             CGRect rect = CGRectMake(x, matrixOffset.y * 3.0/4.0 * height, width, height);
             [array addObject:[NSValue valueWithCGRect:rect]];
         }
@@ -306,6 +320,24 @@
 
 +(NSArray *)alignToGrid:(MazeObject *)mazeObject Matrix:(NSArray *)matrix TopLeft:(CGPoint)point{
     CGSize gridSize = CGSizeMake(matrix.count, ((NSArray*)matrix[0]).count);
+    NSArray *objectRects = [self getNodeRectsFromObject:mazeObject TopLeft:point];
+    
+    NSMutableArray *coords = [NSMutableArray array];
+    
+    for (NSValue *val in objectRects) {
+        CGRect rect = [val CGRectValue];
+        CGPoint center = CGPointMake(rect.origin.x + (rect.size.width / 2.0), rect.origin.y + (rect.size.height / 2.0));
+        CGPoint matrixCoords = [self pixelToHex:center gridSize:gridSize];
+        [coords addObject:[NSValue valueWithCGPoint:matrixCoords]];
+    }
+    
+    NSLog(@"coords: %@",coords);
+    return coords;
+}
+
+/*
++(NSArray *)alignToGrid:(MazeObject *)mazeObject Matrix:(NSArray *)matrix TopLeft:(CGPoint)point{
+    CGSize gridSize = CGSizeMake(matrix.count, ((NSArray*)matrix[0]).count);
     
     CGPoint matrixCoords = [GeometryHelper pixelToHex:CGPointMake(point.x + [[SettingsStore sharedStore]width] /2.0, point.y + [[SettingsStore sharedStore]height] /2.0) gridSize:gridSize];
     if ((int)matrixCoords.y % 2 == 1 && matrixCoords.x == 0.0)
@@ -319,15 +351,15 @@
     CGRect rect = mazeObject.containerView.frame;
     rect.origin.x = node.Anchor.x;
     rect.origin.y = node.Anchor.y;
-    /*
-     UIView *imgView = mazeObject.containerView;
-     if ([imgView isKindOfClass:[UIView class]]){
-     ((UIView*)imgView).transform = CGAffineTransformMakeScale(1.0, 1.0);
-     rect.size = mazeObject.containerView.frame.size;
-     mazeObject.containerView.frame = rect;
-     
-     }
-     */
+ 
+//     UIView *imgView = mazeObject.containerView;
+//     if ([imgView isKindOfClass:[UIView class]]){
+//     ((UIView*)imgView).transform = CGAffineTransformMakeScale(1.0, 1.0);
+//     rect.size = mazeObject.containerView.frame.size;
+//     mazeObject.containerView.frame = rect;
+//     
+//     }
+ 
     
     CGPoint mostLeftNode = CGPointMake(FLT_MAX, FLT_MAX);
     for (NSValue *val in mazeObject.objectCoordinates) {
@@ -363,9 +395,11 @@
 
     return coordsToCheck;
 }
+*/
+
 
 +(NSArray *)alignToValidGrid:(MazeObject *)mazeObject Matrix:(NSArray *)matrix TopLeft:(CGPoint)point searchRadius:(int)radius{
-        CGSize gridSize = CGSizeMake(matrix.count, ((NSArray*)matrix[0]).count);
+    CGSize gridSize = CGSizeMake(matrix.count, ((NSArray*)matrix[0]).count);
     NSArray *coordsToCheck = [self alignToGrid:mazeObject Matrix:matrix TopLeft:point];
     
     bool allValid = YES;
@@ -415,6 +449,7 @@
     
 
 }
+
 
 +(NSArray *)alignToValidGrid:(MazeObject *)mazeObject Matrix:(NSArray *)matrix TopLeft:(CGPoint)point {
     return [self alignToValidGrid:mazeObject Matrix:matrix TopLeft:point searchRadius:100];

@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "MazeObject.h"
 
-@interface UIMazeControl : UIControl
+@interface UIMazeControl : UIControl <NSCopying>
 
 @property (nonatomic,strong) MazeObject* mazeObject;
 @property (nonatomic,strong) UIView *view;

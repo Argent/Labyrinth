@@ -37,6 +37,8 @@
     NSMutableArray *movingPath;
     bool interrupted;
     bool paused;
+    
+    NSMutableArray *overlayRects;
 }
 @end
 
@@ -103,11 +105,14 @@
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,0)]];
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,1)]];
         [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,2)]];
-        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,3)]];
+        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-2,3)]];
          MazeObject *obj2 = [MazeObject objectWithType:WALL andCenter:CGPointMake(150, 60)];
         [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,0)]];
         [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(1,0)]];
         [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(-1,1)]];
+        [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,2)]];
+        [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(-1,3)]];
+        [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,4)]];
          MazeObject *obj3 = [MazeObject objectWithType:WALL andCenter:CGPointMake(250, 60)];
         [wallNodes addObject:[obj3 generateAndAddNodeRelative:CGPointMake(0,0)]];
         [wallNodes addObject:[obj3 generateAndAddNodeRelative:CGPointMake(1,0)]];
@@ -128,7 +133,13 @@
         frame.origin.y = 0;
         obj.containerView.frame = frame;
         
+        CGRect frame2 =  obj2.containerView.frame;
+        frame2.origin.y = 0;
+        obj2.containerView.frame = frame2;
+        
         //[obj2 flashView:[UIColor redColor] times:5];
+        
+        overlayRects = [NSMutableArray array];
         
     }
     return self;
@@ -233,6 +244,21 @@
             [mazeControl.mazeObject removeOverlay];
         }
         
+        /*
+        for (UIView *view in overlayRects) {
+            [view removeFromSuperview];
+        }
+        
+        [overlayRects removeAllObjects];
+        for (NSValue *val in nodeRects) {
+            CGRect rect = [val CGRectValue];
+            UIView *view = [[UIView alloc]initWithFrame:rect];
+            view.layer.borderColor = [UIColor blackColor].CGColor;
+            view.layer.borderWidth = 5.0f;
+            [containerView addSubview:view];
+            [overlayRects addObject:view];
+        }
+        *
         /*
         NSArray *dropCoords = [GeometryHelper alignToGrid:mazeControl.mazeObject Matrix:matrix TopLeft:CGPointMake(rect2.origin.x, rect2.origin.y)];
         
@@ -453,7 +479,8 @@
         MazeNode *nodeEnd = (MazeNode*)matrix[(int)endP.x][(int)endP.y];
         
         
-        if (![nodeStart isEqual:[NSNull null]] && ![nodeEnd isEqual:[NSNull null]] && !(startP.x == endP.x && startP.y == endP.y)){
+        if (![nodeStart isEqual:[NSNull null]] && ![nodeEnd isEqual:[NSNull null]] && !(startP.x == endP.x && startP.y == endP.y)
+            && [GeometryHelper distanceFromHex:startP toHex:endP] > 10){
             
             MazeObject *start = [MazeObject objectWithType:START andCenter:CGPointMake(nodeStart.center.x, nodeStart.center.y)];
             [start generateAndAddNodeRelative:CGPointMake(0,0)];
@@ -576,6 +603,9 @@
     NSLog(@"start: (%.1f,%.1f)",start.MatrixCoords.x,start.MatrixCoords.y);
     if (!animationComplete){
         movingView.frame = [[movingView.layer presentationLayer] frame];
+        CAAnimation *animation = [movingView.layer animationForKey:@"movingAnimation"];
+        NSLog(@"animation class: %@", animation.class);
+            interrupted = YES;
         [movingView.layer removeAnimationForKey:@"movingAnimation"];
     }
     
@@ -647,10 +677,10 @@
     }
     
     animationComplete = NO;
-    interrupted = NO;
+
     
     CAKeyframeAnimation *pathAnimation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
-    pathAnimation.duration = shortestPath.count * 1;
+    pathAnimation.duration = shortestPath.count * 1.5;
     pathAnimation.path = bezierMovingPath.CGPath;
     pathAnimation.calculationMode = kCAAnimationLinear;
     
@@ -693,6 +723,7 @@
                                 array[1] = [NSNumber numberWithBool:YES];
                               //  NSLog(@"(%.2f,%.2f)",matrixPoint.x, matrixPoint.y);
                             }
+                            
                             break;
                         }else if (i > 0)
                             steps++;
@@ -703,6 +734,9 @@
                         
                         i++;
                     }
+                    
+                    if ([movingPath[movingPath.count-1][1] boolValue] == YES)
+                        steps++;
                     
                     menubar.steps = steps;
                     menubar.coins = coins;
@@ -715,7 +749,7 @@
                     NSLog(@"error: %@",error);
                 }
             });
-            usleep(pathAnimation.duration / shortestPath.count / 4.0 * 1000 * 1000);
+            usleep(pathAnimation.duration / shortestPath.count / 8.0 * 1000 * 1000);
         }
     });
     
@@ -753,6 +787,7 @@
     } else {
         contentsFrame.origin.y = 0.0f;
     }
+    contentsFrame.origin.y += 40;
     
     scrollViewOffset.x = contentsFrame.origin.x;
     scrollViewOffset.y = contentsFrame.origin.y;
