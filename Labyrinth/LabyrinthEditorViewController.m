@@ -246,6 +246,11 @@
 	// Do any additional setup after loading the view.
 }
 
+-(void)viewWillAppear:(BOOL)animated{
+    self.scrollView.zoomScale = 0.48;
+    return [super viewWillAppear:animated];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

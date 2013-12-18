@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B547D8E3186214D400680E42 /* StartMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B547D8E1186214D400680E42 /* StartMenuViewController.m */; };
+		B547D8E4186214D400680E42 /* StartMenuViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B547D8E2186214D400680E42 /* StartMenuViewController.xib */; };
 		B55596D618474D1500CC3A13 /* hex_gray.png in Resources */ = {isa = PBXBuildFile; fileRef = B55596D518474D1500CC3A13 /* hex_gray.png */; };
 		B55596D9184784FD00CC3A13 /* MazeObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B55596D8184784FD00CC3A13 /* MazeObject.m */; };
 		B5589F00185A3D65002EB496 /* hex_small_red.png in Resources */ = {isa = PBXBuildFile; fileRef = B5589EFF185A3D65002EB496 /* hex_small_red.png */; };
@@ -52,6 +54,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B547D8E0186214D400680E42 /* StartMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StartMenuViewController.h; sourceTree = "<group>"; };
+		B547D8E1186214D400680E42 /* StartMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StartMenuViewController.m; sourceTree = "<group>"; };
+		B547D8E2186214D400680E42 /* StartMenuViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StartMenuViewController.xib; sourceTree = "<group>"; };
 		B55596D518474D1500CC3A13 /* hex_gray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hex_gray.png; sourceTree = "<group>"; };
 		B55596D7184784FD00CC3A13 /* MazeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MazeObject.h; sourceTree = "<group>"; };
 		B55596D8184784FD00CC3A13 /* MazeObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MazeObject.m; sourceTree = "<group>"; };
@@ -160,6 +165,9 @@
 			children = (
 				B5CED2491844BC10004BC7CE /* AppDelegate.h */,
 				B5CED24A1844BC10004BC7CE /* AppDelegate.m */,
+				B547D8E0186214D400680E42 /* StartMenuViewController.h */,
+				B547D8E1186214D400680E42 /* StartMenuViewController.m */,
+				B547D8E2186214D400680E42 /* StartMenuViewController.xib */,
 				B5CED2691844BD29004BC7CE /* LabyrinthViewController.h */,
 				B5CED26A1844BD29004BC7CE /* LabyrinthViewController.m */,
 				B5ACF81718578476007F58DD /* LabyrinthEditorViewController.h */,
@@ -311,6 +319,7 @@
 				B5CED24D1844BC10004BC7CE /* Images.xcassets in Resources */,
 				B5589F00185A3D65002EB496 /* hex_small_red.png in Resources */,
 				B5ACF816185783CF007F58DD /* hex_empty.png in Resources */,
+				B547D8E4186214D400680E42 /* StartMenuViewController.xib in Resources */,
 				B5F41F8018478BC900B36789 /* hex_turquoise.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -330,6 +339,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B547D8E3186214D400680E42 /* StartMenuViewController.m in Sources */,
 				B58CA7C21848FBB000C06874 /* SettingsStore.m in Sources */,
 				B5D5139F185311640085A838 /* GeometryHelper.m in Sources */,
 				B5ACF81918578476007F58DD /* LabyrinthEditorViewController.m in Sources */,

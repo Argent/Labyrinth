@@ -528,8 +528,12 @@
 	// Do any additional setup after loading the view.
 }
 
--(void)viewDidAppear:(BOOL)animated {
+-(void)viewWillAppear:(BOOL)animated{
     self.scrollView.zoomScale = 0.48;
+    return [super viewWillAppear:animated];
+}
+
+-(void)viewDidAppear:(BOOL)animated {
     [[UIApplication sharedApplication] setStatusBarHidden:YES];
     return [super viewDidAppear:animated];
 }
