@@ -12,6 +12,7 @@
 #import "SettingsStore.h"
 #import "MazeObject.h"
 #import "GeometryHelper.h"
+#import "LevelManager.h"
 
 @interface LabyrinthEditorViewController () {
     UIView *containerView;
@@ -52,10 +53,47 @@
     self.toolBarView.backgroundColor = [UIColor clearColor];
     UIImage *backgroundImg = [UIImage imageNamed:@"toolbar.png"];
     UIImageView *imgView = [[UIImageView alloc]initWithImage:backgroundImg];
+    imgView.alpha=0.5;
     imgView.frame = CGRectMake(0 - 100, 0, self.toolBarView.contentSize.width + 200, self.toolBarView.contentSize.height);
     
     [self.toolBarView addSubview:imgView];
     [self.view addSubview:self.toolBarView];
+    
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    button.frame=CGRectMake(22, 33, 50,50);
+    button.backgroundColor=[UIColor greenColor];
+    button.titleLabel.text = @"speichern";
+    button.titleLabel.textColor=[UIColor whiteColor];
+    [self.toolBarView addSubview:button];
+    
+    [button addTarget:self action:@selector(save) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIButton *editBoard = [UIButton buttonWithType:UIButtonTypeCustom];
+    [editBoard setFrame:CGRectMake(90,33,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
+    [editBoard setBackgroundImage:[UIImage imageNamed:@"hex_gray.png"] forState:UIControlStateNormal];
+    editBoard.tag=0;
+    [self.toolBarView addSubview:editBoard];
+    
+    [editBoard addTarget:self action:@selector(nodeTypeChoosen:) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIButton *editStart = [UIButton buttonWithType:UIButtonTypeCustom];
+    [editStart setFrame:CGRectMake(150,33,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
+    [editStart setBackgroundImage:[UIImage imageNamed:@"hex_turquoise.png"] forState:UIControlStateNormal];
+     editStart.tag=1;
+    [self.toolBarView addSubview:editStart];
+    
+    [editStart addTarget:self action:@selector(nodeTypeChoosen:) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIButton *editEnd = [UIButton buttonWithType:UIButtonTypeCustom];
+    [editEnd setFrame:CGRectMake(210,33,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
+    [editEnd setBackgroundImage:[UIImage imageNamed:@"hex_petrol.png"] forState:UIControlStateNormal];
+    editEnd.tag=2;
+    [self.toolBarView addSubview:editEnd];
+    
+    [editEnd addTarget:self action:@selector(nodeTypeChoosen:) forControlEvents:UIControlEventTouchUpInside];
+    
+    
+    
 }
 
 -(void)initGrid{
@@ -158,7 +196,9 @@
     
     id obj = matrix[(int)matrixCoords.x][(int)matrixCoords.y];
     
-    if (![obj isEqual:[NSNull null]]) {
+   if (![obj isEqual:[NSNull null]]) {
+    
+    if (self.buttonNodeType==0) {
         
         if ([obj isKindOfClass:[UIImageView class]]){
             MazeNode *node = [MazeNode node];
@@ -170,14 +210,75 @@
             [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_gray.png"]];
             
             matrix[(int)matrixCoords.x][(int)matrixCoords.y] = node;
-            
-        }else if ([obj isKindOfClass:[MazeNode class]]){
+        }
+
+            else if ([obj isKindOfClass:[MazeNode class]]){
+          
             
             UIImageView *imgView = (UIImageView*)((MazeNode*)obj).uiElement;
             [imgView setImage:[UIImage imageNamed:@"hex_empty.png"]];
             matrix[(int)matrixCoords.x][(int)matrixCoords.y] = imgView;
             
         }
+   }
+       
+       
+      if (self.buttonNodeType==1) {
+          if ([obj isKindOfClass:[MazeNode class]]){
+              MazeNode *touched = (MazeNode *)obj;
+        
+              
+              if (touched.isStart){
+                  touched.object=Nil;
+                  
+                  UIImageView *imgView = (UIImageView*)((MazeNode*)touched).uiElement;
+                  [imgView setImage:[UIImage imageNamed:@"hex_gray.png"]];
+                  matrix[(int)matrixCoords.x][(int)matrixCoords.y] = touched;
+                  
+              }
+              
+              
+              else {
+              
+              [((UIImageView*)touched.uiElement) setImage:[UIImage imageNamed:@"hex_turquoise.png"]];
+              
+              MazeObject *start = [MazeObject objectWithType:START andCenter:CGPointMake(touched.center.x, touched.center.y)];
+              touched.object = start;
+              matrix[(int)matrixCoords.x][(int)matrixCoords.y] = touched;
+              }
+          
+          }}
+       if (self.buttonNodeType==2) {
+           if ([obj isKindOfClass:[MazeNode class]]){
+               MazeNode *touched = (MazeNode *)obj;
+               
+               
+               if (touched.isEnd){
+                   touched.object=Nil;
+                   
+                   UIImageView *imgView = (UIImageView*)((MazeNode*)touched).uiElement;
+                   [imgView setImage:[UIImage imageNamed:@"hex_gray.png"]];
+                   matrix[(int)matrixCoords.x][(int)matrixCoords.y] = touched;
+                   
+               }
+               
+               else {
+                   
+                   [((UIImageView*)touched.uiElement) setImage:[UIImage imageNamed:@"hex_petrol.png"]];
+                   
+                   MazeObject *end = [MazeObject objectWithType:END andCenter:CGPointMake(touched.center.x, touched.center.y)];
+                   touched.object = end;
+                   matrix[(int)matrixCoords.x][(int)matrixCoords.y] = touched;
+                   
+               }
+               
+           }}
+
+       
+      }}
+                                    
+                                   
+        
         //NSLog(@"Touch Node Center: (x:%.2f,y:%.2f)", node.center.x, node.center.y);
         
         
@@ -190,8 +291,8 @@
              [containerView addSubview:wall.containerView];
              */
         
-    }
-        
+   
+    
         //NSLog(@"Touch GenNode Center: (x:%.2f,y:%.2f)", nn.uiElement.center.x, nn.uiElement.center.y);
         //NSLog(@"Touch Container Center: (x:%.2f,y:%.2f)", start.containerView.center.x, start.containerView.center.y);
         //NSLog(@"Touch Container Frame: (x:%.2f,y:%.2f,width:%.2f,height:%.2f)", start.containerView.frame.origin.x, start.containerView.frame.origin.y, start.containerView.frame.size.width, start.containerView.frame.size.height);
@@ -206,7 +307,7 @@
          };
          }*/
     
-}
+
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
     return containerView;
@@ -251,5 +352,21 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+-(void)save{
+    LevelInfo *info=[[LevelInfo alloc]initWithStart:CGPointZero end:CGPointZero matrix:matrix walls:nil];
+    
+    [[LevelManager sharedManager] saveLevel:info forID:0];
+    
+    
+    
+}
+
+-(void)nodeTypeChoosen:(UIButton*) nodeType {
+    
+    self.buttonNodeType=nodeType.tag;
+}
+
+
 
 @end

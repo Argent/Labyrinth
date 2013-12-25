@@ -12,6 +12,7 @@
 
 @property (nonatomic,strong) UIScrollView *scrollView;
 @property (nonatomic,strong) UIScrollView *toolBarView;
+@property (nonatomic) int buttonNodeType;
 
 
 @end

@@ -23,6 +23,6 @@
 +(NSArray*)alignToGrid:(MazeObject*)object Matrix:(NSArray*)matrix TopLeft:(CGPoint)point;
 +(CGRect)rectForObject:(NSArray*)matrixCoords Matrix:(NSArray*)matrix;
 +(NSMutableArray *)generateMatrixWithWidth:(int)width Height:(int)height withImageName:(NSString*)name inContainerView:(UIView*)containerView;
-+(NSArray*)cropMatrix:(NSArray*)matrix;
++(NSDictionary*)cropMatrix:(NSArray*)matrix;
 
 @end

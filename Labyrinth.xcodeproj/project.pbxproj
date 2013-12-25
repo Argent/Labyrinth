@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		022F3F4E185F252400D54DBE /* LevelManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 022F3F4D185F252400D54DBE /* LevelManager.m */; };
+		022F3F51185F263800D54DBE /* LevelInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 022F3F50185F263800D54DBE /* LevelInfo.m */; };
 		B55596D618474D1500CC3A13 /* hex_gray.png in Resources */ = {isa = PBXBuildFile; fileRef = B55596D518474D1500CC3A13 /* hex_gray.png */; };
 		B55596D9184784FD00CC3A13 /* MazeObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B55596D8184784FD00CC3A13 /* MazeObject.m */; };
 		B58CA7C21848FBB000C06874 /* SettingsStore.m in Sources */ = {isa = PBXBuildFile; fileRef = B58CA7C11848FBB000C06874 /* SettingsStore.m */; };
@@ -53,6 +55,10 @@
 		020373F918531FC5000CD00C /* EditorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditorViewController.m; sourceTree = "<group>"; };
 		020373FB185323B1000CD00C /* TestMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestMenuViewController.h; sourceTree = "<group>"; };
 		020373FC185323B1000CD00C /* TestMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestMenuViewController.m; sourceTree = "<group>"; };
+		022F3F4C185F252400D54DBE /* LevelManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelManager.h; sourceTree = "<group>"; };
+		022F3F4D185F252400D54DBE /* LevelManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LevelManager.m; sourceTree = "<group>"; };
+		022F3F4F185F263800D54DBE /* LevelInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelInfo.h; sourceTree = "<group>"; };
+		022F3F50185F263800D54DBE /* LevelInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LevelInfo.m; sourceTree = "<group>"; };
 		B55596D518474D1500CC3A13 /* hex_gray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hex_gray.png; sourceTree = "<group>"; };
 		B55596D7184784FD00CC3A13 /* MazeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MazeObject.h; sourceTree = "<group>"; };
 		B55596D8184784FD00CC3A13 /* MazeObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MazeObject.m; sourceTree = "<group>"; };
@@ -165,6 +171,10 @@
 				B5CED26A1844BD29004BC7CE /* LabyrinthViewController.m */,
 				B5ACF81718578476007F58DD /* LabyrinthEditorViewController.h */,
 				B5ACF81818578476007F58DD /* LabyrinthEditorViewController.m */,
+				022F3F4F185F263800D54DBE /* LevelInfo.h */,
+				022F3F50185F263800D54DBE /* LevelInfo.m */,
+				022F3F4C185F252400D54DBE /* LevelManager.h */,
+				022F3F4D185F252400D54DBE /* LevelManager.m */,
 				B5C283B318452068005A02B1 /* NSMutableArray+QueueAdditions.h */,
 				B5C283B418452080005A02B1 /* NSMutableArray+QueueAdditions.m */,
 				B5C283B618452571005A02B1 /* MazeNode.h */,
@@ -333,7 +343,9 @@
 				B55596D9184784FD00CC3A13 /* MazeObject.m in Sources */,
 				B5CED24B1844BC10004BC7CE /* AppDelegate.m in Sources */,
 				B5CED2471844BC10004BC7CE /* main.m in Sources */,
+				022F3F51185F263800D54DBE /* LevelInfo.m in Sources */,
 				B5C283B518452080005A02B1 /* NSMutableArray+QueueAdditions.m in Sources */,
+				022F3F4E185F252400D54DBE /* LevelManager.m in Sources */,
 				B5C283B818452571005A02B1 /* MazeNode.m in Sources */,
 				B5CB8A991848633F00CB8EA2 /* UIMazeControl.m in Sources */,
 				B58CA7C7184BA46C00C06874 /* UIBezierView.m in Sources */,

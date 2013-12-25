@@ -48,6 +48,21 @@
     return self.object.type == WALL;
 }
 
+
+-(bool)isStart {
+    if (!self.object)
+        return NO;
+    return self.object.type == START;
+}
+
+
+-(bool)isEnd {
+    if (!self.object)
+        return NO;
+    return self.object.type == END;
+    
+}
+
 -(void)addNeighbours:(MazeNode *)node {
     [neigbours addObject:node];
 }
