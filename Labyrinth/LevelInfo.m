@@ -61,15 +61,22 @@
     
 
 -(NSDictionary *)getDictionary{
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [dict setObject:[NSValue valueWithCGPoint:self.start] forKey:kStartKey];
+    [dict setObject:[NSValue valueWithCGPoint:self.end] forKey:kEndKey];
+    [dict setObject:self.board forKey:kBoardKey];
     
-    return [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSValue valueWithCGPoint:self.start], kStartKey,
-            [NSValue valueWithCGPoint:self.end], kEndKey,
-            self.board, kBoardKey,
-            self.walls, kWallsKey,
-            self.minX, kMinX,
-            self.minY, kMinY,
-            nil];
+    if (self.walls) {
+        [dict setObject:self.walls forKey:kWallsKey];
+    }
+    if (self.minX) {
+            [dict setObject:self.minX forKey:kMinX];
+        }
+    if (self.minY) {
+                [dict setObject:self.minY forKey:kMinY];
+    }
+    
+    return dict;
 }
 
 -(NSMutableArray*)generateBoardFromMatrix:(NSArray*) matrix{
@@ -77,7 +84,9 @@
     
     NSDictionary *cropedDict =[GeometryHelper cropMatrix:matrix];
     self.minX=[cropedDict objectForKey:@"minX"];
+    NSLog(@"minX:%@", self.minX);
     self.minY=[cropedDict objectForKey:@"minY"];
+    NSLog(@"minY:%@", self.minY);
     NSArray*  cropedMatrix= [cropedDict objectForKey:@"matrix"];
    // NSLog(@"%i",cropedMatrix.count);
     
@@ -90,12 +99,12 @@
                NSLog(@"%@", board[x][y]);
           }
           
-          if ([node isKindOfClass:[MazeNode class]] && node.isStart){
+          else if ([node isKindOfClass:[MazeNode class]] && node.isStart){
               [board[x] addObject:[NSNumber numberWithInteger:3]];
               NSLog(@"%@", board[x][y]);
           }
           
-          if ([node isKindOfClass:[MazeNode class]] && node.isEnd){
+          else if ([node isKindOfClass:[MazeNode class]] && node.isEnd){
               [board[x] addObject:[NSNumber numberWithInteger:4]];
               NSLog(@"%@", board[x][y]);
           }
@@ -109,7 +118,7 @@
                 NSLog(@"%@", board[x][y]);
            }
            
-               }  //NSLog(@"%@", board[x][y]);
+               }  
             }
 
     return board;

@@ -33,25 +33,28 @@ static LevelManager *_instance;
 -(BOOL)saveLevel:(LevelInfo *)levelInfo forID:(NSInteger)ID{
     
     if(levelInfo){
-    if(ID<0 || ID>=self.levels.count){
-        [self.levels addObject:[levelInfo getDictionary]];
-    }
-    else {
-        
-        if (levelInfo){
-        
-            [self.levels replaceObjectAtIndex:ID withObject:[levelInfo getDictionary]];
+        if(ID<0 || ID>=self.levels.count|| self.levels.count==0){
+            NSDictionary *dict = [levelInfo getDictionary];
+        [self.levels addObject:dict];
         }
-             else
-            {
-                [self.levels removeObjectAtIndex:ID];
-            }
-
+        
+        else {
+            NSDictionary *dict = [levelInfo getDictionary];
+            [self.levels replaceObjectAtIndex:ID withObject:dict];
+        }
     }
     
+    else{
+        
+        [self.levels removeObjectAtIndex:ID];
     }
+    NSString *filename = [self levelsFileName];
     
-    [self.levels writeToFile:[self levelsFileName] atomically:YES];
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self.levels];
+    
+    if([data writeToFile:filename atomically:YES]){
+        NSLog(@"hallo");
+    }
     
 
     return true;
@@ -64,15 +67,18 @@ static LevelManager *_instance;
     NSString *fileName = [self levelsFileName];
     
     if ([[NSFileManager defaultManager] fileExistsAtPath:fileName]) {
-        self.levels=[NSMutableArray arrayWithContentsOfFile:fileName];
+        NSData *data = [NSData dataWithContentsOfFile:fileName];
+        
+        self.levels=[NSKeyedUnarchiver unarchiveObjectWithData:data];
 
     }
-    else
+    else{
         self.levels=[NSMutableArray array];
-    
-    
-    
+    }
+   
 }
+
+
 
 
 //search for document path
@@ -80,7 +86,8 @@ static LevelManager *_instance;
 - (NSString *)levelsFileName
 {
     NSArray *searchPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentPath = [searchPaths lastObject];
+    NSString *documentPath = [searchPaths objectAtIndex:0];
+   
     
     
     

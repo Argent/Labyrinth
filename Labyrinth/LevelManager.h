@@ -15,5 +15,6 @@
 
 +(LevelManager*)sharedManager;
 -(BOOL)saveLevel:(LevelInfo*)levelInfo forID:(NSInteger)ID;
+-(void)loadLevels;
 
 @end

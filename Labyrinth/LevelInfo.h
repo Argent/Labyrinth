@@ -17,7 +17,8 @@
 @property (nonatomic, strong) NSMutableArray *walls;
 
 - (id)initWithStart:(CGPoint)start end:(CGPoint)end matrix:(NSArray*)matrix walls:(NSArray*)walls;
--(NSDictionary*) getDictionary;
+- (id)initWithDictionary:(NSDictionary*)dict;
+- (NSDictionary*) getDictionary;
 
 @end
 
