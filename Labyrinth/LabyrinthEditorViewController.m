@@ -18,15 +18,17 @@
 @interface LabyrinthEditorViewController () {
     UIView *containerView;
     NSMutableArray *matrix;
+    NSString *name;
     CGPoint scrollViewOffset;
     CGSize gridSize;
     
     bool paint;
     CGPoint lastPaintCoord;
     
+    bool hasStart;
+    bool hasEnd;
+    
     LevelInfo * levelInfo;
-    
-    
 }
 @end
 
@@ -60,32 +62,41 @@
     UIImageView *imgView = [[UIImageView alloc]initWithImage:backgroundImg];
     imgView.alpha=0.5;
     imgView.frame = CGRectMake(0 - 100, 0, self.toolBarView.contentSize.width + 200, self.toolBarView.contentSize.height);
+    //imgView.transform=CGAffineTransformMakeRotation(M_PI);
     
     [self.toolBarView addSubview:imgView];
     [self.view addSubview:self.toolBarView];
     
     UIButton *saveButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    saveButton.frame=CGRectMake(22, 33, 50,50);
+    saveButton.frame=CGRectMake(22, 25, 50,24);
     saveButton.backgroundColor=[UIColor greenColor];
     [saveButton setTitle:@"save" forState:UIControlStateNormal];
     [self.toolBarView addSubview:saveButton];
     
-    [saveButton addTarget:self action:@selector(save) forControlEvents:UIControlEventTouchUpInside];
+    [saveButton addTarget:self action:@selector(alertOverwrite) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIButton *cleanButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    cleanButton.frame=CGRectMake(22, 50, 50,24);
+    cleanButton.backgroundColor=[UIColor greenColor];
+    [cleanButton setTitle:@"clean" forState:UIControlStateNormal];
+    [self.toolBarView addSubview:cleanButton];
+    
+    [cleanButton addTarget:self action:@selector(cleanScreen) forControlEvents:UIControlEventTouchUpInside];
     
     UIButton *loadButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    loadButton.frame=CGRectMake(340, 33, 50,50);
+    loadButton.frame=CGRectMake(90, 25, 50,50);
     loadButton.backgroundColor=[UIColor yellowColor];
     /*loadButton.titleLabel.frame=CGRectMake(0, 0, loadButton.frame.size.height,loadButton.frame.size.width);
-    loadButton.titleLabel.font=[UIFont systemFontOfSize:20];
-    loadButton.titleLabel.textColor=[UIColor whiteColor];
-    loadButton.titleLabel.text = @"speichern";*/
+     loadButton.titleLabel.font=[UIFont systemFontOfSize:20];
+     loadButton.titleLabel.textColor=[UIColor whiteColor];
+     loadButton.titleLabel.text = @"speichern";*/
     [loadButton setTitle:@"load" forState:UIControlStateNormal];
     [self.toolBarView addSubview:loadButton];
     
-    [loadButton addTarget:self action:@selector(load) forControlEvents:UIControlEventTouchUpInside];
+    [loadButton addTarget:self action:@selector(levelsView) forControlEvents:UIControlEventTouchUpInside];
     
     UIButton *editBoard = [UIButton buttonWithType:UIButtonTypeCustom];
-    [editBoard setFrame:CGRectMake(90,33,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
+    [editBoard setFrame:CGRectMake(150,25,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
     [editBoard setBackgroundImage:[UIImage imageNamed:@"hex_gray.png"] forState:UIControlStateNormal];
     editBoard.tag=0;
     [self.toolBarView addSubview:editBoard];
@@ -93,15 +104,15 @@
     [editBoard addTarget:self action:@selector(nodeTypeChoosen:) forControlEvents:UIControlEventTouchUpInside];
     
     UIButton *editStart = [UIButton buttonWithType:UIButtonTypeCustom];
-    [editStart setFrame:CGRectMake(150,33,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
+    [editStart setFrame:CGRectMake(210,25,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
     [editStart setBackgroundImage:[UIImage imageNamed:@"hex_turquoise.png"] forState:UIControlStateNormal];
-     editStart.tag=1;
+    editStart.tag=1;
     [self.toolBarView addSubview:editStart];
     
     [editStart addTarget:self action:@selector(nodeTypeChoosen:) forControlEvents:UIControlEventTouchUpInside];
     
     UIButton *editEnd = [UIButton buttonWithType:UIButtonTypeCustom];
-    [editEnd setFrame:CGRectMake(210,33,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
+    [editEnd setFrame:CGRectMake(270,25,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
     [editEnd setBackgroundImage:[UIImage imageNamed:@"hex_petrol.png"] forState:UIControlStateNormal];
     editEnd.tag=2;
     [self.toolBarView addSubview:editEnd];
@@ -109,12 +120,45 @@
     [editEnd addTarget:self action:@selector(nodeTypeChoosen:) forControlEvents:UIControlEventTouchUpInside];
     
     UIButton *editWalls = [UIButton buttonWithType:UIButtonTypeCustom];
-    [editWalls setFrame:CGRectMake(270,33,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
+    [editWalls setFrame:CGRectMake(330,25,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
     [editWalls setBackgroundImage:[UIImage imageNamed:@"hex_brown.png"] forState:UIControlStateNormal];
     editWalls.tag=3;
     [self.toolBarView addSubview:editWalls];
     
     [editWalls addTarget:self action:@selector(nodeTypeChoosen:) forControlEvents:UIControlEventTouchUpInside];
+    
+    //toolBar unten
+    
+    /*  self.toolBarView2 = [[UIScrollView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height - toolbarHeight, self.view.frame.size.width, toolbarHeight)];
+     self.toolBarView2.contentSize = CGSizeMake(self.view.frame.size.width * 2, toolbarHeight);
+     self.toolBarView2.backgroundColor = [UIColor clearColor];
+     UIImage *backgroundImg2 = [UIImage imageNamed:@"toolbar.png"];
+     UIImageView *imgView2 = [[UIImageView alloc]initWithImage:backgroundImg2];
+     imgView2.alpha=0.5;
+     imgView2.frame = CGRectMake(0 - 100, 0, self.toolBarView2.contentSize.width + 200, self.toolBarView2.contentSize.height);
+     [self.toolBarView2 addSubview:imgView2];
+     [self.view addSubview:self.toolBarView2];
+     
+     UIButton *wall1 = [UIButton buttonWithType:UIButtonTypeCustom];
+     [wall1 setFrame:CGRectMake(0,20,50,39)];
+     [[wall1 layer] setBorderWidth:1.0f];
+     [[wall1 layer] setBorderColor:[UIColor grayColor].CGColor];
+     wall1.tag=5;
+     
+     UIButton *wall2 = [UIButton buttonWithType:UIButtonTypeCustom];
+     [wall2 setFrame:CGRectMake(0,62,50,39)];
+     [[wall2 layer] setBorderWidth:1.0f];
+     [[wall2 layer] setBorderColor:[UIColor grayColor].CGColor];
+     wall2.tag=6;
+     
+     [self.toolBarView2 addSubview:wall1];
+     [self.toolBarView2 addSubview:wall2];
+     
+     [wall1 addTarget:self action:@selector(nodeTypeChoosen:) forControlEvents:UIControlEventTouchUpInside];
+     [wall1 addTarget:self action:@selector(chooseWalls:) forControlEvents:UIControlEventTouchUpInside];
+     [wall2 addTarget:self action:@selector(nodeTypeChoosen:) forControlEvents:UIControlEventTouchUpInside];
+     [wall2 addTarget:self action:@selector(chooseWalls:) forControlEvents:UIControlEventTouchUpInside];*/
+    
     
 }
 
@@ -141,7 +185,7 @@
     [self.scrollView addSubview:containerView];
     
     matrix = [GeometryHelper generateMatrixWithWidth:gridSize.width Height:gridSize.height withImageName:@"hex_empty.png" inContainerView:containerView];
-
+    
     for (int x = 0; x < matrix.count; x++) {
         for (int y = 0; y < ((NSArray*)matrix[0]).count; y++) {
             MazeNode *node = matrix[x][y];
@@ -162,114 +206,122 @@
     
     id obj = matrix[(int)matrixCoords.x][(int)matrixCoords.y];
     
-    
     if(self.buttonNodeType==0){
-    if (![obj isEqual:[NSNull null]]){
-        if(gesture.state == UIGestureRecognizerStateBegan){
-            //NSLog(@"Gesture started")
-            if ([obj isKindOfClass:[UIImageView class]]){
-                paint = YES;
-            }else if ([obj isKindOfClass:[MazeNode class]]){
-                paint = NO;
+        if (![obj isEqual:[NSNull null]]){
+            if(gesture.state == UIGestureRecognizerStateBegan){
+                //NSLog(@"Gesture started")
+                if ([obj isKindOfClass:[UIImageView class]]){
+                    paint = YES;
+                }else if ([obj isKindOfClass:[MazeNode class]]){
+                    paint = NO;
+                }
+                
             }
-        }
-        if (!(lastPaintCoord.x == matrixCoords.x && lastPaintCoord.y == matrixCoords.y)) {
-            if (paint){
+            
+            MazeNode *node = [MazeNode node];
+            node.Size = [SettingsStore sharedStore].hexSize;
+            
+            if (!(lastPaintCoord.x == matrixCoords.x && lastPaintCoord.y == matrixCoords.y)) {
+                if (paint){
+                    
+                    if ([obj isKindOfClass:[UIImageView class]]){
+                        
+                        MazeNode *node = [MazeNode node];
+                        node.Size = [SettingsStore sharedStore].hexSize;
+                        node.uiElement = obj;
+                        node.center = node.uiElement.center;
+                        node.MatrixCoords = CGPointMake((int)matrixCoords.x, (int)matrixCoords.y);
+                        
+                        
+                        [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_gray.png"]];
+                        
+                        matrix[(int)matrixCoords.x][(int)matrixCoords.y] = node;
+                    }
+                    
+                }
+                
+                else {
+                    
+                    if([obj isKindOfClass:[MazeNode class]]) {
+                        
+                        node=obj;
+                        
+                        if(node.isEnd){
+                            hasEnd=NO;
+                        }
+                        if(node.isStart){
+                            hasStart=NO;
+                        }
+                        
+                        node.object=nil;
+                        UIImageView *imgView = (UIImageView*)((MazeNode*)obj).uiElement;
+                        [imgView setImage:[UIImage imageNamed:@"hex_empty.png"]];
+                        matrix[(int)matrixCoords.x][(int)matrixCoords.y] = imgView;
+                        
+                    }
+                    
+                }
+            }}}
+    if (self.buttonNodeType==3){
+        
+        if (![obj isEqual:[NSNull null]]){
+            if(gesture.state == UIGestureRecognizerStateBegan){
+                MazeNode *node = [MazeNode node];
+                node.Size = [SettingsStore sharedStore].hexSize;
+                
+            }
+            if (!(lastPaintCoord.x == matrixCoords.x && lastPaintCoord.y == matrixCoords.y)) {
                 
                 MazeNode *node = [MazeNode node];
                 node.Size = [SettingsStore sharedStore].hexSize;
                 
-                if ([obj isKindOfClass:[UIImageView class]]){
+                if ([obj isKindOfClass:[MazeNode class]]) {
                     
-                    MazeNode *node = [MazeNode node];
-                    node.Size = [SettingsStore sharedStore].hexSize;
-                    node.uiElement = obj;
-                    node.center = node.uiElement.center;
-                    node.MatrixCoords = CGPointMake((int)matrixCoords.x, (int)matrixCoords.y);
-                
+                    MazeNode* node = obj;
                     
-                    [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_gray.png"]];
                     
-                    matrix[(int)matrixCoords.x][(int)matrixCoords.y] = node;
-                
-                  }else if ([obj isKindOfClass:[MazeNode class]]) {
-                
-                    node=obj;
-                      
-                    //if (!node.isStart && !node.isWall && !node.isEnd){
-                    node.object=nil;
-                    
-                    UIImageView *imgView = (UIImageView*)((MazeNode*)obj).uiElement;
-                    [imgView setImage:[UIImage imageNamed:@"hex_empty.png"]];
-                    matrix[(int)matrixCoords.x][(int)matrixCoords.y] = imgView;
-                     // }
-                    }
-            
-                }
-        }}}
-           if (self.buttonNodeType==3){
-               
-               if (![obj isEqual:[NSNull null]]){
-                   if(gesture.state == UIGestureRecognizerStateBegan){
-                       //NSLog(@"Gesture started")
-                       if ([obj isKindOfClass:[UIImageView class]]){
-                           paint = NO;
-                       }else if ([obj isKindOfClass:[MazeNode class]]){
-                           paint = YES;
-                       }
-                   }
-                   if (!(lastPaintCoord.x == matrixCoords.x && lastPaintCoord.y == matrixCoords.y)) {
-                       if (paint){
-                           
-                           MazeNode *node = [MazeNode node];
-                           node.Size = [SettingsStore sharedStore].hexSize;
-                           
-                           if ([obj isKindOfClass:[MazeNode class]]) {
-                            
-                               MazeNode* node = obj;
-                               
-                               if (!node.isStart && !node.isEnd && !node.isWall){
-                               
-                               MazeObject *wall = [MazeObject objectWithType:WALL andCenter:CGPointMake(node.center.x, node.center.y)];
-                               node.object = wall;
-                               
-                               [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_brown.png"]];
-                               
-                               matrix[(int)matrixCoords.x][(int)matrixCoords.y] = node;
-                               }
-                               
-                               else if(node.isWall){
-                               
-                               node.object=nil;
-                               
-                               UIImageView *imgView = (UIImageView*)((MazeNode*)node).uiElement;
-                               [imgView setImage:[UIImage imageNamed:@"hex_gray.png"]];
-                                matrix[(int)matrixCoords.x][(int)matrixCoords.y] = node;}
-                               
-                              
-                           }
-                           
-                       }
-                   }}}
-
-                 /*   if ([obj isKindOfClass:[MazeNode class]]){
+                    if (!node.isStart && !node.isEnd && !node.isWall){
                         
-                        node.uiElement = obj;
-                        node.center = node.uiElement.center;
-                        node.MatrixCoords = CGPointMake((int)matrixCoords.x, (int)matrixCoords.y);
-                    
-                    [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_brown.png"]];
-                    
-                    MazeObject *wall = [MazeObject objectWithType:WALL andCenter:CGPointMake(node.center.x, node.center.y)];
-                    node.object = wall;
-                    matrix[(int)matrixCoords.x][(int)matrixCoords.y] = node;
+                        MazeObject *wall = [MazeObject objectWithType:WALL andCenter:CGPointMake(node.center.x, node.center.y)];
+                        node.object = wall;
+                        
+                        [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_brown.png"]];
+                        
+                        matrix[(int)matrixCoords.x][(int)matrixCoords.y] = node;
                     }
                     
-                }*/
+                    else if( node.isWall){
+                        
+                        node.object=nil;
+                        
+                        UIImageView *imgView = (UIImageView*)((MazeNode*)node).uiElement;
+                        [imgView setImage:[UIImage imageNamed:@"hex_gray.png"]];
+                        matrix[(int)matrixCoords.x][(int)matrixCoords.y] = node;}
+                    
+                    
+                }
                 
+                
+            }}}
     
-            //NSLog(@"(%.2f,%.2f)", newCoord.x,newCoord.y);
-
+    /*   if ([obj isKindOfClass:[MazeNode class]]){
+     
+     node.uiElement = obj;
+     node.center = node.uiElement.center;
+     node.MatrixCoords = CGPointMake((int)matrixCoords.x, (int)matrixCoords.y);
+     
+     [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_brown.png"]];
+     
+     MazeObject *wall = [MazeObject objectWithType:WALL andCenter:CGPointMake(node.center.x, node.center.y)];
+     node.object = wall;
+     matrix[(int)matrixCoords.x][(int)matrixCoords.y] = node;
+     }
+     
+     }*/
+    
+    
+    //NSLog(@"(%.2f,%.2f)", newCoord.x,newCoord.y);
+    
     
     lastPaintCoord = matrixCoords;
 }
@@ -292,141 +344,168 @@
     
     id obj = matrix[(int)matrixCoords.x][(int)matrixCoords.y];
     
-   if (![obj isEqual:[NSNull null]]) {
-    
-    if (self.buttonNodeType==0) {
+    if (![obj isEqual:[NSNull null]]) {
         
-        if ([obj isKindOfClass:[UIImageView class]]){
+        if (self.buttonNodeType==0) {
+            
             MazeNode *node = [MazeNode node];
             node.Size = [SettingsStore sharedStore].hexSize;
-            node.uiElement = obj;
-            node.center = node.uiElement.center;
-            node.MatrixCoords = CGPointMake((int)matrixCoords.x, (int)matrixCoords.y);
             
-            [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_gray.png"]];
+            if ([obj isKindOfClass:[UIImageView class]]){
+                
+                
+                node.uiElement = obj;
+                node.center = node.uiElement.center;
+                node.MatrixCoords = CGPointMake((int)matrixCoords.x, (int)matrixCoords.y);
+                
+                [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_gray.png"]];
+                
+                matrix[(int)matrixCoords.x][(int)matrixCoords.y] = node;
+            }
             
-            matrix[(int)matrixCoords.x][(int)matrixCoords.y] = node;
-        }
-
             else if ([obj isKindOfClass:[MazeNode class]]){
-          
-            
-            UIImageView *imgView = (UIImageView*)((MazeNode*)obj).uiElement;
-            [imgView setImage:[UIImage imageNamed:@"hex_empty.png"]];
-            matrix[(int)matrixCoords.x][(int)matrixCoords.y] = imgView;
-            
+                
+                node=obj;
+                
+                if(node.isStart){
+                    hasStart=NO;
+                }
+                if(node.isEnd){
+                    hasEnd=NO;
+                }
+                
+                node.object=Nil;
+                
+                UIImageView *imgView = (UIImageView*)((MazeNode*)obj).uiElement;
+                [imgView setImage:[UIImage imageNamed:@"hex_empty.png"]];
+                matrix[(int)matrixCoords.x][(int)matrixCoords.y] = imgView;
+                
+            }
         }
-   }
-       
-       
-      if (self.buttonNodeType==1) {
-          if ([obj isKindOfClass:[MazeNode class]]){
-              MazeNode *touched = (MazeNode *)obj;
         
-              
-              if (touched.isStart){
-                  touched.object=Nil;
-                  
-                  UIImageView *imgView = (UIImageView*)((MazeNode*)touched).uiElement;
-                  [imgView setImage:[UIImage imageNamed:@"hex_gray.png"]];
-                  matrix[(int)matrixCoords.x][(int)matrixCoords.y] = touched;
-                  
-              }
-              
-              
-              else {
-              
-              [((UIImageView*)touched.uiElement) setImage:[UIImage imageNamed:@"hex_turquoise.png"]];
-              
-              MazeObject *start = [MazeObject objectWithType:START andCenter:CGPointMake(touched.center.x, touched.center.y)];
-              touched.object = start;
-              matrix[(int)matrixCoords.x][(int)matrixCoords.y] = touched;
-              }
-          
-          }}
-       if (self.buttonNodeType==2) {
-           if ([obj isKindOfClass:[MazeNode class]]){
-               MazeNode *touched = (MazeNode *)obj;
-               
-               
-               if (touched.isEnd){
-                   touched.object=Nil;
-                   
-                   UIImageView *imgView = (UIImageView*)((MazeNode*)touched).uiElement;
-                   [imgView setImage:[UIImage imageNamed:@"hex_gray.png"]];
-                   matrix[(int)matrixCoords.x][(int)matrixCoords.y] = touched;
-                   
-               }
-               
-               else {
-                   
-                   [((UIImageView*)touched.uiElement) setImage:[UIImage imageNamed:@"hex_petrol.png"]];
-                   
-                   MazeObject *end = [MazeObject objectWithType:END andCenter:CGPointMake(touched.center.x, touched.center.y)];
-                   touched.object = end;
-                   matrix[(int)matrixCoords.x][(int)matrixCoords.y] = touched;
-                   
-               }
-               
-           }}
+        
+        if (self.buttonNodeType==1) {
+            if ([obj isKindOfClass:[MazeNode class]]){
+                MazeNode *touched = (MazeNode *)obj;
+                
+                
+                if (touched.isStart){
+                    touched.object=Nil;
+                    hasStart=NO;
+                    
+                    UIImageView *imgView = (UIImageView*)((MazeNode*)touched).uiElement;
+                    [imgView setImage:[UIImage imageNamed:@"hex_gray.png"]];
+                    matrix[(int)matrixCoords.x][(int)matrixCoords.y] = touched;
+                    
+                }
+                
+                
+                else {
+                    
+                    if(hasStart==NO && !touched.isWall && !touched.isEnd) {
+                        
+                        [((UIImageView*)touched.uiElement) setImage:[UIImage imageNamed:@"hex_turquoise.png"]];
+                        
+                        MazeObject *start = [MazeObject objectWithType:START andCenter:CGPointMake(touched.center.x, touched.center.y)];
+                        touched.object = start;
+                        matrix[(int)matrixCoords.x][(int)matrixCoords.y] = touched;
+                        hasStart=YES;
+                    }
+                }
+                
+            }}
+        if (self.buttonNodeType==2) {
+            
+            
+            if ([obj isKindOfClass:[MazeNode class]]){
+                MazeNode *touched = (MazeNode *)obj;
+                
+                
+                if (touched.isEnd){
+                    touched.object=Nil;
+                    hasEnd =NO;
+                    
+                    UIImageView *imgView = (UIImageView*)((MazeNode*)touched).uiElement;
+                    [imgView setImage:[UIImage imageNamed:@"hex_gray.png"]];
+                    matrix[(int)matrixCoords.x][(int)matrixCoords.y] = touched;
+                    
+                }
+                
+                else {
+                    if(hasEnd==NO && !touched.isStart && !touched.isWall){
+                        
+                        [((UIImageView*)touched.uiElement) setImage:[UIImage imageNamed:@"hex_petrol.png"]];
+                        
+                        MazeObject *end = [MazeObject objectWithType:END andCenter:CGPointMake(touched.center.x, touched.center.y)];
+                        touched.object = end;
+                        matrix[(int)matrixCoords.x][(int)matrixCoords.y] = touched;
+                        hasEnd=YES;
+                    }
+                    
+                }
+                
+            }}
+        
+        if (self.buttonNodeType==3) {
+            if ([obj isKindOfClass:[MazeNode class]]){
+                MazeNode *touched = (MazeNode *)obj;
+                
+                
+                if (touched.isWall){
+                    touched.object=Nil;
+                    
+                    UIImageView *imgView = (UIImageView*)((MazeNode*)touched).uiElement;
+                    [imgView setImage:[UIImage imageNamed:@"hex_gray.png"]];
+                    matrix[(int)matrixCoords.x][(int)matrixCoords.y] = touched;
+                    
+                }
+                
+                else {
+                    
+                    if (!touched.isStart && !touched.isEnd){
+                        
+                        [((UIImageView*)touched.uiElement) setImage:[UIImage imageNamed:@"hex_brown.png"]];
+                        
+                        MazeObject *wall = [MazeObject objectWithType:WALL andCenter:CGPointMake(touched.center.x, touched.center.y)];
+                        touched.object = wall;
+                        matrix[(int)matrixCoords.x][(int)matrixCoords.y] = touched;
+                    }
+                    
+                }
+                
+            }}
+    }}
 
-       if (self.buttonNodeType==3) {
-           if ([obj isKindOfClass:[MazeNode class]]){
-               MazeNode *touched = (MazeNode *)obj;
-               
-               
-               if (touched.isWall){
-                   touched.object=Nil;
-                   
-                   UIImageView *imgView = (UIImageView*)((MazeNode*)touched).uiElement;
-                   [imgView setImage:[UIImage imageNamed:@"hex_gray.png"]];
-                   matrix[(int)matrixCoords.x][(int)matrixCoords.y] = touched;
-                   
-               }
-               
-               else {
-                   
-                   [((UIImageView*)touched.uiElement) setImage:[UIImage imageNamed:@"hex_brown.png"]];
-                   
-                   MazeObject *wall = [MazeObject objectWithType:WALL andCenter:CGPointMake(touched.center.x, touched.center.y)];
-                   touched.object = wall;
-                   matrix[(int)matrixCoords.x][(int)matrixCoords.y] = touched;
-                   
-               }
-               
-           }}
-      }}
-                                    
-                                   
-        
-        //NSLog(@"Touch Node Center: (x:%.2f,y:%.2f)", node.center.x, node.center.y);
-        
-        
-        
-            /*
-             MazeObject *wall = [MazeObject objectWithType:WALL andCenter:CGPointMake(node.center.x, node.center.y)];
-             MazeNode *nn = [wall generateAndAddNodeRelative:CGPointMake(0,0)];
-             [self addDragEventsToNode:nn];
-             node.object = wall;
-             [containerView addSubview:wall.containerView];
-             */
-        
-   
-    
-        //NSLog(@"Touch GenNode Center: (x:%.2f,y:%.2f)", nn.uiElement.center.x, nn.uiElement.center.y);
-        //NSLog(@"Touch Container Center: (x:%.2f,y:%.2f)", start.containerView.center.x, start.containerView.center.y);
-        //NSLog(@"Touch Container Frame: (x:%.2f,y:%.2f,width:%.2f,height:%.2f)", start.containerView.frame.origin.x, start.containerView.frame.origin.y, start.containerView.frame.size.width, start.containerView.frame.size.height);
-        
-        /*
-         NSArray *neighbours =  [GeometryHelper getNeighboursFrom:matrixCoords GridSize:gridSize];
-         for (NSValue *neighbour in neighbours) {
-         CGPoint coords = [neighbour CGPointValue];
-         MazeNode *node = matrix[(int)coords.x][(int)coords.y];
-         if (![node isEqual:[NSNull null]]) {
-         [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_red.png"]];
-         };
-         }*/
-    
+
+
+//NSLog(@"Touch Node Center: (x:%.2f,y:%.2f)", node.center.x, node.center.y);
+
+
+
+/*
+ MazeObject *wall = [MazeObject objectWithType:WALL andCenter:CGPointMake(node.center.x, node.center.y)];
+ MazeNode *nn = [wall generateAndAddNodeRelative:CGPointMake(0,0)];
+ [self addDragEventsToNode:nn];
+ node.object = wall;
+ [containerView addSubview:wall.containerView];
+ */
+
+
+
+//NSLog(@"Touch GenNode Center: (x:%.2f,y:%.2f)", nn.uiElement.center.x, nn.uiElement.center.y);
+//NSLog(@"Touch Container Center: (x:%.2f,y:%.2f)", start.containerView.center.x, start.containerView.center.y);
+//NSLog(@"Touch Container Frame: (x:%.2f,y:%.2f,width:%.2f,height:%.2f)", start.containerView.frame.origin.x, start.containerView.frame.origin.y, start.containerView.frame.size.width, start.containerView.frame.size.height);
+
+/*
+ NSArray *neighbours =  [GeometryHelper getNeighboursFrom:matrixCoords GridSize:gridSize];
+ for (NSValue *neighbour in neighbours) {
+ CGPoint coords = [neighbour CGPointValue];
+ MazeNode *node = matrix[(int)coords.x][(int)coords.y];
+ if (![node isEqual:[NSNull null]]) {
+ [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_red.png"]];
+ };
+ }*/
+
 
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
@@ -464,6 +543,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.wallList= [[NSMutableArray alloc]init];
+    
+    
 	// Do any additional setup after loading the view.
 }
 
@@ -473,49 +555,119 @@
     // Dispose of any resources that can be recreated.
 }
 
--(void)save{
-    LevelInfo *info=[[LevelInfo alloc]initWithStart:CGPointZero end:CGPointZero matrix:matrix walls:nil];
+
+-(void)alertOverwrite {
     
-    NSLog(@"info: %i", info.board.count );
+    NSLog(@"levelId vor alert:%i",self.levelID);
     
-    [[LevelManager sharedManager] saveLevel:info forID:0];
+    if (self.levelID!=-1){
+        
+        UIAlertView* alertSave = [[UIAlertView  alloc]initWithTitle:@"" message:@"Overwrite Level?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"overwrite", @"add new level", nil];
+        alertSave.tag=0;
+        [alertSave show];}
+    
+    else{
+        
+        [self alertLevelName];
+    }
     
 }
 
--(void)load{
+-(void)alertLevelName {
+    
+    UIAlertView *alertName= [[UIAlertView alloc] initWithTitle:@"Levelname" message:@"Enter Levelname:" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Save",nil];
+    alertName.alertViewStyle = UIAlertViewStylePlainTextInput;
+    alertName.tag=1;
+    [alertName show];
+    
+}
+
+
+-(void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex{
+    
+    if (alertView.tag ==0){
+        
+        if(buttonIndex==1){
+            
+            name=levelInfo.name;
+            [self save];
+        }
+        
+        else if (buttonIndex == 2){
+            [self alertLevelName];
+            
+            
+        }}
+    
+    if (alertView.tag == 1){
+        
+        if(buttonIndex == 1){
+            
+            UITextField *nameTextField = [alertView textFieldAtIndex:0];
+            name=nameTextField.text;
+            self.levelID=-1;
+            [self save];
+            
+            
+        }
+    }
+}
+
+
+
+-(void)save{
+    
+    LevelInfo *info=[[LevelInfo alloc]initWithStart:CGPointZero end:CGPointZero matrix:matrix walls:self.wallList name:name];
+    
+    [[LevelManager sharedManager] saveLevel:info forID:self.levelID];
+    self.levelID=[LevelManager sharedManager].levels.count-1;
+    NSLog(@"levelID: %i", self.levelID );
+    
+}
+
+
+
+-(void)levelsView {
+    [self dismissViewControllerAnimated:YES completion:nil];
+    [self cleanScreen];
+}
+
+
+-(void)loadAtIndex:(int)index{
+    
+    self.levelID=index;
+    
     LevelManager *manager =[LevelManager sharedManager];
     NSMutableArray *allLevels = manager.levels;
     
     if (allLevels.count>0){
-    LevelInfo *info2=[[LevelInfo alloc]initWithDictionary:allLevels[0]];
-    NSLog(@"info2: %i", info2.board.count);
-    
-    levelInfo = info2;
+        LevelInfo *info2=[[LevelInfo alloc]initWithDictionary:allLevels[index-1]];
         
-    [self cleanScreen];
-    [self buildBoard:info2];
+        levelInfo = info2;
+        NSLog(@"levelID nach load: %i", self.levelID);
+        
+        [self buildBoard:info2];
+        
         
     }
     else  NSLog(@"Fehler");
-    
-    
 }
 
 
 -(void)nodeTypeChoosen:(UIButton*) nodeType {
     
     self.buttonNodeType=nodeType.tag;
-   
+    
     
 }
 
 -(void)cleanScreen{
-  
-//bildschirm leeren
+    
+    //board und alle weiteren Levelinfovariablen leeren
     
     for (int x = 0; x < gridSize.height; x++) {
         for (int y = 0; y < gridSize.width; y++){
-           
+            
             id node = matrix[x][y];
             
             if ([node isKindOfClass:[MazeNode class]]){
@@ -525,12 +677,17 @@
                 UIImageView *imgView = (UIImageView*)((MazeNode*)node2).uiElement;
                 [imgView setImage:[UIImage imageNamed:@"hex_empty.png"]];
                 matrix[x][y] = imgView;
-
+                
             }
+            
         }
     }
-
+    [self.wallList removeAllObjects];
+    hasEnd=NO;
+    hasStart=NO;
+    self.levelID=-1;
 }
+
 
 -(void)buildBoard:(LevelInfo*) info{
     
@@ -538,9 +695,9 @@
     NSInteger ab=[info.minX integerValue];
     NSLog(@"ab:%ld",(long)ab);
     
-   
+    
     NSMutableArray *board= info.board;
-
+    
     
     for (int x = 0; x < board.count; x++) {
         NSInteger bc=[info.minY integerValue];
@@ -561,9 +718,9 @@
                 
                 [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_gray.png"]];
                 
-               
+                
             }
-        
+            
             else if (nodeType==[NSNumber numberWithInteger:4]){
                 
                 node.center = node.uiElement.center;
@@ -573,7 +730,8 @@
                 
                 MazeObject *end = [MazeObject objectWithType:END andCenter:CGPointMake(node.center.x, node.center.y)];
                 node.object = end;
-                }
+                hasEnd=YES;
+            }
             
             else if (nodeType==[NSNumber numberWithInteger:3]){
                 
@@ -584,6 +742,7 @@
                 
                 MazeObject *start = [MazeObject objectWithType:START andCenter:CGPointMake(node.center.x, node.center.y)];
                 node.object = start;
+                hasStart=YES;
             }
             
             else if (nodeType==[NSNumber numberWithInteger:2]){
@@ -595,16 +754,48 @@
                 
                 MazeObject *wall = [MazeObject objectWithType:WALL andCenter:CGPointMake(node.center.x, node.center.y)];
                 node.object = wall;
+                hasStart=YES;
             }
             
             matrix[ab][bc] = node;
             bc++;
             
         }
-      ab++;
+        ab++;
         
         
     }
 }
+
+
+/*
+
+-(void)chooseWalls:(NSMutableArray*)choosenWall{
+    
+    NSMutableArray* wallArray=[NSMutableArray array];
+    
+    if(self.buttonNodeType == 5){
+        MazeObject *obj = [MazeObject objectWithType:WALL andCenter:CGPointMake(0, 0)];
+        [wallArray addObject:[obj generateAndAddNodeRelative:CGPointMake(0,0)]];
+        [wallArray addObject:[obj generateAndAddNodeRelative:CGPointMake(1,0)]];
+        
+        
+    }
+    
+    if(self.buttonNodeType == 6){
+        MazeObject *obj = [MazeObject objectWithType:WALL andCenter:CGPointMake(0, 0)];
+        [wallArray addObject:[obj generateAndAddNodeRelative:CGPointMake(0,0)]];
+        [wallArray addObject:[obj generateAndAddNodeRelative:CGPointMake(1,0)]];
+        [wallArray addObject:[obj generateAndAddNodeRelative:CGPointMake(1,0)]];
+        
+    }
+    
+    [self.wallList addObject:wallArray];
+    
+    NSLog(@"wallList:%i", self.wallList.count);
+    
+}
+*/
+
 
 @end

@@ -8,11 +8,17 @@
 
 #import <UIKit/UIKit.h>
 
-@interface LabyrinthEditorViewController : UIViewController <UIScrollViewDelegate>
+@interface LabyrinthEditorViewController : UIViewController <UIScrollViewDelegate, UIAlertViewDelegate>
 
 @property (nonatomic,strong) UIScrollView *scrollView;
 @property (nonatomic,strong) UIScrollView *toolBarView;
+@property (nonatomic,strong) UIScrollView *toolBarView2;
+@property (nonatomic,strong) UIScrollView *scrollView2;
 @property (nonatomic) int buttonNodeType;
+@property (nonatomic,strong) NSMutableArray* wallList;
+@property (nonatomic) int levelID;
 //@property (nonatomic, strong) LevelInfo *levelInfo;
+
+-(void)loadAtIndex:(int)index;
 
 @end

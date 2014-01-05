@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "LevelInfo.h"
+#import "LevelsViewController.h"
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -16,9 +17,11 @@
     // Override point for customization after application launch.
     
     //self.rootViewController = [[LabyrinthViewController alloc]initWithNibName:nil bundle:nil];
-    self.rootViewController = [[LabyrinthEditorViewController alloc]initWithNibName:nil bundle:nil];
-    self.window.rootViewController = self.rootViewController;
-    
+//    self.window.rootViewController = self.rootViewController;
+    LevelsViewController *vc = [[LevelsViewController alloc]initWithNibName:@"LevelsViewController" bundle:nil];
+
+    self.window.rootViewController = vc;
+  
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     
