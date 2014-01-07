@@ -29,6 +29,9 @@
     bool hasEnd;
     
     LevelInfo * levelInfo;
+    
+    NSMutableArray *toolbarItemsLabel;
+    NSMutableArray *objCounts;
 }
 @end
 
@@ -41,7 +44,8 @@
         paint = YES;
         scrollViewOffset = CGPointMake(0.0, 0.0);
         [self initGrid];
-        [self initToolbar];
+        [self initToolbarBottom];
+        [self initToolbarTop];
         UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapGestureCaptured:)];
         [self.scrollView addGestureRecognizer:singleTap];
         
@@ -51,21 +55,120 @@
     }
     return self;
 }
-
-
--(void)initToolbar{
+-(void)initToolbars:(bool)top{
+    int yPosition = 0;
     int toolbarHeight = 100;
-    self.toolBarView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height - toolbarHeight, self.view.frame.size.width, toolbarHeight)];
-    self.toolBarView.contentSize = CGSizeMake(self.view.frame.size.width * 2, toolbarHeight);
-    self.toolBarView.backgroundColor = [UIColor clearColor];
+    if(!top){
+        yPosition = self.view.frame.size.height - toolbarHeight;
+        self.toolBarView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, yPosition, self.view.frame.size.width, toolbarHeight)];
+        self.toolBarView.contentSize = CGSizeMake(self.view.frame.size.width * 2, toolbarHeight);
+        self.toolBarView.backgroundColor = [UIColor clearColor];
+    }else{
+        self.toolBarView2 = [[UIScrollView alloc]initWithFrame:CGRectMake(0, yPosition, self.view.frame.size.width, toolbarHeight)];
+        self.toolBarView2.contentSize = CGSizeMake(self.view.frame.size.width * 2, toolbarHeight);
+        self.toolBarView2.backgroundColor = [UIColor clearColor];
+    }
     UIImage *backgroundImg = [UIImage imageNamed:@"toolbar.png"];
     UIImageView *imgView = [[UIImageView alloc]initWithImage:backgroundImg];
     imgView.alpha=0.5;
     imgView.frame = CGRectMake(0 - 100, 0, self.toolBarView.contentSize.width + 200, self.toolBarView.contentSize.height);
-    //imgView.transform=CGAffineTransformMakeRotation(M_PI);
-    
-    [self.toolBarView addSubview:imgView];
-    [self.view addSubview:self.toolBarView];
+    if(top){
+        imgView.transform = CGAffineTransformMakeRotation(M_PI);
+        [self.toolBarView2 addSubview:imgView];
+        [self.view addSubview:self.toolBarView2];
+    }else{
+        [self.toolBarView addSubview:imgView];
+        [self.view addSubview:self.toolBarView];
+    }
+}
+-(void)initToolbarTop{
+    [self initToolbars:YES];
+    NSMutableArray *wallNodes = [NSMutableArray array];
+    NSMutableArray *objNodes = [NSMutableArray array];
+    MazeObject *obj1 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+    [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(0,0)]];
+    [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(-1,1)]];
+    [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(0,1)]];
+    //[wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(-1,2)]];
+    [objNodes addObject:obj1];
+    MazeObject *obj2 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+    [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,0)]];
+    [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,1)]];
+    [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,2)]];
+    [objNodes addObject:obj2];
+    MazeObject *obj3 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+    [wallNodes addObject:[obj3 generateAndAddNodeRelative:CGPointMake(0,0)]];
+    [wallNodes addObject:[obj3 generateAndAddNodeRelative:CGPointMake(1,0)]];
+    [objNodes addObject:obj3];
+    MazeObject *obj4 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+    [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(0,0)]];
+    [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(0,1)]];
+    [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(-1,2)]];
+    [objNodes addObject:obj4];
+    for (MazeObject* objects in objNodes) {
+        [GeometryHelper scaleToToolbar:objects withLength:@"height"];
+        [GeometryHelper scaleToToolbar:objects withLength:@"width"];
+    }
+    NSMutableArray *toolbarItems = [NSMutableArray array];
+    toolbarItemsLabel = [NSMutableArray array];
+    objCounts = [NSMutableArray array];
+    int itemSize = [SettingsStore sharedStore].toolbarHeight-30;
+    for(int i = 0; i < 4; i++){
+        objCounts[i] = [NSNumber numberWithInt:0];
+        
+        toolbarItems[i] = [[UIView alloc] initWithFrame:CGRectMake(10+i*(itemSize+10), self.toolBarView2.frame.size.height/2-itemSize/2-10, itemSize, itemSize)];
+        [((UIView*)toolbarItems[i]).layer setBorderWidth:1.0];
+        [((UIView*)toolbarItems[i]).layer setBorderColor:[UIColor blackColor].CGColor];
+        [self.toolBarView2 addSubview:toolbarItems[i]];
+        UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 15, 15)];
+        UIButton *plus = [[UIButton alloc]initWithFrame:CGRectMake(0, ((UIView*)toolbarItems[i]).frame.size.height-15, 15, 15)];
+        UIButton *minus = [[UIButton alloc]initWithFrame:CGRectMake(((UIView*)toolbarItems[i]).frame.size.width-15,((UIView*)toolbarItems[i]).frame.size.height-15, 15, 15)];
+        plus.tag = i+4;
+        minus.tag = i+4;
+        [label setBackgroundColor:[UIColor blackColor]];
+        [label setTextColor:[UIColor whiteColor]];
+        [label setFont:[UIFont boldSystemFontOfSize:12]];
+        label.textAlignment = NSTextAlignmentCenter;
+        ((MazeObject*) objNodes[i]).containerView.center = CGPointMake(((UIView*)toolbarItems[i]).frame.size.width/2+10+i*(itemSize+10), ((UIView*)toolbarItems[i]).frame.size.height/2+self.toolBarView.frame.size.height/2-itemSize/2-10);
+        [label setText:[NSString stringWithFormat:@"1"]];
+        [toolbarItemsLabel addObject:label];
+        [((UIView*)toolbarItems[i]) addSubview:label];
+        [plus setBackgroundColor:[UIColor blackColor]];
+        [plus setTitleColor:[UIColor greenColor] forState:UIControlStateNormal];
+        [plus setTitle:@"+" forState:UIControlStateNormal];
+        [plus addTarget:self action:@selector(plusObjects:) forControlEvents:UIControlEventTouchUpInside];
+        [((UIView*)toolbarItems[i]) addSubview:plus];
+        [minus setBackgroundColor:[UIColor blackColor]];
+        [minus setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+        [minus setTitle:@"-" forState:UIControlStateNormal];
+        [((UIView*)toolbarItems[i]) addSubview:minus];
+        [minus addTarget:self action:@selector(minusObjects:) forControlEvents:UIControlEventTouchUpInside];    }
+
+    [self.toolBarView2 addSubview:obj1.containerView];
+    [self.toolBarView2 addSubview:obj2.containerView];
+    [self.toolBarView2 addSubview:obj3.containerView];
+    [self.toolBarView2 addSubview:obj4.containerView];
+}
+-(void)plusObjects:(UIButton*) plusMinusType {
+    [self plusMinusObjects:YES andType:plusMinusType];
+}
+-(void)minusObjects:(UIButton*) plusMinusType {
+    [self plusMinusObjects:NO andType:plusMinusType];
+}
+-(void)plusMinusObjects:(bool)plus andType:(UIButton*) buttonType {
+    for(int i = 4; i < 9; i++){
+        if(buttonType.tag == i){
+            int tmpCount = [((UILabel*)toolbarItemsLabel[i-4]).text intValue];
+            if(!plus && tmpCount > 0){
+                [(UILabel*)toolbarItemsLabel[i-4] setText:[NSString stringWithFormat:@"%@", [NSNumber numberWithInt:tmpCount-1]]];
+            }else if (plus){
+                [(UILabel*)toolbarItemsLabel[i-4] setText:[NSString stringWithFormat:@"%@", [NSNumber numberWithInt:tmpCount+1]]];
+            }
+        }
+    }
+}
+-(void)initToolbarBottom{
+    [self initToolbars:NO];
     
     UIButton *saveButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     saveButton.frame=CGRectMake(22, 25, 50,24);
