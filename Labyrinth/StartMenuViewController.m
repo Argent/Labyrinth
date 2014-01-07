@@ -10,6 +10,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "LabyrinthEditorViewController.h"
 #import "LabyrinthViewController.h"
+#import "LevelsViewController.h"
 
 @interface StartMenuViewController ()
 
@@ -51,7 +52,9 @@
 }
 
 - (IBAction)editorButtonPressed:(UIButton *)sender {
-    LabyrinthEditorViewController *vc = [[LabyrinthEditorViewController alloc]initWithNibName:nil bundle:nil];
+  //  LabyrinthEditorViewController *vc = [[LabyrinthEditorViewController alloc]initWithNibName:nil bundle:nil];
+     LevelsViewController *vc = [[LevelsViewController alloc]initWithNibName:@"LevelsViewController" bundle:nil];
+    
     [self presentViewController:vc animated:YES completion:nil];
 }
 @end
