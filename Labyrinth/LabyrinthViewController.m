@@ -33,6 +33,9 @@
     bool touchedDown;
     bool overGameField;
     
+    bool hasStart;
+    bool hasEnd;
+    
     CGPoint scrollViewOffset;
     
     UIImageView *movingView;

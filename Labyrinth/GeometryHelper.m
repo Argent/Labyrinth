@@ -548,6 +548,9 @@
                 node.uiElement = uiImage;
                 
                 [matrix[x] addObject:node];
+                
+               
+             //bei ungeraden vorne kein node / bei geraden hinten keins
             } else {
                 [matrix[x] addObject:[NSNull null]];
             }
@@ -586,7 +589,7 @@
     return matrix;
 }
 
-+(NSArray *)cropMatrix:(NSArray *)matrix {
++(NSDictionary *)cropMatrix:(NSArray *)matrix {
     int minX = INT32_MAX;
     int maxX = 0;
     int minY = INT32_MAX;
@@ -596,10 +599,10 @@
         for (int y = 0; y < ((NSArray*)matrix[0]).count; y++) {
             id obj = matrix[x][y];
             if (![obj isEqual:[NSNull null]] && [obj isKindOfClass:[MazeNode class]]) {
-                minX = MIN(minX, x);
-                minY = MIN(minY, y);
-                maxX = MAX(maxX, x);
-                maxY = MAX(maxY, y);
+               minX = MIN(minX, x);
+               minY = MIN(minY, y);
+               maxX = MAX(maxX, x);
+               maxY = MAX(maxY, y);
             }
         }
     }
@@ -609,12 +612,14 @@
         [newMatrix addObject:[NSMutableArray array]];
         for (int y = minY; y <= maxY; y++) {
             MazeNode *node = matrix[x][y];
-            node.MatrixCoords = CGPointMake(x, y);
-            [newMatrix[x] addObject:node];
+            //node.MatrixCoords = CGPointMake(x, y);
+            NSLog(@"%i, %i", x,y);
+            [newMatrix[x - minX] addObject:node];
         }
     }
     
-    return newMatrix;
+    
+    return [NSDictionary dictionaryWithObjectsAndKeys:newMatrix, @"matrix", [NSNumber numberWithInt:minX], @"minX", [NSNumber numberWithInt:minY], @"minY", nil];
 }
 
 +(bool)compareWallObject:(MazeObject *)object1 compareWith:(MazeObject *)object2{

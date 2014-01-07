@@ -23,6 +23,8 @@
 @property (nonatomic, readonly) NSArray *neighbours;
 @property (nonatomic, weak) UIView *uiElement;
 @property (nonatomic, readonly) bool isWall;
+@property (nonatomic) bool isStart;
+@property (nonatomic, readonly) bool isEnd;
 
 @property (nonatomic, strong) MazeObject *object;
 

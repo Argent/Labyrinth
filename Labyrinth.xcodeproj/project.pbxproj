@@ -170,6 +170,9 @@
 				B547D8E2186214D400680E42 /* StartMenuViewController.xib */,
 				B5CED2691844BD29004BC7CE /* LabyrinthViewController.h */,
 				B5CED26A1844BD29004BC7CE /* LabyrinthViewController.m */,
+				0234140F1878AA01002F458A /* LevelsViewController.h */,
+				023414101878AA01002F458A /* LevelsViewController.m */,
+				023414121878B058002F458A /* LevelsViewController.xib */,
 				B5ACF81718578476007F58DD /* LabyrinthEditorViewController.h */,
 				B5ACF81818578476007F58DD /* LabyrinthEditorViewController.m */,
 				B56370C6185F40A000C6D8C8 /* UILabyrinthMenu.h */,
@@ -230,6 +233,7 @@
 			children = (
 				B5CED25B1844BC10004BC7CE /* LabyrinthTests-Info.plist */,
 				B5CED25C1844BC10004BC7CE /* InfoPlist.strings */,
+				023414031878488E002F458A /* Walls.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -313,6 +317,7 @@
 				B5F41F7E18478BC900B36789 /* hex_brown.png in Resources */,
 				B55596D618474D1500CC3A13 /* hex_gray.png in Resources */,
 				B5F41F82184797FF00B36789 /* toolbar.png in Resources */,
+				023414131878B058002F458A /* LevelsViewController.xib in Resources */,
 				B5CED2451844BC10004BC7CE /* InfoPlist.strings in Resources */,
 				B5DDA821185F9AFB0005F0B1 /* hex_coin.png in Resources */,
 				B58CA7C41849337500C06874 /* hex_red.png in Resources */,
@@ -328,6 +333,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				023414051878488E002F458A /* Walls.plist in Resources */,
 				B5CED25E1844BC10004BC7CE /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -349,7 +355,10 @@
 				B55596D9184784FD00CC3A13 /* MazeObject.m in Sources */,
 				B5CED24B1844BC10004BC7CE /* AppDelegate.m in Sources */,
 				B5CED2471844BC10004BC7CE /* main.m in Sources */,
+				022F3F51185F263800D54DBE /* LevelInfo.m in Sources */,
 				B5C283B518452080005A02B1 /* NSMutableArray+QueueAdditions.m in Sources */,
+				022F3F4E185F252400D54DBE /* LevelManager.m in Sources */,
+				023414111878AA01002F458A /* LevelsViewController.m in Sources */,
 				B5C283B818452571005A02B1 /* MazeNode.m in Sources */,
 				B5CB8A991848633F00CB8EA2 /* UIMazeControl.m in Sources */,
 				B58CA7C7184BA46C00C06874 /* UIBezierView.m in Sources */,
