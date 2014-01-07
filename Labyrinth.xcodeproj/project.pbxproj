@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		022F3F4E185F252400D54DBE /* LevelManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 022F3F4D185F252400D54DBE /* LevelManager.m */; };
+		022F3F51185F263800D54DBE /* LevelInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 022F3F50185F263800D54DBE /* LevelInfo.m */; };
+		023414041878488E002F458A /* Walls.plist in Resources */ = {isa = PBXBuildFile; fileRef = 023414031878488E002F458A /* Walls.plist */; };
+		023414051878488E002F458A /* Walls.plist in Resources */ = {isa = PBXBuildFile; fileRef = 023414031878488E002F458A /* Walls.plist */; };
+		023414111878AA01002F458A /* LevelsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 023414101878AA01002F458A /* LevelsViewController.m */; };
+		023414131878B058002F458A /* LevelsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 023414121878B058002F458A /* LevelsViewController.xib */; };
 		B547D8E3186214D400680E42 /* StartMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B547D8E1186214D400680E42 /* StartMenuViewController.m */; };
 		B547D8E4186214D400680E42 /* StartMenuViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B547D8E2186214D400680E42 /* StartMenuViewController.xib */; };
 		B55596D618474D1500CC3A13 /* hex_gray.png in Resources */ = {isa = PBXBuildFile; fileRef = B55596D518474D1500CC3A13 /* hex_gray.png */; };
@@ -54,6 +60,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		020373F818531FC5000CD00C /* EditorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditorViewController.h; sourceTree = "<group>"; };
+		020373F918531FC5000CD00C /* EditorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditorViewController.m; sourceTree = "<group>"; };
+		020373FB185323B1000CD00C /* TestMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestMenuViewController.h; sourceTree = "<group>"; };
+		020373FC185323B1000CD00C /* TestMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestMenuViewController.m; sourceTree = "<group>"; };
+		022F3F4C185F252400D54DBE /* LevelManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelManager.h; sourceTree = "<group>"; };
+		022F3F4D185F252400D54DBE /* LevelManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LevelManager.m; sourceTree = "<group>"; };
+		022F3F4F185F263800D54DBE /* LevelInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelInfo.h; sourceTree = "<group>"; };
+		022F3F50185F263800D54DBE /* LevelInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LevelInfo.m; sourceTree = "<group>"; };
+		023414031878488E002F458A /* Walls.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Walls.plist; sourceTree = "<group>"; };
+		0234140F1878AA01002F458A /* LevelsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LevelsViewController.h; path = ../LevelsViewController.h; sourceTree = "<group>"; };
+		023414101878AA01002F458A /* LevelsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LevelsViewController.m; path = ../LevelsViewController.m; sourceTree = "<group>"; };
+		023414121878B058002F458A /* LevelsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LevelsViewController.xib; sourceTree = "<group>"; };
 		B547D8E0186214D400680E42 /* StartMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StartMenuViewController.h; sourceTree = "<group>"; };
 		B547D8E1186214D400680E42 /* StartMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StartMenuViewController.m; sourceTree = "<group>"; };
 		B547D8E2186214D400680E42 /* StartMenuViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StartMenuViewController.xib; sourceTree = "<group>"; };
@@ -175,6 +193,10 @@
 				023414121878B058002F458A /* LevelsViewController.xib */,
 				B5ACF81718578476007F58DD /* LabyrinthEditorViewController.h */,
 				B5ACF81818578476007F58DD /* LabyrinthEditorViewController.m */,
+				022F3F4F185F263800D54DBE /* LevelInfo.h */,
+				022F3F50185F263800D54DBE /* LevelInfo.m */,
+				022F3F4C185F252400D54DBE /* LevelManager.h */,
+				022F3F4D185F252400D54DBE /* LevelManager.m */,
 				B56370C6185F40A000C6D8C8 /* UILabyrinthMenu.h */,
 				B56370C7185F40A000C6D8C8 /* UILabyrinthMenu.m */,
 				B5C283B318452068005A02B1 /* NSMutableArray+QueueAdditions.h */,
@@ -324,6 +346,7 @@
 				B5CED24D1844BC10004BC7CE /* Images.xcassets in Resources */,
 				B5589F00185A3D65002EB496 /* hex_small_red.png in Resources */,
 				B5ACF816185783CF007F58DD /* hex_empty.png in Resources */,
+				023414041878488E002F458A /* Walls.plist in Resources */,
 				B547D8E4186214D400680E42 /* StartMenuViewController.xib in Resources */,
 				B5F41F8018478BC900B36789 /* hex_turquoise.png in Resources */,
 			);

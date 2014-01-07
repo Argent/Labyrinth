@@ -17,7 +17,11 @@
 //@property (nonatomic, strong) LabyrinthViewController *rootViewController;
 //@property (nonatomic, strong) LabyrinthEditorViewController *rootViewController;
 
-@property (nonatomic, strong) StartMenuViewController *rootViewController;
+//@property (nonatomic, strong) StartMenuViewController *rootViewController;
+
+
+@property (nonatomic, strong) UIViewController *rootViewController;
+
 
 
 @end
