@@ -114,7 +114,7 @@
     toolbarItemsLabel = [NSMutableArray array];
     objCounts = [NSMutableArray array];
     int itemSize = [SettingsStore sharedStore].toolbarHeight-30;
-    for(int i = 0; i < objCounts.count; i++){
+    for(int i = 0; i < 4; i++){
         objCounts[i] = [NSNumber numberWithInt:0];
         
         toolbarItems[i] = [[UIView alloc] initWithFrame:CGRectMake(10+i*(itemSize+10), self.toolBarView2.frame.size.height/2-itemSize/2-10, itemSize, itemSize)];
