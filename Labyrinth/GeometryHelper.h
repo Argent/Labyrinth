@@ -31,5 +31,6 @@
 +(NSDictionary*)cropMatrix:(NSArray*)matrix;
 +(bool)compareWallObject:(MazeObject *)object1 compareWith:(MazeObject *)object2;
 +(MazeObject*)scaleToToolbar:(MazeObject *)object withLength:(NSString*)length;
++(void)connectMatrix:(NSArray*)matrix;
 
 @end

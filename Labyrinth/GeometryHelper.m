@@ -102,7 +102,7 @@
     for (int x = 0; x < matrix.count; x++) {
         for (int y = 0; y < ((NSArray*)matrix[0]).count; y++) {
             MazeNode *node = matrix[x][y];
-            if (![node isEqual:[NSNull null]]){
+            if (![node isEqual:[NSNull null]] && [node isKindOfClass:[MazeNode class]]){
                 node.steps = -1;
             }
         }
@@ -121,7 +121,7 @@
         NSArray *neighbours = currentNode.neighbours;
         for (MazeNode *node in neighbours) {
             int nextStepValue = currentNode.steps + 1;
-            if (!node.isWall && (node.steps == -1 || nextStepValue < node.steps)) {
+            if ([node isKindOfClass:[MazeNode class]] && !node.isWall && (node.steps == -1 || nextStepValue < node.steps)) {
                 node.steps = nextStepValue;
                 [nodeList enqueue:node];
             }
@@ -587,6 +587,29 @@
         }
     }
     return matrix;
+}
+
++(void)connectMatrix:(NSArray *)matrix{
+    int width = matrix.count;
+    int height = ((NSArray*)matrix[0]).count;
+    
+    for (int x = 0; x < matrix.count; x++) {
+        for (int y = 0; y < ((NSArray*)matrix[0]).count; y++) {
+            MazeNode *node = matrix[x][y];
+            if (![node isEqual:[NSNull null]] && [node isKindOfClass:[MazeNode class]]) {
+                CGSize gridSize  = CGSizeMake(width, height);
+                NSArray *neigbours = [GeometryHelper getNeighboursFrom:CGPointMake(x, y) GridSize:gridSize];
+                for (NSValue *val in neigbours) {
+                    CGPoint neigbour = [val CGPointValue];
+                    
+                    MazeNode *node2 = matrix[(int)neigbour.x][(int)neigbour.y];
+                    if (![node2 isEqual:[NSNull null]] && [node2 isKindOfClass:[MazeNode class]])
+                        [node addNeighbours:node2];
+                }
+            }
+        }
+    }
+
 }
 
 +(NSDictionary *)cropMatrix:(NSArray *)matrix {

@@ -62,7 +62,7 @@
     if(!top){
         yPosition = self.view.frame.size.height - toolbarHeight;
         self.toolBarView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, yPosition, self.view.frame.size.width, toolbarHeight)];
-        self.toolBarView.contentSize = CGSizeMake(self.view.frame.size.width * 2, toolbarHeight);
+        self.toolBarView.contentSize = CGSizeMake(self.view.frame.size.width, toolbarHeight);
         self.toolBarView.backgroundColor = [UIColor clearColor];
     }else{
         self.toolBarView2 = [[UIScrollView alloc]initWithFrame:CGRectMake(0, yPosition, self.view.frame.size.width, toolbarHeight)];
@@ -72,12 +72,14 @@
     UIImage *backgroundImg = [UIImage imageNamed:@"toolbar.png"];
     UIImageView *imgView = [[UIImageView alloc]initWithImage:backgroundImg];
     imgView.alpha=0.5;
-    imgView.frame = CGRectMake(0 - 100, 0, self.toolBarView.contentSize.width + 200, self.toolBarView.contentSize.height);
+    
     if(top){
         imgView.transform = CGAffineTransformMakeRotation(M_PI);
+        imgView.frame = CGRectMake(0 - 100, 0, self.toolBarView2.contentSize.width + 200, self.toolBarView.contentSize.height);
         [self.toolBarView2 addSubview:imgView];
         [self.view addSubview:self.toolBarView2];
     }else{
+        imgView.frame = CGRectMake(0 - 100, 0, self.toolBarView.contentSize.width + 200, self.toolBarView.contentSize.height);
         [self.toolBarView addSubview:imgView];
         [self.view addSubview:self.toolBarView];
     }
@@ -227,14 +229,14 @@
     
     UIButton *editWalls = [UIButton buttonWithType:UIButtonTypeCustom];
     [editWalls setFrame:CGRectMake(190,25,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
-    [editWalls setBackgroundImage:[UIImage imageNamed:@"hex_brown.png"] forState:UIControlStateNormal];
+    [editWalls setBackgroundImage:[UIImage imageNamed:@"hex_darkbrown.png"] forState:UIControlStateNormal];
     editWalls.tag=3;
     [self.toolBarView addSubview:editWalls];
     
     [editWalls addTarget:self action:@selector(nodeTypeChoosen:) forControlEvents:UIControlEventTouchUpInside];
     
     UIButton *editCoins = [UIButton buttonWithType:UIButtonTypeCustom];
-    [editCoins setFrame:CGRectMake(330,25,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
+    [editCoins setFrame:CGRectMake(250,25,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
     [editCoins setBackgroundImage:[UIImage imageNamed:@"hex_coin.png"] forState:UIControlStateNormal];
     editCoins.tag=4;
     [self.toolBarView addSubview:editCoins];
@@ -473,7 +475,31 @@
 
 -(void)alertOverwrite {
     
-    NSLog(@"levelId vor alert:%i",self.levelID);
+    if (!startElement || !endElement){
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No start/end button"
+                                                        message:@"Please set a start and an end button"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+        return;
+    }
+    
+    [GeometryHelper connectMatrix:matrix];
+    [GeometryHelper solveMazeFrom:startElement To:endElement Matrix:matrix];
+    NSArray *shortestPath = [GeometryHelper getShortestPathFrom:startElement To:endElement];
+    
+    if (shortestPath.count == 0) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No path from start to end"
+                                                        message:@"There is no possible path from start point to end point"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+        return;
+    }
+    
+    //NSLog(@"levelId vor alert:%i",self.levelID);
     
     if (self.levelID!=-1){
         
@@ -503,15 +529,12 @@
     if (alertView.tag ==0){
         
         if(buttonIndex==1){
-            
             name=levelInfo.name;
             [self save];
         }
         
         else if (buttonIndex == 2){
             [self alertLevelName];
-            
-            
         }}
     
     if (alertView.tag == 1){
@@ -522,8 +545,6 @@
             name=nameTextField.text;
             self.levelID=-1;
             [self save];
-            
-            
         }
     }
 }

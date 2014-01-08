@@ -79,7 +79,7 @@
     else{
     
         cell.textLabel.text = [NSString stringWithFormat:@"%i. %@", indexPath.row, [[self.levels objectAtIndex:indexPath.row - 1] objectForKey:@"name"]];
-        NSLog(@"namebeim laen:%@",[[self.levels objectAtIndex:indexPath.row - 1] objectForKey:@"name"]);
+        //NSLog(@"name beim laden:%@",[[self.levels objectAtIndex:indexPath.row - 1] objectForKey:@"name"]);
         
         
     }
