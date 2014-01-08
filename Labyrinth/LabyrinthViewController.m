@@ -644,6 +644,8 @@
 
 - (void)singleTapGestureCaptured:(UITapGestureRecognizer *)gesture
 {
+    return;
+    
     CGPoint touchPoint=[gesture locationInView:self.scrollView];
     touchPoint.x -= scrollViewOffset.x;
     touchPoint.y -= scrollViewOffset.y;

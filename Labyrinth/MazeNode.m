@@ -47,7 +47,7 @@
 -(bool)isWall {
     if (!self.object)
         return NO;
-    return self.object.type == WALL;
+    return self.object.type == WALL || self.object.type == FIXEDWALL;
 }
 
 

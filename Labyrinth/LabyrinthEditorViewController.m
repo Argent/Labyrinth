@@ -233,6 +233,14 @@
     
     [editWalls addTarget:self action:@selector(nodeTypeChoosen:) forControlEvents:UIControlEventTouchUpInside];
     
+    UIButton *editCoins = [UIButton buttonWithType:UIButtonTypeCustom];
+    [editCoins setFrame:CGRectMake(330,25,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
+    [editCoins setBackgroundImage:[UIImage imageNamed:@"hex_coin.png"] forState:UIControlStateNormal];
+    editCoins.tag=4;
+    [self.toolBarView addSubview:editCoins];
+    
+    [editCoins addTarget:self action:@selector(nodeTypeChoosen:) forControlEvents:UIControlEventTouchUpInside];
+    
     //toolBar unten
     
     /*  self.toolBarView2 = [[UIScrollView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height - toolbarHeight, self.view.frame.size.width, toolbarHeight)];
@@ -369,7 +377,9 @@
                 }
                 endElement = node;
             } else if (type == 3){
-                mazeObj = [MazeObject objectWithType:WALL andCenter:CGPointMake(node.center.x, node.center.y)];
+                mazeObj = [MazeObject objectWithType:FIXEDWALL andCenter:CGPointMake(node.center.x, node.center.y)];
+            }  else if (type == 4){
+                mazeObj = [MazeObject objectWithType:COIN andCenter:CGPointMake(node.center.x, node.center.y)];
             }
             
             if (type > 0){
@@ -431,6 +441,8 @@
         contentsFrame.origin.y = 0.0f;
     }
     
+    contentsFrame.origin.y += 60;
+    
     scrollViewOffset.x = contentsFrame.origin.x;
     scrollViewOffset.y = contentsFrame.origin.y;
     
@@ -441,7 +453,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.wallList= [[NSMutableArray alloc]init];
+    self.wallList= [[NSMutableDictionary alloc]init];
     
     
 	// Do any additional setup after loading the view.
@@ -519,9 +531,14 @@
 
 
 -(void)save{
+    int i = 0;
+    for (UILabel *wallElementLabel in toolbarItemsLabel) {
+        [self.wallList setObject:[NSNumber numberWithInt:[wallElementLabel.text intValue]] forKey:[NSNumber numberWithInt:i]];
+        i++;
+    }
     
-    LevelInfo *info=[[LevelInfo alloc]initWithStart:CGPointZero end:CGPointZero matrix:matrix walls:self.wallList name:name];
-    
+    LevelInfo *info=[[LevelInfo alloc]initWithMatrix:matrix walls:self.wallList name:name];
+
     [[LevelManager sharedManager] saveLevel:info forID:self.levelID];
     self.levelID=[LevelManager sharedManager].levels.count-1;
     NSLog(@"levelID: %i", self.levelID );
@@ -550,6 +567,10 @@
         NSLog(@"levelID nach load: %i", self.levelID);
         
         [self buildBoard:info2];
+        
+        for (NSNumber *key in info2.walls) {
+            ((UILabel*)toolbarItemsLabel[key.intValue]).text = [NSString stringWithFormat:@"%i",[[info2.walls objectForKey:key] intValue]];
+        }
         
         
     }
@@ -599,6 +620,9 @@
             NSNumber *nodeType = board[x][y];
             id obj = matrix[x + info.minX.intValue][y + info.minY.intValue];
             
+            if ([obj isEqual:[NSNull null]])
+                continue;
+            
             MazeNode *node = [MazeNode node];
             node.Size = [SettingsStore sharedStore].hexSize;
             node.uiElement = obj;
@@ -606,22 +630,30 @@
             node.MatrixCoords = CGPointMake(x,y);
             node.center = node.uiElement.center;
             
-            if(nodeType == [NSNumber numberWithInteger:1]){
+            if(nodeType.intValue == 1){
                 [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_gray.png"]];
-            } else if (nodeType==[NSNumber numberWithInteger:4]){
+            } else if (nodeType.intValue == 4){
                 [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_petrol.png"]];
                 node.object = [MazeObject objectWithType:END andCenter:CGPointMake(node.center.x, node.center.y)];
                 endElement = node;
-            } else if (nodeType==[NSNumber numberWithInteger:3]){
+            } else if (nodeType.intValue == 3){
                 [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_turquoise.png"]];
                 node.object = [MazeObject objectWithType:START andCenter:CGPointMake(node.center.x, node.center.y)];
                 startElement = node;
-            } else if (nodeType==[NSNumber numberWithInteger:2]){
-                [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_brown.png"]];
-                node.object = [MazeObject objectWithType:WALL andCenter:CGPointMake(node.center.x, node.center.y)];
+            } else if (nodeType.intValue == 2){
+                [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_darkbrown.png"]];
+                node.object = [MazeObject objectWithType:FIXEDWALL andCenter:CGPointMake(node.center.x, node.center.y)];
+            }else if (nodeType.intValue == 5){
+                [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_coin.png"]];
+                node.object = [MazeObject objectWithType:COIN andCenter:CGPointMake(node.center.x, node.center.y)];
             }
             
-            matrix[x + info.minX.intValue][y + info.minY.intValue] = node;
+            //NSLog(@"(x:%i,y:%i) = %@", x,y,board[x][y]);
+            
+            if (nodeType.intValue == 0)
+                matrix[x + info.minX.intValue][y + info.minY.intValue] = node.uiElement;
+            else
+                matrix[x + info.minX.intValue][y + info.minY.intValue] = node;
         }
     }
 }

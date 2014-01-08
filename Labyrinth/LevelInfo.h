@@ -12,12 +12,12 @@
 @property (nonatomic,strong)  NSMutableArray *board;
 @property (nonatomic,strong) NSNumber *minX;
 @property (nonatomic,strong) NSNumber *minY;
-@property (nonatomic) CGPoint start;
-@property (nonatomic) CGPoint end;
-@property (nonatomic, strong) NSMutableArray *walls;
+@property (nonatomic, strong) NSMutableDictionary *walls;
 @property (nonatomic) NSString *name;
+@property (nonatomic) int highScore;
+@property (nonatomic) float stepDuration;
 
-- (id)initWithStart:(CGPoint)start end:(CGPoint)end matrix:(NSArray*)matrix walls:(NSArray*)walls name:(NSString*)name;
+- (id)initWithMatrix:(NSArray*)matrix walls:(NSDictionary*)walls name:(NSString*)name;
 - (id)initWithDictionary:(NSDictionary*)dict;
 - (NSDictionary*) getDictionary;
 

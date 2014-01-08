@@ -13,6 +13,7 @@
 
 typedef enum {
     WALL,
+    FIXEDWALL,
     COIN,
     START,
     STARTEDIT,
