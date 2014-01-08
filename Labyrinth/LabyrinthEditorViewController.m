@@ -25,15 +25,14 @@
     bool paint;
     CGPoint lastPaintCoord;
     
-    bool hasStart;
-    bool hasEnd;
-    
     LevelInfo * levelInfo;
     
     NSMutableArray *toolbarItemsLabel;
     NSMutableArray *objCounts;
     MazeNode *startElement;
     MazeNode *endElement;
+ 
+    CALayer *lastBorderLayer;
 }
 @end
 
@@ -206,6 +205,8 @@
     [editBoard setBackgroundImage:[UIImage imageNamed:@"hex_gray.png"] forState:UIControlStateNormal];
     editBoard.tag=0;
     [self.toolBarView addSubview:editBoard];
+    [self setButtonBorder:editBoard withColor:[UIColor whiteColor]];
+
     
     [editBoard addTarget:self action:@selector(nodeTypeChoosen:) forControlEvents:UIControlEventTouchUpInside];
     
@@ -325,10 +326,8 @@
     if(gesture.state == UIGestureRecognizerStateBegan){
         if ([obj isKindOfClass:[UIImageView class]]){
             paint = YES;
-            NSLog(@"paint");
         }else if ([obj isKindOfClass:[MazeNode class]] && type == 0){
             paint = NO;
-            NSLog(@"remove");
         }
     }
     
@@ -560,10 +559,8 @@
 
 
 -(void)nodeTypeChoosen:(UIButton*) nodeType {
-    
-    self.buttonNodeType=nodeType.tag;
-    
-    
+    self.buttonNodeType = nodeType.tag;
+    [self setButtonBorder:nodeType withColor:[UIColor whiteColor]]; 
 }
 
 -(void)cleanScreen{
@@ -588,8 +585,8 @@
         }
     }
     [self.wallList removeAllObjects];
-    hasEnd=NO;
-    hasStart=NO;
+    startElement = nil;
+    endElement = nil;
     self.levelID=-1;
 }
 
@@ -628,6 +625,20 @@
             matrix[x + info.minX.intValue][y + info.minY.intValue] = node;
         }
     }
+}
+
+-(void)setButtonBorder:(UIButton*)button withColor:(UIColor*)color{
+    [lastBorderLayer removeFromSuperlayer];
+    
+    CALayer *borderLayer = [CALayer layer];
+    CGRect borderFrame = CGRectMake(-3, 0, (button.frame.size.width + 6), (button.frame.size.height));
+    [borderLayer setBackgroundColor:[[UIColor clearColor] CGColor]];
+    [borderLayer setFrame:borderFrame];
+    [borderLayer setCornerRadius:8];
+    [borderLayer setBorderWidth:2];
+    [borderLayer setBorderColor:[color CGColor]];
+    [button.layer addSublayer:borderLayer];
+    lastBorderLayer = borderLayer;
 }
 
 
