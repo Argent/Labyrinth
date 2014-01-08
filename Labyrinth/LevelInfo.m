@@ -20,12 +20,11 @@
 
 @implementation LevelInfo
 
-- (id)initWithStart:(CGPoint)start end:(CGPoint)end matrix:(NSArray*)matrix walls:(NSArray*)walls name:(NSString*)name
+- (id)initWithMatrix:(NSArray*)matrix walls:(NSArray*)walls name:(NSString*)name
 {
     self = [super init];
     if (self) {
-        self.start=start;
-        self.end=end;
+
         self.walls=[walls mutableCopy];
         self.name=name;
         
@@ -41,9 +40,6 @@
     
     self=[super init];
     if (self){
-        self.start=[[dict objectForKey:kStartKey]CGPointValue];
-        self.end=[[dict objectForKey:kEndKey]CGPointValue];
-        
         self.walls=[dict objectForKey:kWallsKey];
         
         self.board=[dict objectForKey:kBoardKey];
@@ -61,8 +57,6 @@
 
 -(NSDictionary *)getDictionary{
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:[NSValue valueWithCGPoint:self.start] forKey:kStartKey];
-    [dict setObject:[NSValue valueWithCGPoint:self.end] forKey:kEndKey];
     [dict setObject:self.board forKey:kBoardKey];
     
     if(!self.name){
@@ -103,27 +97,25 @@
             MazeNode *node = cropedMatrix[x][y];
             if ([node isKindOfClass:[MazeNode class]] && node.isWall){
                 [board[x] addObject:[NSNumber numberWithInteger:2]];
-                NSLog(@"%@", board[x][y]);
             }
-            
-            else if ([node isKindOfClass:[MazeNode class]] && node.isStart){
+            else if ([node isKindOfClass:[MazeNode class]] && node.object && node.object.type == START){
                 [board[x] addObject:[NSNumber numberWithInteger:3]];
-                NSLog(@"%@", board[x][y]);
+            }
+            else if ([node isKindOfClass:[MazeNode class]] && node.object && node.object.type == COIN){
+                [board[x] addObject:[NSNumber numberWithInteger:5]];
             }
             
-            else if ([node isKindOfClass:[MazeNode class]] && node.isEnd){
+            else if ([node isKindOfClass:[MazeNode class]] && node.object && node.object.type == END){
                 [board[x] addObject:[NSNumber numberWithInteger:4]];
-                NSLog(@"%@", board[x][y]);
             }
             
-            else if ([node isKindOfClass:[MazeNode class]] && !node.isWall && !node.isEnd && !node.isStart){
+            else if ([node isKindOfClass:[MazeNode class]] && !node.object){
                 [board[x] addObject:[NSNumber numberWithInteger:1]];
-                NSLog(@"%@", board[x][y]);
             }
             else {
                 [board[x] addObject:[NSNumber numberWithInteger:0]];
-                NSLog(@"%@", board[x][y]);
             }
+            //NSLog(@"(x:%i,y:%i) = %@", x,y,board[x][y]);
             
         }
     }

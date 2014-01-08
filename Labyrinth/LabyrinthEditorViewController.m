@@ -238,11 +238,19 @@
     
     UIButton *editWalls = [UIButton buttonWithType:UIButtonTypeCustom];
     [editWalls setFrame:CGRectMake(330,25,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
-    [editWalls setBackgroundImage:[UIImage imageNamed:@"hex_brown.png"] forState:UIControlStateNormal];
+    [editWalls setBackgroundImage:[UIImage imageNamed:@"hex_darkbrown.png"] forState:UIControlStateNormal];
     editWalls.tag=3;
     [self.toolBarView addSubview:editWalls];
     
     [editWalls addTarget:self action:@selector(nodeTypeChoosen:) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIButton *editCoins = [UIButton buttonWithType:UIButtonTypeCustom];
+    [editCoins setFrame:CGRectMake(330,25,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
+    [editCoins setBackgroundImage:[UIImage imageNamed:@"hex_coin.png"] forState:UIControlStateNormal];
+    editCoins.tag=4;
+    [self.toolBarView addSubview:editCoins];
+    
+    [editCoins addTarget:self action:@selector(nodeTypeChoosen:) forControlEvents:UIControlEventTouchUpInside];
     
     //toolBar unten
     
@@ -380,7 +388,9 @@
                 }
                 endElement = node;
             } else if (type == 3){
-                mazeObj = [MazeObject objectWithType:WALL andCenter:CGPointMake(node.center.x, node.center.y)];
+                mazeObj = [MazeObject objectWithType:FIXEDWALL andCenter:CGPointMake(node.center.x, node.center.y)];
+            }  else if (type == 4){
+                mazeObj = [MazeObject objectWithType:COIN andCenter:CGPointMake(node.center.x, node.center.y)];
             }
             
             if (type > 0){
@@ -533,7 +543,7 @@
 
 -(void)save{
     
-    LevelInfo *info=[[LevelInfo alloc]initWithStart:CGPointZero end:CGPointZero matrix:matrix walls:self.wallList name:name];
+    LevelInfo *info=[[LevelInfo alloc]initWithMatrix:matrix walls:self.wallList name:name];
     
     [[LevelManager sharedManager] saveLevel:info forID:self.levelID];
     self.levelID=[LevelManager sharedManager].levels.count-1;
@@ -622,22 +632,30 @@
             node.MatrixCoords = CGPointMake(x,y);
             node.center = node.uiElement.center;
             
-            if(nodeType == [NSNumber numberWithInteger:1]){
+            if(nodeType.intValue == 1){
                 [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_gray.png"]];
-            } else if (nodeType==[NSNumber numberWithInteger:4]){
+            } else if (nodeType.intValue == 4){
                 [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_petrol.png"]];
                 node.object = [MazeObject objectWithType:END andCenter:CGPointMake(node.center.x, node.center.y)];
                 endElement = node;
-            } else if (nodeType==[NSNumber numberWithInteger:3]){
+            } else if (nodeType.intValue == 3){
                 [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_turquoise.png"]];
                 node.object = [MazeObject objectWithType:START andCenter:CGPointMake(node.center.x, node.center.y)];
                 startElement = node;
-            } else if (nodeType==[NSNumber numberWithInteger:2]){
-                [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_brown.png"]];
-                node.object = [MazeObject objectWithType:WALL andCenter:CGPointMake(node.center.x, node.center.y)];
+            } else if (nodeType.intValue == 2){
+                [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_darkbrown.png"]];
+                node.object = [MazeObject objectWithType:FIXEDWALL andCenter:CGPointMake(node.center.x, node.center.y)];
+            }else if (nodeType.intValue == 5){
+                [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_coin.png"]];
+                node.object = [MazeObject objectWithType:COIN andCenter:CGPointMake(node.center.x, node.center.y)];
             }
             
-            matrix[x + info.minX.intValue][y + info.minY.intValue] = node;
+            //NSLog(@"(x:%i,y:%i) = %@", x,y,board[x][y]);
+            
+            if (nodeType.intValue == 0)
+                matrix[x + info.minX.intValue][y + info.minY.intValue] = node.uiElement;
+            else
+                matrix[x + info.minX.intValue][y + info.minY.intValue] = node;
         }
     }
 }

@@ -46,6 +46,11 @@
                 self.isDraggable = YES;
                 break;
                 
+            case FIXEDWALL:
+                self.imageName = @"hex_darkbrown.png";
+                self.isDraggable = NO;
+                break;
+                
             case COIN:
                 self.imageName = @"hex_coin.png";
                 self.isDraggable = NO;
