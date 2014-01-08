@@ -115,7 +115,7 @@
     toolbarItemsLabel = [NSMutableArray array];
     objCounts = [NSMutableArray array];
     int itemSize = [SettingsStore sharedStore].toolbarHeight-30;
-    for(int i = 0; i < 4; i++){
+    for(int i = 0; i < objCounts.count; i++){
         objCounts[i] = [NSNumber numberWithInt:0];
         
         toolbarItems[i] = [[UIView alloc] initWithFrame:CGRectMake(10+i*(itemSize+10), self.toolBarView2.frame.size.height/2-itemSize/2-10, itemSize, itemSize)];
@@ -162,10 +162,11 @@
         if(buttonType.tag == i){
             int tmpCount = [((UILabel*)toolbarItemsLabel[i-4]).text intValue];
             if(!plus && tmpCount > 0){
-                [(UILabel*)toolbarItemsLabel[i-4] setText:[NSString stringWithFormat:@"%@", [NSNumber numberWithInt:tmpCount-1]]];
+                tmpCount--;
             }else if (plus){
-                [(UILabel*)toolbarItemsLabel[i-4] setText:[NSString stringWithFormat:@"%@", [NSNumber numberWithInt:tmpCount+1]]];
+                tmpCount++;
             }
+            [(UILabel*)toolbarItemsLabel[i-4] setText:[NSString stringWithFormat:@"%@", [NSNumber numberWithInt:tmpCount]]];
         }
     }
 }
