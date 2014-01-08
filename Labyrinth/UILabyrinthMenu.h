@@ -17,5 +17,6 @@
 
 @property (nonatomic, strong) void(^startPauseBlock)(bool);
 @property (nonatomic, strong) void(^stopBlock)(void);
+@property (nonatomic, strong) void(^backBlock)(void);
 
 @end

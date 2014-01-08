@@ -13,6 +13,8 @@
 		023414051878488E002F458A /* Walls.plist in Resources */ = {isa = PBXBuildFile; fileRef = 023414031878488E002F458A /* Walls.plist */; };
 		023414111878AA01002F458A /* LevelsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 023414101878AA01002F458A /* LevelsViewController.m */; };
 		023414131878B058002F458A /* LevelsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 023414121878B058002F458A /* LevelsViewController.xib */; };
+		26CB1E94187D932F002D163F /* back_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 26CB1E93187D932F002D163F /* back_arrow.png */; };
+		26CB1E96187DA66F002D163F /* menu_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 26CB1E95187DA66F002D163F /* menu_white.png */; };
 		B547D8E3186214D400680E42 /* StartMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B547D8E1186214D400680E42 /* StartMenuViewController.m */; };
 		B547D8E4186214D400680E42 /* StartMenuViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B547D8E2186214D400680E42 /* StartMenuViewController.xib */; };
 		B55596D618474D1500CC3A13 /* hex_gray.png in Resources */ = {isa = PBXBuildFile; fileRef = B55596D518474D1500CC3A13 /* hex_gray.png */; };
@@ -60,10 +62,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		020373F818531FC5000CD00C /* EditorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditorViewController.h; sourceTree = "<group>"; };
-		020373F918531FC5000CD00C /* EditorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditorViewController.m; sourceTree = "<group>"; };
-		020373FB185323B1000CD00C /* TestMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestMenuViewController.h; sourceTree = "<group>"; };
-		020373FC185323B1000CD00C /* TestMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestMenuViewController.m; sourceTree = "<group>"; };
 		022F3F4C185F252400D54DBE /* LevelManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelManager.h; sourceTree = "<group>"; };
 		022F3F4D185F252400D54DBE /* LevelManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LevelManager.m; sourceTree = "<group>"; };
 		022F3F4F185F263800D54DBE /* LevelInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelInfo.h; sourceTree = "<group>"; };
@@ -72,6 +70,8 @@
 		0234140F1878AA01002F458A /* LevelsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LevelsViewController.h; path = ../LevelsViewController.h; sourceTree = "<group>"; };
 		023414101878AA01002F458A /* LevelsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LevelsViewController.m; path = ../LevelsViewController.m; sourceTree = "<group>"; };
 		023414121878B058002F458A /* LevelsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LevelsViewController.xib; sourceTree = "<group>"; };
+		26CB1E93187D932F002D163F /* back_arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = back_arrow.png; sourceTree = "<group>"; };
+		26CB1E95187DA66F002D163F /* menu_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = menu_white.png; sourceTree = "<group>"; };
 		B547D8E0186214D400680E42 /* StartMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StartMenuViewController.h; sourceTree = "<group>"; };
 		B547D8E1186214D400680E42 /* StartMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StartMenuViewController.m; sourceTree = "<group>"; };
 		B547D8E2186214D400680E42 /* StartMenuViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StartMenuViewController.xib; sourceTree = "<group>"; };
@@ -211,6 +211,7 @@
 				B58CA7C6184BA46C00C06874 /* UIBezierView.m */,
 				B590F352185885B700BDFDE1 /* TwoFingerScrollView.h */,
 				B590F353185885B700BDFDE1 /* TwoFingerScrollView.m */,
+				26CB1E95187DA66F002D163F /* menu_white.png */,
 				B5F41F81184797FF00B36789 /* toolbar.png */,
 				B5DDA820185F9AFB0005F0B1 /* hex_coin.png */,
 				B5589EFF185A3D65002EB496 /* hex_small_red.png */,
@@ -233,6 +234,7 @@
 		B5CED2411844BC10004BC7CE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				26CB1E93187D932F002D163F /* back_arrow.png */,
 				B5CED2421844BC10004BC7CE /* Labyrinth-Info.plist */,
 				B5CED2431844BC10004BC7CE /* InfoPlist.strings */,
 				B5CED2461844BC10004BC7CE /* main.m */,
@@ -341,7 +343,9 @@
 				B5F41F82184797FF00B36789 /* toolbar.png in Resources */,
 				023414131878B058002F458A /* LevelsViewController.xib in Resources */,
 				B5CED2451844BC10004BC7CE /* InfoPlist.strings in Resources */,
+				26CB1E96187DA66F002D163F /* menu_white.png in Resources */,
 				B5DDA821185F9AFB0005F0B1 /* hex_coin.png in Resources */,
+				26CB1E94187D932F002D163F /* back_arrow.png in Resources */,
 				B58CA7C41849337500C06874 /* hex_red.png in Resources */,
 				B5CED24D1844BC10004BC7CE /* Images.xcassets in Resources */,
 				B5589F00185A3D65002EB496 /* hex_small_red.png in Resources */,

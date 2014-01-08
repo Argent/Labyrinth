@@ -94,20 +94,20 @@
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-
-    if (indexPath.row>0){
+    
     LabyrinthEditorViewController *vc= [[LabyrinthEditorViewController alloc]init];
-    [vc loadAtIndex:indexPath.row];
-    [self presentViewController:vc animated: YES completion:nil];
+    [vc setHomeBlock:^{
+        [self dismissViewControllerAnimated:NO completion:nil];
+    }];
+    if (indexPath.row>0){
+        [vc loadAtIndex:indexPath.row];
     }
     
     else {
-        LabyrinthEditorViewController *vc= [[LabyrinthEditorViewController alloc]init];
         vc.levelID=-1;
-        [self presentViewController:vc animated: YES completion:nil];
     }
     
-    
+    [self presentViewController:vc animated: YES completion:nil];
 }
 
 

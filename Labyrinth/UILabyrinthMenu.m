@@ -12,7 +12,7 @@
     UILabel *stepsCounter;
     UILabel *coinCounter;
  
-    bool paused;
+    bool inAction;
 }
 @end
 
@@ -25,16 +25,19 @@
         // Initialization code
         
         self.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.7];
-        paused = YES;
+        inAction = NO;
         
-        self.startButton = [[UIButton alloc]initWithFrame:CGRectMake(5, 0, 60, 40)];
+        self.startButton = [[UIButton alloc]initWithFrame:CGRectMake(70, 0, 40, 40)];
         [self.startButton setTitle:@"Play" forState:UIControlStateNormal];
         [self.startButton addTarget:self action:@selector(startButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:self.startButton];
-        self.stopButton = [[UIButton alloc]initWithFrame:CGRectMake(70, 0, 40, 40)];
-        [self.stopButton setTitle:@"Stop" forState:UIControlStateNormal];
-        [self.stopButton addTarget:self action:@selector(stopButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        self.stopButton = [[UIButton alloc]initWithFrame:CGRectMake(5, 0, 60, 40)];
+        [self.stopButton setTitle:@"   Back" forState:UIControlStateNormal];
+        [self.stopButton setBackgroundImage:[UIImage imageNamed:@"back_arrow.png"] forState:UIControlStateNormal];
+        [self.stopButton setTitleColor:[UIColor colorWithRed:0.224 green:0.504 blue:0.915 alpha:1.000] forState:UIControlStateNormal];
+        [self.stopButton addTarget:self action:@selector(backButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:self.stopButton];
+        
         
         stepsCounter = [[UILabel alloc]initWithFrame:CGRectMake(130, 5, 100, 30)];
         stepsCounter.text = @"Steps: 0";
@@ -62,28 +65,26 @@
 }
 
 -(IBAction)startButtonPressed:(id)sender{
-    if(paused){
-        paused = NO;
-        [self.startButton setTitle:@"Pause" forState:UIControlStateNormal];
-        
-    }else {
-        paused = YES;
+    if(inAction){
+        inAction = NO;
         [self.startButton setTitle:@"Play" forState:UIControlStateNormal];
+        if(self.stopBlock){
+            self.stopBlock();
+        }
+    }else {
+        inAction = YES;
+        [self.startButton setTitle:@"Stop" forState:UIControlStateNormal];
+        if (self.startPauseBlock){
+            self.startPauseBlock(inAction);
+        }
     }
-    if (self.startPauseBlock){
-        self.startPauseBlock(!paused);
-    }
+    
     
 }
 
--(IBAction)stopButtonPressed:(id)sender{
-    if (self.stopBlock){
-        self.stopBlock();
-    }
-    if (!paused){
-        paused = YES;
-        [self.startButton setTitle:@"Play" forState:UIControlStateNormal];
-
+-(IBAction)backButtonPressed:(id)sender{
+    if (self.backBlock){
+        self.backBlock();
     }
 }
 

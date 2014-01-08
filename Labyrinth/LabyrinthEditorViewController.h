@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface LabyrinthEditorViewController : UIViewController <UIScrollViewDelegate, UIAlertViewDelegate>
+@interface LabyrinthEditorViewController : UIViewController <UIScrollViewDelegate, UIAlertViewDelegate, UIActionSheetDelegate>
 
 @property (nonatomic,strong) UIScrollView *scrollView;
 @property (nonatomic,strong) UIScrollView *toolBarView;
@@ -20,5 +20,8 @@
 //@property (nonatomic, strong) LevelInfo *levelInfo;
 
 -(void)loadAtIndex:(int)index;
+-(IBAction)showActionSheet:(id)sender;
+@property (nonatomic, strong) void(^homeBlock)(void);
+
 
 @end

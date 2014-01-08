@@ -60,6 +60,9 @@
         [self initGrid];
         [self initToolbar];
         menubar = [[UILabyrinthMenu alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 40)];
+        [menubar setBackBlock:^{
+            [self dismissViewControllerAnimated:YES completion:nil];
+        }];
         [menubar setStartPauseBlock:^(bool start) {
             if (start){
                 if (!paused) {

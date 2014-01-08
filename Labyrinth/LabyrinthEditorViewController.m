@@ -84,13 +84,23 @@
 }
 -(void)initToolbarTop{
     [self initToolbars:YES];
+    
+    // Menu Button
+    
+    UIButton *cleanButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    cleanButton.frame=CGRectMake(10, 10, 35, 35);
+    [cleanButton setBackgroundImage:[UIImage imageNamed:@"menu_white.png"] forState:UIControlStateNormal];
+    [self.toolBarView2 addSubview:cleanButton];
+    
+    [cleanButton addTarget:self action:@selector(showActionSheet:) forControlEvents:UIControlEventTouchUpInside];
+    
+    // Object contrainers
     NSMutableArray *wallNodes = [NSMutableArray array];
     NSMutableArray *objNodes = [NSMutableArray array];
     MazeObject *obj1 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
     [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(0,0)]];
     [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(-1,1)]];
     [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(0,1)]];
-    //[wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(-1,2)]];
     [objNodes addObject:obj1];
     MazeObject *obj2 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
     [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,0)]];
@@ -117,7 +127,7 @@
     for(int i = 0; i < 4; i++){
         objCounts[i] = [NSNumber numberWithInt:0];
         
-        toolbarItems[i] = [[UIView alloc] initWithFrame:CGRectMake(10+i*(itemSize+10), self.toolBarView2.frame.size.height/2-itemSize/2-10, itemSize, itemSize)];
+        toolbarItems[i] = [[UIView alloc] initWithFrame:CGRectMake(50+10+i*(itemSize+10), self.toolBarView2.frame.size.height/2-itemSize/2-10, itemSize, itemSize)];
         [((UIView*)toolbarItems[i]).layer setBorderWidth:1.0];
         [((UIView*)toolbarItems[i]).layer setBorderColor:[UIColor blackColor].CGColor];
         [self.toolBarView2 addSubview:toolbarItems[i]];
@@ -132,7 +142,7 @@
         [label setTextColor:[UIColor whiteColor]];
         [label setFont:[UIFont boldSystemFontOfSize:12]];
         label.textAlignment = NSTextAlignmentCenter;
-        ((MazeObject*) objNodes[i]).containerView.center = CGPointMake(((UIView*)toolbarItems[i]).frame.size.width/2+10+i*(itemSize+10), ((UIView*)toolbarItems[i]).frame.size.height/2+self.toolBarView.frame.size.height/2-itemSize/2-10);
+        ((MazeObject*) objNodes[i]).containerView.center = CGPointMake(50+((UIView*)toolbarItems[i]).frame.size.width/2+10+i*(itemSize+10), ((UIView*)toolbarItems[i]).frame.size.height/2+self.toolBarView.frame.size.height/2-itemSize/2-10);
         [label setText:[NSString stringWithFormat:@"1"]];
         [toolbarItemsLabel addObject:label];
         [((UIView*)toolbarItems[i]) addSubview:label];
@@ -153,12 +163,16 @@
         [minus setBackgroundColor:[UIColor clearColor]];
         [minus addSubview:minusText];
         [((UIView*)toolbarItems[i]) addSubview:minus];
-        [minus addTarget:self action:@selector(minusObjects:) forControlEvents:UIControlEventTouchUpInside];    }
+        [minus addTarget:self action:@selector(minusObjects:) forControlEvents:UIControlEventTouchUpInside];
+    }
 
     [self.toolBarView2 addSubview:obj1.containerView];
     [self.toolBarView2 addSubview:obj2.containerView];
     [self.toolBarView2 addSubview:obj3.containerView];
     [self.toolBarView2 addSubview:obj4.containerView];
+    for (MazeObject* obj in objNodes) {
+        obj.containerView.userInteractionEnabled = NO;
+    }
 }
 -(void)plusObjects:(UIButton*) plusMinusType {
     [self plusMinusObjects:YES andType:plusMinusType];
@@ -179,39 +193,14 @@
         }
     }
 }
+-(IBAction)backButtonPressed:(id)sender{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
 -(void)initToolbarBottom{
     [self initToolbars:NO];
     
-    UIButton *saveButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    saveButton.frame=CGRectMake(22, 25, 50,24);
-    saveButton.backgroundColor=[UIColor greenColor];
-    [saveButton setTitle:@"save" forState:UIControlStateNormal];
-    [self.toolBarView addSubview:saveButton];
-    
-    [saveButton addTarget:self action:@selector(alertOverwrite) forControlEvents:UIControlEventTouchUpInside];
-    
-    UIButton *cleanButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    cleanButton.frame=CGRectMake(22, 50, 50,24);
-    cleanButton.backgroundColor=[UIColor greenColor];
-    [cleanButton setTitle:@"clean" forState:UIControlStateNormal];
-    [self.toolBarView addSubview:cleanButton];
-    
-    [cleanButton addTarget:self action:@selector(cleanScreen) forControlEvents:UIControlEventTouchUpInside];
-    
-    UIButton *loadButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    loadButton.frame=CGRectMake(90, 25, 50,50);
-    loadButton.backgroundColor=[UIColor yellowColor];
-    /*loadButton.titleLabel.frame=CGRectMake(0, 0, loadButton.frame.size.height,loadButton.frame.size.width);
-     loadButton.titleLabel.font=[UIFont systemFontOfSize:20];
-     loadButton.titleLabel.textColor=[UIColor whiteColor];
-     loadButton.titleLabel.text = @"speichern";*/
-    [loadButton setTitle:@"load" forState:UIControlStateNormal];
-    [self.toolBarView addSubview:loadButton];
-    
-    [loadButton addTarget:self action:@selector(levelsView) forControlEvents:UIControlEventTouchUpInside];
-    
     UIButton *editBoard = [UIButton buttonWithType:UIButtonTypeCustom];
-    [editBoard setFrame:CGRectMake(150,25,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
+    [editBoard setFrame:CGRectMake(10,25,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
     [editBoard setBackgroundImage:[UIImage imageNamed:@"hex_gray.png"] forState:UIControlStateNormal];
     editBoard.tag=0;
     [self.toolBarView addSubview:editBoard];
@@ -221,7 +210,7 @@
     [editBoard addTarget:self action:@selector(nodeTypeChoosen:) forControlEvents:UIControlEventTouchUpInside];
     
     UIButton *editStart = [UIButton buttonWithType:UIButtonTypeCustom];
-    [editStart setFrame:CGRectMake(210,25,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
+    [editStart setFrame:CGRectMake(70,25,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
     [editStart setBackgroundImage:[UIImage imageNamed:@"hex_turquoise.png"] forState:UIControlStateNormal];
     editStart.tag=1;
     [self.toolBarView addSubview:editStart];
@@ -229,7 +218,7 @@
     [editStart addTarget:self action:@selector(nodeTypeChoosen:) forControlEvents:UIControlEventTouchUpInside];
     
     UIButton *editEnd = [UIButton buttonWithType:UIButtonTypeCustom];
-    [editEnd setFrame:CGRectMake(270,25,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
+    [editEnd setFrame:CGRectMake(130,25,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
     [editEnd setBackgroundImage:[UIImage imageNamed:@"hex_petrol.png"] forState:UIControlStateNormal];
     editEnd.tag=2;
     [self.toolBarView addSubview:editEnd];
@@ -237,7 +226,7 @@
     [editEnd addTarget:self action:@selector(nodeTypeChoosen:) forControlEvents:UIControlEventTouchUpInside];
     
     UIButton *editWalls = [UIButton buttonWithType:UIButtonTypeCustom];
-    [editWalls setFrame:CGRectMake(330,25,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
+    [editWalls setFrame:CGRectMake(190,25,[[SettingsStore sharedStore]width],[[SettingsStore sharedStore]height])];
     [editWalls setBackgroundImage:[UIImage imageNamed:@"hex_brown.png"] forState:UIControlStateNormal];
     editWalls.tag=3;
     [self.toolBarView addSubview:editWalls];
@@ -651,11 +640,44 @@
     lastBorderLayer = borderLayer;
 }
 
+-(IBAction)showActionSheet:(id)sender {
+    UIActionSheet *popupQuery = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save Level", @"Clear Level", @"Load Level", @"Home", nil];
+    popupQuery.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+    [popupQuery showInView:self.view];
+}
+
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    switch (buttonIndex) {
+        case 0:
+            [self alertOverwrite];
+            break;
+        case 1:
+            [self cleanScreen];
+            break;
+        case 2:
+            [self levelsView];
+            break;
+        case 4:
+            break;
+        case 3:
+            [self dismissViewControllerAnimated:YES completion:^{
+                if(self.homeBlock){
+                    self.homeBlock();
+                }
+            }];
+            
+            break;
+
+            
+    }
+}
+
+
 
 /*
 
 -(void)chooseWalls:(NSMutableArray*)choosenWall{
-    
+ 
     NSMutableArray* wallArray=[NSMutableArray array];
     
     if(self.buttonNodeType == 5){
