@@ -30,6 +30,8 @@
     
     LevelInfo * levelInfo;
     
+    NSMutableArray *toolbarItemsLabel;
+    NSMutableArray *objCounts;
     MazeNode *startElement;
     MazeNode *endElement;
 }
