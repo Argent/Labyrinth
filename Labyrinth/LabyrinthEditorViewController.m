@@ -464,7 +464,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.wallList= [[NSMutableArray alloc]init];
+    self.wallList= [[NSMutableDictionary alloc]init];
     
     
 	// Do any additional setup after loading the view.
@@ -542,9 +542,14 @@
 
 
 -(void)save{
+    int i = 0;
+    for (UILabel *wallElementLabel in toolbarItemsLabel) {
+        [self.wallList setObject:[NSNumber numberWithInt:[wallElementLabel.text intValue]] forKey:[NSNumber numberWithInt:i]];
+        i++;
+    }
     
     LevelInfo *info=[[LevelInfo alloc]initWithMatrix:matrix walls:self.wallList name:name];
-    
+
     [[LevelManager sharedManager] saveLevel:info forID:self.levelID];
     self.levelID=[LevelManager sharedManager].levels.count-1;
     NSLog(@"levelID: %i", self.levelID );
@@ -573,6 +578,10 @@
         NSLog(@"levelID nach load: %i", self.levelID);
         
         [self buildBoard:info2];
+        
+        for (NSNumber *key in info2.walls) {
+            ((UILabel*)toolbarItemsLabel[key.intValue]).text = [NSString stringWithFormat:@"%i",[[info2.walls objectForKey:key] intValue]];
+        }
         
         
     }

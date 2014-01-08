@@ -12,6 +12,8 @@
 
 #define kStartKey @"start"
 #define kEndKey @"end"
+#define kHighScore @"highscore"
+#define kStepDuration @"stepduration"
 #define kBoardKey @"board"
 #define kWallsKey @"walls"
 #define kMinX @"minX"
@@ -20,7 +22,7 @@
 
 @implementation LevelInfo
 
-- (id)initWithMatrix:(NSArray*)matrix walls:(NSArray*)walls name:(NSString*)name
+- (id)initWithMatrix:(NSArray*)matrix walls:(NSDictionary*)walls name:(NSString*)name
 {
     self = [super init];
     if (self) {
@@ -49,6 +51,9 @@
         
         self.name = [dict objectForKey:kName];
         
+        self.stepDuration = [[dict objectForKey:kStepDuration]floatValue];
+        self.highScore = [[dict objectForKey:kHighScore]intValue];
+        
     }
     return self;
     
@@ -76,6 +81,9 @@
     if (self.minY) {
         [dict setObject:self.minY forKey:kMinY];
     }
+    
+    [dict setObject:[NSNumber numberWithFloat:self.stepDuration] forKey:kStepDuration];
+    [dict setObject:[NSNumber numberWithInt:self.highScore] forKey:kHighScore];
     
     return dict;
 }
