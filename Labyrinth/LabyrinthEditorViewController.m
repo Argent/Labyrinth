@@ -431,6 +431,8 @@
         contentsFrame.origin.y = 0.0f;
     }
     
+    contentsFrame.origin.y += 60;
+    
     scrollViewOffset.x = contentsFrame.origin.x;
     scrollViewOffset.y = contentsFrame.origin.y;
     
@@ -598,6 +600,9 @@
             
             NSNumber *nodeType = board[x][y];
             id obj = matrix[x + info.minX.intValue][y + info.minY.intValue];
+            
+            if ([obj isEqual:[NSNull null]])
+                continue;
             
             MazeNode *node = [MazeNode node];
             node.Size = [SettingsStore sharedStore].hexSize;
