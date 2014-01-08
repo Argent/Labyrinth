@@ -122,8 +122,10 @@
         [((UIView*)toolbarItems[i]).layer setBorderColor:[UIColor blackColor].CGColor];
         [self.toolBarView2 addSubview:toolbarItems[i]];
         UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 15, 15)];
-        UIButton *plus = [[UIButton alloc]initWithFrame:CGRectMake(0, ((UIView*)toolbarItems[i]).frame.size.height-15, 15, 15)];
-        UIButton *minus = [[UIButton alloc]initWithFrame:CGRectMake(((UIView*)toolbarItems[i]).frame.size.width-15,((UIView*)toolbarItems[i]).frame.size.height-15, 15, 15)];
+        UIButton *plus = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, ((UIView*)toolbarItems[i]).frame.size.width/2, ((UIView*)toolbarItems[i]).frame.size.height)];
+        UIButton *minus = [[UIButton alloc]initWithFrame:CGRectMake(((UIView*)toolbarItems[i]).frame.size.width/2, 0, ((UIView*)toolbarItems[i]).frame.size.height/2, ((UIView*)toolbarItems[i]).frame.size.height)];
+        UILabel *plusText = [[UILabel alloc]initWithFrame:CGRectMake(0, plus.frame.size.height-15, 15, 15)];
+        UILabel *minusText = [[UILabel alloc]initWithFrame:CGRectMake(minus.frame.size.width-15, minus.frame.size.height-15, 15, 15)];
         plus.tag = i+4;
         minus.tag = i+4;
         [label setBackgroundColor:[UIColor blackColor]];
@@ -134,14 +136,22 @@
         [label setText:[NSString stringWithFormat:@"1"]];
         [toolbarItemsLabel addObject:label];
         [((UIView*)toolbarItems[i]) addSubview:label];
-        [plus setBackgroundColor:[UIColor blackColor]];
-        [plus setTitleColor:[UIColor greenColor] forState:UIControlStateNormal];
-        [plus setTitle:@"+" forState:UIControlStateNormal];
+        [plus setBackgroundColor:[UIColor clearColor]];
         [plus addTarget:self action:@selector(plusObjects:) forControlEvents:UIControlEventTouchUpInside];
+        [plusText setBackgroundColor:[UIColor blackColor]];
+        [plusText setTextColor:[UIColor greenColor]];
+        [plusText setFont:[UIFont boldSystemFontOfSize:12]];
+        [plusText setText:@"+"];
+        plusText.textAlignment = NSTextAlignmentCenter;
+        [minusText setBackgroundColor:[UIColor blackColor]];
+        [minusText setTextColor:[UIColor redColor]];
+        [minusText setFont:[UIFont boldSystemFontOfSize:12]];
+        [minusText setText:@"-"];
+        minusText.textAlignment = NSTextAlignmentCenter;
+        [plus addSubview:plusText];
         [((UIView*)toolbarItems[i]) addSubview:plus];
-        [minus setBackgroundColor:[UIColor blackColor]];
-        [minus setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-        [minus setTitle:@"-" forState:UIControlStateNormal];
+        [minus setBackgroundColor:[UIColor clearColor]];
+        [minus addSubview:minusText];
         [((UIView*)toolbarItems[i]) addSubview:minus];
         [minus addTarget:self action:@selector(minusObjects:) forControlEvents:UIControlEventTouchUpInside];    }
 
