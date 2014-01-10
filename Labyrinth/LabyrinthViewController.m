@@ -589,7 +589,7 @@
                 matrix[x + 1][y + 1] = node;
         }
     }
-    /*
+    
     NSMutableArray *wallNodes = [NSMutableArray array];
     objCounts = [NSMutableArray array];
     objNodes = [NSMutableArray array];
@@ -635,17 +635,13 @@
             
         }
     }
-    NSLog(@"different object counter: %i", differentObjectsCounter);
     int categoryCounter = 0;
-    for(int i = 0; i <= differentObjectsCounter; i++){
+    for (int i = 0; i < objNodes.count; i++) {
         if(i == 0){
             ((MazeObject*)objNodes[i]).category = categoryCounter;
         }else{
             bool sameCategory = NO;
-            for(int j = i-1; j >= 0; j--){
-                if(i >= differentObjectsCounter){
-                    break;
-                }
+            for (int j = i-1; j>= 0; j--) {
                 if([GeometryHelper compareWallObject:(MazeObject*)objNodes[j] compareWith:(MazeObject*)objNodes[i]]){
                     ((MazeObject*)objNodes[i]).category = ((MazeObject*)objNodes[j]).category;
                     sameCategory = YES;
@@ -657,7 +653,6 @@
                     ((MazeObject*)objNodes[i]).category = categoryCounter;
                 }
             }
-            
         }
     }
     
@@ -669,7 +664,7 @@
     for (MazeObject* objects in objNodes) {
         [self.toolBarView addSubview:objects.containerView];
     }
-     */
+     /*
     
     NSMutableArray *wallNodes = [NSMutableArray array];
     objCounts = [NSMutableArray array];
@@ -706,9 +701,9 @@
     [wallNodes addObject:[obj5 generateAndAddNodeRelative:CGPointMake(1,0)]];
     [objNodes addObject:obj5];
     
-    /* [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,4)]];
+     [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,4)]];
      [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,4)]];
-     [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,-1)]];*/
+     [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,-1)]];
     
     
     for (MazeNode *wallNode in wallNodes) {
@@ -725,18 +720,18 @@
             
         }
     }
+    
     int categoryCounter = 0;
-    for(int i = 0; i <= differentObjectsCounter; i++){
+    for (int i = 0; i < objNodes.count; i++) {
         if(i == 0){
             ((MazeObject*)objNodes[i]).category = categoryCounter;
         }else{
             bool sameCategory = NO;
-            for(int j = i-1; j >= 0; j--){
-                if(i >= differentObjectsCounter){
-                    break;
-                }
+            for (int j = i-1; j>= 0; j--) {
                 if([GeometryHelper compareWallObject:(MazeObject*)objNodes[j] compareWith:(MazeObject*)objNodes[i]]){
                     ((MazeObject*)objNodes[i]).category = ((MazeObject*)objNodes[j]).category;
+                    //   NSLog(@"i: %i, j: %i, differentObejctsCounter: %i",i,j,differentObjectsCounter);
+                    //   NSLog(@"category-j: %i, category-i: %i",((MazeObject*)objNodes[j]).category,((MazeObject*)objNodes[i]).category);
                     sameCategory = YES;
                 }
             }
@@ -744,11 +739,42 @@
                 categoryCounter++;
                 if(i < objNodes.count){
                     ((MazeObject*)objNodes[i]).category = categoryCounter;
+                    //  NSLog(@"category-i: %i",((MazeObject*)objNodes[i]).category);
+                }
+            }
+        }
+    }
+    
+    /*
+    for(int i = 0; i <= differentObjectsCounter; i++){
+        NSLog(@"i ist: %i",i);
+        if(i == 0){
+            ((MazeObject*)objNodes[i]).category = categoryCounter;
+        }else{
+            bool sameCategory = NO;
+            for(int j = i-1; j >= 0; j--){
+                
+                if(i > differentObjectsCounter){
+                    break;
+                }
+                if([GeometryHelper compareWallObject:(MazeObject*)objNodes[j] compareWith:(MazeObject*)objNodes[i]]){
+                    ((MazeObject*)objNodes[i]).category = ((MazeObject*)objNodes[j]).category;
+                 //   NSLog(@"i: %i, j: %i, differentObejctsCounter: %i",i,j,differentObjectsCounter);
+                 //   NSLog(@"category-j: %i, category-i: %i",((MazeObject*)objNodes[j]).category,((MazeObject*)objNodes[i]).category);
+                    sameCategory = YES;
+                }
+            }
+            if(!sameCategory){
+                categoryCounter++;
+                if(i < objNodes.count){
+                    ((MazeObject*)objNodes[i]).category = categoryCounter;
+                  //  NSLog(@"category-i: %i",((MazeObject*)objNodes[i]).category);
                 }
             }
             
         }
     }
+     
     for (MazeObject* objects in objNodes) {
         [GeometryHelper scaleToToolbar:objects withLength:@"height"];
         [GeometryHelper scaleToToolbar:objects withLength:@"width"];
@@ -760,6 +786,7 @@
     [self.toolBarView addSubview:obj4.containerView];
     [self.toolBarView addSubview:obj5.containerView];
     [self.toolBarView addSubview:obj6.containerView];
+     */
 }
 
 -(void)initToolbar{
@@ -795,7 +822,7 @@
             if(items.category == i){
                 objCounts[i] = [NSNumber numberWithInt:[objCounts[i] intValue]+1];
                 items.containerView.center = CGPointMake(((UIView*)toolbarItems[items.category]).frame.size.width/2+10+items.category*(itemSize+10), ((UIView*)toolbarItems[items.category]).frame.size.height/2+self.toolBarView.frame.size.height/2-itemSize/2+10);
-                NSLog(@"center: (x:%.0f,y:%.0f)",items.containerView.center.x,items.containerView.center.y);
+                //NSLog(@"center: (x:%.0f,y:%.0f)",items.containerView.center.x,items.containerView.center.y);
             }
         }
         [label setText:[NSString stringWithFormat:@"%@", [NSNumber numberWithInt:[objCounts[i] intValue]]]];
