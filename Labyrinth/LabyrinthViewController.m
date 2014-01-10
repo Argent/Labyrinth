@@ -15,6 +15,7 @@
 #import "SettingsStore.h"
 #import "GeometryHelper.h"
 #import "UILabyrinthMenu.h"
+#import "LevelInfo.h"
 
 
 @interface LabyrinthViewController () {
@@ -47,17 +48,26 @@
     
     NSMutableArray *overlayRects;
     int differentObjectsCounter;
+    
+    LevelInfo *levelInfo;
 }
 @end
 
 @implementation LabyrinthViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+-(id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    [NSException raise:@"should not call this" format:@"forbidden"];
+    return nil;
+}
+
+
+-(id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andLevelInfo:(LevelInfo*)levelinfo
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         scrollViewOffset = CGPointMake(0.0, 0.0);
-        [self initGrid];
+        levelInfo = levelinfo;
+        [self initGridWithSize:CGSizeMake(levelInfo.board.count +1 , ((NSArray*)levelInfo.board[0]).count +1)];
         [self initToolbar];
         menubar = [[UILabyrinthMenu alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 40)];
         [menubar setBackBlock:^{
@@ -71,7 +81,7 @@
                 for (int x = 0; x < matrix.count; x++) {
                     for (int y = 0; y < ((NSArray*)matrix[0]).count; y++) {
                         MazeNode *tmpNode = matrix[x][y];
-                        if (![tmpNode isEqual:[NSNull null]]) {
+                        if (![tmpNode isEqual:[NSNull null]] && [tmpNode isKindOfClass:[MazeNode class]]) {
                             if (tmpNode.object != nil && tmpNode.object.type == END)
                                 endNode = tmpNode;
                             if (tmpNode.object != nil && tmpNode.object.type == START)
@@ -110,85 +120,11 @@
         UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapGestureCaptured:)];
         [self.scrollView addGestureRecognizer:singleTap];
         
-        NSMutableArray *wallNodes = [NSMutableArray array];
-        objCounts = [NSMutableArray array];
-        objNodes = [NSMutableArray array];
-        MazeObject *obj1 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
-        [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(0,0)]];
-        [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(-1,1)]];
-        [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(0,1)]];
-        //[wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(-1,2)]];
-        [objNodes addObject:obj1];
-         MazeObject *obj2 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
-        [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,0)]];
-        [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(-1,1)]];
-        [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,1)]];
-        [objNodes addObject:obj2];
-         MazeObject *obj3 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
-        [wallNodes addObject:[obj3 generateAndAddNodeRelative:CGPointMake(0,0)]];
-        [wallNodes addObject:[obj3 generateAndAddNodeRelative:CGPointMake(1,0)]];
-        [objNodes addObject:obj3];
-        MazeObject *obj4 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
-        [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(0,0)]];
-        [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(0,1)]];
-        [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(-1,2)]];
-       // [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(-1,3)]];
-        //[wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(-2,4)]];
-        [objNodes addObject:obj4];
+
+        [self buildLevel:levelInfo];
+        [GeometryHelper connectMatrix:matrix];
         
-       /* [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,4)]];
-        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,4)]];
-        [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,-1)]];*/
         
-    
-        for (MazeNode *wallNode in wallNodes) {
-            [self addDragEventsToNode:wallNode];
-        }
-        
-        differentObjectsCounter = objNodes.count;
-        for(int i = 0; i < objNodes.count; i++){
-           for(int j = i+1; j < objNodes.count; j++){
-                if([GeometryHelper compareWallObject:(MazeObject*)objNodes[i] compareWith:(MazeObject*)objNodes[j]]){
-                    differentObjectsCounter--;
-                    break;
-                }
-                
-            }
-        }
-        int categoryCounter = 0;
-        for(int i = 0; i <= differentObjectsCounter; i++){
-            if(i == 0){
-                ((MazeObject*)objNodes[i]).category = categoryCounter;
-            }else{
-                bool sameCategory = NO;
-                for(int j = i-1; j >= 0; j--){
-                    if(i >= differentObjectsCounter){
-                        break;
-                    }
-                    if([GeometryHelper compareWallObject:(MazeObject*)objNodes[j] compareWith:(MazeObject*)objNodes[i]]){
-                        ((MazeObject*)objNodes[i]).category = ((MazeObject*)objNodes[j]).category;
-                        sameCategory = YES;
-                    }
-                }
-                if(!sameCategory){
-                    categoryCounter++;
-                    if(i < objNodes.count){
-                        ((MazeObject*)objNodes[i]).category = categoryCounter;
-                    }
-                }
-                
-            }
-        }
-        for (MazeObject* objects in objNodes) {
-            [GeometryHelper scaleToToolbar:objects withLength:@"height"];
-            [GeometryHelper scaleToToolbar:objects withLength:@"width"];
-        }
-        [self initToolbarItems];
-        [self.toolBarView addSubview:obj1.containerView];
-        [self.toolBarView addSubview:obj2.containerView];
-        [self.toolBarView addSubview:obj3.containerView];
-        [self.toolBarView addSubview:obj4.containerView];
-         
         //CGRect frame =  obj1.containerView.frame;
         //frame.origin.y = 0;
         //obj1.containerView.frame = frame;
@@ -247,7 +183,7 @@
                     for (int x = 0; x < matrix.count; x++) {
                         for (int y = 0; y < ((NSArray*)matrix[0]).count; y++) {
                             MazeNode *tmpNode = matrix[x][y];
-                            if (![tmpNode isEqual:[NSNull null]]) {
+                            if (![tmpNode isEqual:[NSNull null]] && [tmpNode isKindOfClass:[MazeNode class]]) {
                                 if (tmpNode.object != nil && tmpNode.object.type == END)
                                     endNode = tmpNode;
                             }
@@ -301,7 +237,7 @@
         for (int x = 0; x < matrix.count; x++) {
             for (int y = 0; y < ((NSArray*)matrix[0]).count; y++) {
                 MazeNode *node = matrix[x][y];
-                if (![node isEqual:[NSNull null]] && node.object &&
+                if (![node isEqual:[NSNull null]]&& [node isKindOfClass:[MazeNode class]] && node.object &&
                     (node.object.type == WALL ||
                      node.object.type == START ||
                      node.object.type == END ) ){
@@ -512,7 +448,7 @@
                 for (int x = 0; x < matrix.count; x++) {
                     for (int y = 0; y < ((NSArray*)matrix[0]).count; y++) {
                         MazeNode *tmpNode = matrix[x][y];
-                        if (![tmpNode isEqual:[NSNull null]]) {
+                        if (![tmpNode isEqual:[NSNull null]] && [tmpNode isKindOfClass:[MazeNode class]]) {
                             if (tmpNode.object != nil && tmpNode.object.type == END)
                                 endNode = tmpNode;
                         }
@@ -545,12 +481,12 @@
 }
 
 
--(void)initGrid{
+-(void)initGridWithSize:(CGSize)size{
     float hex_height = [SettingsStore sharedStore].hexSize * 2;
     float hex_width = sqrt(3) / 2.0 * hex_height;
     
     
-    gridSize = CGSizeMake(20, 20);
+    gridSize = size;
 
     // Custom initialization
     self.view.backgroundColor = [UIColor whiteColor];
@@ -567,7 +503,17 @@
     containerView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.scrollView.contentSize.width, self.scrollView.contentSize.height)];
     [self.scrollView addSubview:containerView];
     
-    matrix = [GeometryHelper generateMatrixWithWidth:gridSize.width Height:gridSize.height withImageName:@"hex_gray.png" inContainerView:containerView];
+    matrix = [GeometryHelper generateMatrixWithWidth:gridSize.width Height:gridSize.height withImageName:@"empty.png" inContainerView:containerView];
+    
+    for (int x = 0; x < matrix.count; x++) {
+        for (int y = 0; y < ((NSArray*)matrix[0]).count; y++) {
+            MazeNode *node = matrix[x][y];
+            if (![node isEqual:[NSNull null]]) {
+                matrix[x][y] = node.uiElement;
+            }
+        }
+    }
+    /*
      while (true) {
         CGPoint startP =  CGPointMake(arc4random()%(int)gridSize.width,arc4random()%(int)gridSize.height);
         CGPoint endP =  CGPointMake(arc4random()%(int)gridSize.width,arc4random()%(int)gridSize.height);
@@ -596,8 +542,224 @@
             break;
         }
         
+    }*/
+}
+
+-(void)buildLevel:(LevelInfo*)info{
+    
+    NSMutableArray *board= info.board;
+    
+    for (int x = 0; x < board.count; x++) {
+        for (int y = 0; y <((NSArray*)board[x]).count; y++){
+            
+            NSNumber *nodeType = board[x][y];
+            id obj = matrix[x + 1][y + 1];
+            
+            if ([obj isEqual:[NSNull null]])
+                continue;
+            
+            MazeNode *node = [MazeNode node];
+            node.Size = [SettingsStore sharedStore].hexSize;
+            node.uiElement = obj;
+            
+            node.MatrixCoords = CGPointMake(x,y);
+            node.center = node.uiElement.center;
+            
+            if(nodeType.intValue == 1){
+                [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_gray.png"]];
+            } else if (nodeType.intValue == 4){
+                [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_petrol.png"]];
+                node.object = [MazeObject objectWithType:END andCenter:CGPointMake(node.center.x, node.center.y)];
+            } else if (nodeType.intValue == 3){
+                [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_turquoise.png"]];
+                node.object = [MazeObject objectWithType:START andCenter:CGPointMake(node.center.x, node.center.y)];
+            } else if (nodeType.intValue == 2){
+                [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_darkbrown.png"]];
+                node.object = [MazeObject objectWithType:FIXEDWALL andCenter:CGPointMake(node.center.x, node.center.y)];
+            }else if (nodeType.intValue == 5){
+                [((UIImageView*)node.uiElement) setImage:[UIImage imageNamed:@"hex_coin.png"]];
+                node.object = [MazeObject objectWithType:COIN andCenter:CGPointMake(node.center.x, node.center.y)];
+            }
+            
+            //NSLog(@"(x:%i,y:%i) = %@", x,y,board[x][y]);
+            
+            if (nodeType.intValue == 0)
+                matrix[x + 1][y + 1] = node.uiElement;
+            else
+                matrix[x + 1][y + 1] = node;
+        }
+    }
+    /*
+    NSMutableArray *wallNodes = [NSMutableArray array];
+    objCounts = [NSMutableArray array];
+    objNodes = [NSMutableArray array];
+    for (NSNumber *key in info.walls) {
+        for (int i = 0; i < [[info.walls objectForKey:key]intValue]; i++) {
+            MazeObject *obj;
+            if (key.intValue == 0){
+                obj = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,0)]];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,1)]];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,1)]];
+            }else if (key.intValue == 1){
+                obj = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,0)]];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,1)]];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,2)]];
+            }else if (key.intValue == 2){
+                obj = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,0)]];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,0)]];
+            }else if (key.intValue == 3){
+                obj = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,0)]];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,1)]];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,2)]];
+            }
+            [objNodes addObject:obj];
+        }
     }
     
+    
+    for (MazeNode *wallNode in wallNodes) {
+        [self addDragEventsToNode:wallNode];
+    }
+    
+    differentObjectsCounter = objNodes.count;
+    for(int i = 0; i < objNodes.count; i++){
+        for(int j = i+1; j < objNodes.count; j++){
+            if([GeometryHelper compareWallObject:(MazeObject*)objNodes[i] compareWith:(MazeObject*)objNodes[j]]){
+                differentObjectsCounter--;
+                break;
+            }
+            
+        }
+    }
+    NSLog(@"different object counter: %i", differentObjectsCounter);
+    int categoryCounter = 0;
+    for(int i = 0; i <= differentObjectsCounter; i++){
+        if(i == 0){
+            ((MazeObject*)objNodes[i]).category = categoryCounter;
+        }else{
+            bool sameCategory = NO;
+            for(int j = i-1; j >= 0; j--){
+                if(i >= differentObjectsCounter){
+                    break;
+                }
+                if([GeometryHelper compareWallObject:(MazeObject*)objNodes[j] compareWith:(MazeObject*)objNodes[i]]){
+                    ((MazeObject*)objNodes[i]).category = ((MazeObject*)objNodes[j]).category;
+                    sameCategory = YES;
+                }
+            }
+            if(!sameCategory){
+                categoryCounter++;
+                if(i < objNodes.count){
+                    ((MazeObject*)objNodes[i]).category = categoryCounter;
+                }
+            }
+            
+        }
+    }
+    
+    for (MazeObject* objects in objNodes) {
+        [GeometryHelper scaleToToolbar:objects withLength:@"height"];
+        [GeometryHelper scaleToToolbar:objects withLength:@"width"];
+    }
+    [self initToolbarItems];
+    for (MazeObject* objects in objNodes) {
+        [self.toolBarView addSubview:objects.containerView];
+    }
+     */
+    
+    NSMutableArray *wallNodes = [NSMutableArray array];
+    objCounts = [NSMutableArray array];
+    objNodes = [NSMutableArray array];
+    MazeObject *obj1 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+    [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(0,0)]];
+    [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(-1,1)]];
+    [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(0,1)]];
+    [objNodes addObject:obj1];
+    MazeObject *obj2 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+    [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,0)]];
+    [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,1)]];
+    [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,2)]];
+    [objNodes addObject:obj2];
+    
+    MazeObject *obj4 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+    [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(0,0)]];
+    [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(0,1)]];
+    [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(0,2)]];
+    [objNodes addObject:obj4];
+    
+    MazeObject *obj6 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+    [wallNodes addObject:[obj6 generateAndAddNodeRelative:CGPointMake(0,0)]];
+    [wallNodes addObject:[obj6 generateAndAddNodeRelative:CGPointMake(0,1)]];
+    [wallNodes addObject:[obj6 generateAndAddNodeRelative:CGPointMake(-1,2)]];
+    [objNodes addObject:obj6];
+    MazeObject *obj3 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+    [wallNodes addObject:[obj3 generateAndAddNodeRelative:CGPointMake(0,0)]];
+    [wallNodes addObject:[obj3 generateAndAddNodeRelative:CGPointMake(0,1)]];
+    [wallNodes addObject:[obj3 generateAndAddNodeRelative:CGPointMake(0,2)]];
+    [objNodes addObject:obj3];
+    MazeObject *obj5 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+    [wallNodes addObject:[obj5 generateAndAddNodeRelative:CGPointMake(0,0)]];
+    [wallNodes addObject:[obj5 generateAndAddNodeRelative:CGPointMake(1,0)]];
+    [objNodes addObject:obj5];
+    
+    /* [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,4)]];
+     [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,4)]];
+     [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,-1)]];*/
+    
+    
+    for (MazeNode *wallNode in wallNodes) {
+        [self addDragEventsToNode:wallNode];
+    }
+    
+    differentObjectsCounter = objNodes.count;
+    for(int i = 0; i < objNodes.count; i++){
+        for(int j = i+1; j < objNodes.count; j++){
+            if([GeometryHelper compareWallObject:(MazeObject*)objNodes[i] compareWith:(MazeObject*)objNodes[j]]){
+                differentObjectsCounter--;
+                break;
+            }
+            
+        }
+    }
+    int categoryCounter = 0;
+    for(int i = 0; i <= differentObjectsCounter; i++){
+        if(i == 0){
+            ((MazeObject*)objNodes[i]).category = categoryCounter;
+        }else{
+            bool sameCategory = NO;
+            for(int j = i-1; j >= 0; j--){
+                if(i >= differentObjectsCounter){
+                    break;
+                }
+                if([GeometryHelper compareWallObject:(MazeObject*)objNodes[j] compareWith:(MazeObject*)objNodes[i]]){
+                    ((MazeObject*)objNodes[i]).category = ((MazeObject*)objNodes[j]).category;
+                    sameCategory = YES;
+                }
+            }
+            if(!sameCategory){
+                categoryCounter++;
+                if(i < objNodes.count){
+                    ((MazeObject*)objNodes[i]).category = categoryCounter;
+                }
+            }
+            
+        }
+    }
+    for (MazeObject* objects in objNodes) {
+        [GeometryHelper scaleToToolbar:objects withLength:@"height"];
+        [GeometryHelper scaleToToolbar:objects withLength:@"width"];
+    }
+    [self initToolbarItems];
+    [self.toolBarView addSubview:obj1.containerView];
+    [self.toolBarView addSubview:obj2.containerView];
+    [self.toolBarView addSubview:obj3.containerView];
+    [self.toolBarView addSubview:obj4.containerView];
+    [self.toolBarView addSubview:obj5.containerView];
+    [self.toolBarView addSubview:obj6.containerView];
 }
 
 -(void)initToolbar{

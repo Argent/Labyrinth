@@ -8,9 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@interface LevelsViewController : UIViewController
-<UITableViewDelegate, UITableViewDataSource>
+@interface LevelsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
+
 @property (nonatomic, strong) NSMutableArray* levels;
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
+
+@property (nonatomic) BOOL startEditor;
 
 @end

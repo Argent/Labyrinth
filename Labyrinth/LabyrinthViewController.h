@@ -8,9 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
+@class LevelInfo;
+
 @interface LabyrinthViewController : UIViewController <UIScrollViewDelegate>
+
+-(id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andLevelInfo:(LevelInfo*)levelinfo;
 
 @property (nonatomic,strong) UIScrollView *scrollView;
 @property (nonatomic,strong) UIScrollView *toolBarView;
+
+@property (nonatomic, strong) void(^homeBlock)(void);
 
 @end

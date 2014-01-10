@@ -11,6 +11,7 @@
 #import "LevelManager.h"
 #import "LevelInfo.h"
 #import "LabyrinthEditorViewController.h"
+#import "LabyrinthViewController.h"
 
 @interface LevelsViewController ()
 
@@ -63,7 +64,10 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.levels.count+1;
+    if (self.startEditor)
+        return self.levels.count+1;
+    else
+        return self.levels.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -73,15 +77,14 @@
     if (!cell){
         cell=[[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
     }
-    if (indexPath.row==0){
-        cell.textLabel.text = @"add new";
-    }
-    else{
-    
-        cell.textLabel.text = [NSString stringWithFormat:@"%i. %@", indexPath.row, [[self.levels objectAtIndex:indexPath.row - 1] objectForKey:@"name"]];
-        //NSLog(@"name beim laden:%@",[[self.levels objectAtIndex:indexPath.row - 1] objectForKey:@"name"]);
-        
-        
+    if (self.startEditor){
+        if (indexPath.row==0){
+            cell.textLabel.text = @"add new";
+        } else {
+            cell.textLabel.text = [NSString stringWithFormat:@"%i. %@", indexPath.row, [[self.levels objectAtIndex:indexPath.row - 1] objectForKey:@"name"]];
+        }
+    }else {
+        cell.textLabel.text = [NSString stringWithFormat:@"%i. %@", indexPath.row, [[self.levels objectAtIndex:indexPath.row] objectForKey:@"name"]];
     }
     
     return cell;
@@ -95,16 +98,25 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     
-    LabyrinthEditorViewController *vc= [[LabyrinthEditorViewController alloc]init];
-    [vc setHomeBlock:^{
-        [self dismissViewControllerAnimated:NO completion:nil];
-    }];
-    if (indexPath.row>0){
-        [vc loadAtIndex:indexPath.row];
-    }
+    UIViewController *vc = nil;
     
-    else {
-        vc.levelID=-1;
+    if (self.startEditor){
+        vc = [[LabyrinthEditorViewController alloc]init];
+        [(LabyrinthEditorViewController*)vc setHomeBlock:^{
+            [self dismissViewControllerAnimated:NO completion:nil];
+        }];
+        
+        if (indexPath.row>0){
+            [(LabyrinthEditorViewController*)vc loadAtIndex:indexPath.row];
+        } else {
+            ((LabyrinthEditorViewController*)vc).levelID=-1;
+        }
+    }else {
+        vc = [[LabyrinthViewController alloc]initWithNibName:nil bundle:nil andLevelInfo:[[LevelInfo alloc]initWithDictionary:self.levels[indexPath.row]] ];
+        [(LabyrinthViewController*)vc setHomeBlock:^{
+            [self dismissViewControllerAnimated:NO completion:nil];
+        }];
+        
     }
     
     [self presentViewController:vc animated: YES completion:nil];
