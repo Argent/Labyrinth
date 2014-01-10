@@ -67,11 +67,16 @@
     if (self) {
         scrollViewOffset = CGPointMake(0.0, 0.0);
         levelInfo = levelinfo;
-        [self initGridWithSize:CGSizeMake(levelInfo.board.count +1 , ((NSArray*)levelInfo.board[0]).count +1)];
+        [self initGridWithSize:CGSizeMake(levelInfo.board.count +2 , ((NSArray*)levelInfo.board[0]).count +2)];
         [self initToolbar];
         menubar = [[UILabyrinthMenu alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 40)];
         [menubar setBackBlock:^{
-            [self dismissViewControllerAnimated:YES completion:nil];
+            [self dismissViewControllerAnimated:NO completion:^{
+                
+                    if(self.homeBlock){
+                        self.homeBlock();
+                    }
+            }];
         }];
         [menubar setStartPauseBlock:^(bool start) {
             if (start){
@@ -549,11 +554,15 @@
     
     NSMutableArray *board= info.board;
     
+    int yOffset = info.minY.intValue % 2 == 0 ? 2 : 1;
+    
+    //NSLog(@"minY: %i, minY: %i, yOffset: %i",info.minY.intValue, info.minX.intValue, yOffset);
+    
     for (int x = 0; x < board.count; x++) {
         for (int y = 0; y <((NSArray*)board[x]).count; y++){
             
             NSNumber *nodeType = board[x][y];
-            id obj = matrix[x + 1][y + 1];
+            id obj = matrix[x + 1][y + yOffset];
             
             if ([obj isEqual:[NSNull null]])
                 continue;
@@ -584,9 +593,9 @@
             //NSLog(@"(x:%i,y:%i) = %@", x,y,board[x][y]);
             
             if (nodeType.intValue == 0)
-                matrix[x + 1][y + 1] = node.uiElement;
+                matrix[x + 1][y + yOffset] = node.uiElement;
             else
-                matrix[x + 1][y + 1] = node;
+                matrix[x + 1][y + yOffset] = node;
         }
     }
     /*
