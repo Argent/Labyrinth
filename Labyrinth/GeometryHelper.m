@@ -663,8 +663,9 @@
                 }
             }
         }
-        if(sameCoord == object1.objectNodes.count)
+        if(sameCoord == object1.objectNodes.count){
             return YES;
+        }
     }
     return NO;
 }
