@@ -660,6 +660,30 @@
                 [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,0)]];
                 [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,1)]];
                 [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,2)]];
+            }else if (key.intValue == 4){
+                obj = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,0)]];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,1)]];
+            }else if (key.intValue == 5){
+                obj = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,0)]];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,1)]];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-2,2)]];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,1)]];
+            }else if (key.intValue == 6){
+                obj = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,0)]];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,0)]];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,1)]];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(-1,2)]];
+            }else if (key.intValue == 7){
+                obj = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,0)]];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,1)]];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(0,2)]];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(1,3)]];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(2,3)]];
+                [wallNodes addObject:[obj generateAndAddNodeRelative:CGPointMake(2,4)]];
             }
             [objNodes addObject:obj];
         }

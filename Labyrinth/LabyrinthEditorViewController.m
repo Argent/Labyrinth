@@ -118,6 +118,30 @@
     [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(0,1)]];
     [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(-1,2)]];
     [objNodes addObject:obj4];
+    MazeObject *obj5 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+    [wallNodes addObject:[obj5 generateAndAddNodeRelative:CGPointMake(0,0)]];
+    [wallNodes addObject:[obj5 generateAndAddNodeRelative:CGPointMake(1,1)]];
+    [objNodes addObject:obj5];
+    MazeObject *obj6 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+    [wallNodes addObject:[obj6 generateAndAddNodeRelative:CGPointMake(0,0)]];
+    [wallNodes addObject:[obj6 generateAndAddNodeRelative:CGPointMake(0,1)]];
+    [wallNodes addObject:[obj6 generateAndAddNodeRelative:CGPointMake(-2,2)]];
+    [wallNodes addObject:[obj6 generateAndAddNodeRelative:CGPointMake(-1,1)]];
+    [objNodes addObject:obj6];
+    MazeObject *obj7 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+    [wallNodes addObject:[obj7 generateAndAddNodeRelative:CGPointMake(0,0)]];
+    [wallNodes addObject:[obj7 generateAndAddNodeRelative:CGPointMake(-1,0)]];
+    [wallNodes addObject:[obj7 generateAndAddNodeRelative:CGPointMake(-1,1)]];
+    [wallNodes addObject:[obj7 generateAndAddNodeRelative:CGPointMake(-1,2)]];
+    [objNodes addObject:obj7];
+    MazeObject *obj8 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+    [wallNodes addObject:[obj8 generateAndAddNodeRelative:CGPointMake(0,0)]];
+    [wallNodes addObject:[obj8 generateAndAddNodeRelative:CGPointMake(0,1)]];
+    [wallNodes addObject:[obj8 generateAndAddNodeRelative:CGPointMake(0,2)]];
+    [wallNodes addObject:[obj8 generateAndAddNodeRelative:CGPointMake(1,3)]];
+    [wallNodes addObject:[obj8 generateAndAddNodeRelative:CGPointMake(2,3)]];
+    [wallNodes addObject:[obj8 generateAndAddNodeRelative:CGPointMake(2,4)]];
+    [objNodes addObject:obj8];
     for (MazeObject* objects in objNodes) {
         [GeometryHelper scaleToToolbar:objects withLength:@"height"];
         [GeometryHelper scaleToToolbar:objects withLength:@"width"];
@@ -126,7 +150,7 @@
     toolbarItemsLabel = [NSMutableArray array];
     objCounts = [NSMutableArray array];
     int itemSize = [SettingsStore sharedStore].toolbarHeight-30;
-    for(int i = 0; i < 4; i++){
+    for(int i = 0; i < 8; i++){
         objCounts[i] = [NSNumber numberWithInt:0];
         
         toolbarItems[i] = [[UIView alloc] initWithFrame:CGRectMake(50+10+i*(itemSize+10), self.toolBarView2.frame.size.height/2-itemSize/2-10, itemSize, itemSize)];
@@ -168,12 +192,9 @@
         [minus addTarget:self action:@selector(minusObjects:) forControlEvents:UIControlEventTouchUpInside];
     }
 
-    [self.toolBarView2 addSubview:obj1.containerView];
-    [self.toolBarView2 addSubview:obj2.containerView];
-    [self.toolBarView2 addSubview:obj3.containerView];
-    [self.toolBarView2 addSubview:obj4.containerView];
-    for (MazeObject* obj in objNodes) {
-        obj.containerView.userInteractionEnabled = NO;
+    for (MazeObject* objects in objNodes) {
+        [self.toolBarView2 addSubview:objects.containerView];
+        objects.containerView.userInteractionEnabled = NO;
     }
 }
 -(void)plusObjects:(UIButton*) plusMinusType {
