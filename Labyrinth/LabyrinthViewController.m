@@ -183,6 +183,11 @@
                 if (!animationComplete && animationStarted){
                     CGPoint playerCoords = [GeometryHelper pixelToHex:[movingView.layer.presentationLayer position] gridSize:gridSize];
                     NSLog(@"Matrix: (%.2f,%.2f)",playerCoords.x, playerCoords.y);
+                    if (![matrix[(int)playerCoords.x][(int)playerCoords.y] isKindOfClass:[MazeNode class]]){
+                        NSLog(@"player position is not a maze node?!");
+                        
+                        return;
+                    }
                     
                     MazeNode *endNode = nil;
                     for (int x = 0; x < matrix.count; x++) {
@@ -476,8 +481,15 @@
                     }
                     [mazeControl.mazeObject.gridNodes removeAllObjects];
                     [mazeControl.mazeObject overlayWithColor:[UIColor redColor] alpha:0.6];
-                }else
+                }else {
+                    if ([imgView isKindOfClass:[UIView class]]){
+                        ((UIView*)imgView).transform = CGAffineTransformMakeScale(1.0, 1.0);
+                        rect.size = mazeControl.mazeObject.containerView.frame.size;
+                        mazeControl.mazeObject.containerView.frame = rect;
+                    }
+                    
                     [self recalculateAnimationFromStart:matrix[(int)playerCoords.x][(int)playerCoords.y] toEnd:endNode withStepDuration:1];
+                }
 
             } else {
                 if ([imgView isKindOfClass:[UIView class]]){
@@ -962,6 +974,8 @@
     [GeometryHelper solveMazeFrom:start To:end Matrix:matrix];
     NSArray *shortestPath = [GeometryHelper getShortestPathFrom:start To:end];
     NSLog(@"shortest path: %i steps", shortestPath.count);
+    if (shortestPath.count == 0)
+        return;
     
     UIBezierPath *bezierMovingPath = [UIBezierPath bezierPath];
     for (int i = 0; i < shortestPath.count; i++) {
@@ -989,12 +1003,17 @@
     if (movingPath.count > 0 && delIndex > 0){
         bool same = YES;
         for (int i = delIndex - 1; i < movingPath.count; i++) {
+            if (i - (delIndex-1) >= shortestPath.count){
+                same = NO;
+                break;
+            }
             CGPoint p1 = [movingPath[i][0] CGPointValue];
             CGPoint p2 = [shortestPath[i - (delIndex-1)] MatrixCoords];
            // NSArray *ar = @[[NSValue valueWithCGPoint:p1], [NSValue valueWithCGPoint:p2]];
            // NSLog(@"%@", ar);
             if (!(p1.x == p2.x && p1.y == p2.y)){
                 same = NO;
+                break;
             }
         }
         //NSLog(@"%@", same ? @"path is equal" : @"path is not equal");
