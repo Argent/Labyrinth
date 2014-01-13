@@ -1128,7 +1128,10 @@
     [CATransaction begin];
     [CATransaction setCompletionBlock:^{
         if (!interrupted) {
-            [menubar resetButton];
+            if ([movingPath[movingPath.count-1][1] boolValue]){
+                [menubar resetButton];
+            }
+            
             animationComplete = YES;
             
             for (int i = 0; i < movingPath.count; i++) {
@@ -1143,7 +1146,10 @@
         }else {
             interrupted = NO;
         }
-        [self gameOver];
+        if ([movingPath[movingPath.count-1][1] boolValue]){
+            [self gameOver];
+        }
+        
         // [movingView.layer removeFromSuperlayer];
     }];
     [movingView.layer addAnimation:pathAnimation forKey:@"movingAnimation"];
@@ -1180,8 +1186,8 @@
                         i++;
                     }
                     
-                    if ([movingPath[movingPath.count-1][1] boolValue] == YES)
-                        steps++;
+                    //if ([movingPath[movingPath.count-1][1] boolValue] == YES)
+                    //    steps++;
                     
                    // NSLog(@"Steps: %i", steps);
                     
@@ -1254,7 +1260,7 @@
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     CGRect area = CGRectMake(0, 0, screenRect.size.width, screenRect.size.height);
     gameOverView = [[UIView alloc]initWithFrame:area];
-    gameOverView.backgroundColor = [UIColor darkGrayColor];
+    gameOverView.backgroundColor = [UIColor colorWithWhite:0.333 alpha:0.750];
     
     UILabel* gameOverLabel =[[UILabel alloc]initWithFrame:CGRectMake(0, 50, area.size.width, 50)];
     [gameOverLabel setText:@"Game over!"];
