@@ -28,6 +28,8 @@
     NSMutableArray* toolbarItems;
     NSMutableArray *toolbarItemsLabel;
     
+    UIView *gameOverView;
+    
     CGSize gridSize;
 
     CGPoint lastDragPoint;
@@ -1141,6 +1143,7 @@
         }else {
             interrupted = NO;
         }
+        [self gameOver];
         // [movingView.layer removeFromSuperlayer];
     }];
     [movingView.layer addAnimation:pathAnimation forKey:@"movingAnimation"];
@@ -1244,6 +1247,65 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(void)gameOver {
+    //initializes and displays game over view
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGRect area = CGRectMake(0, 0, screenRect.size.width, screenRect.size.height);
+    gameOverView = [[UIView alloc]initWithFrame:area];
+    gameOverView.backgroundColor = [UIColor darkGrayColor];
+    
+    UILabel* gameOverLabel =[[UILabel alloc]initWithFrame:CGRectMake(0, 50, area.size.width, 50)];
+    [gameOverLabel setText:@"Game over!"];
+    [gameOverLabel setTextColor:[UIColor whiteColor]];
+    [gameOverLabel setTextAlignment:NSTextAlignmentCenter];
+    [gameOverLabel setFont: [UIFont fontWithName:@"Chalkduster" size:33.0]];
+    [gameOverView addSubview:gameOverLabel];
+    
+    UILabel* descriptionLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 150, area.size.width, 50)];
+    [descriptionLabel setTextAlignment:NSTextAlignmentCenter];
+    NSString *description = [NSString stringWithFormat:@"Steps: %i",menubar.steps];
+    [descriptionLabel setFont: [UIFont fontWithName:@"System Bold" size:22.0]];
+    [descriptionLabel setText:description];
+    [descriptionLabel setTextColor:[UIColor whiteColor]];
+    [gameOverView addSubview:descriptionLabel];
+    
+    UILabel* descriptionLabel2 = [[UILabel alloc]initWithFrame:CGRectMake(0, 200, area.size.width, 50)];
+    [descriptionLabel2 setTextAlignment:NSTextAlignmentCenter];
+    NSString *description2 = [NSString stringWithFormat:@"Coins: %i",menubar.coins];
+    [descriptionLabel2 setFont: [UIFont fontWithName:@"System Bold" size:22.0]];
+    [descriptionLabel2 setText:description2];
+    [descriptionLabel2 setTextColor:[UIColor whiteColor]];
+    [gameOverView addSubview:descriptionLabel2];
+    
+    UIButton* homeButton = [[UIButton alloc]initWithFrame:CGRectMake(area.size.width/2-60, 390, 120, 40)];
+    homeButton.backgroundColor = [UIColor darkGrayColor];
+    [homeButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [homeButton setTitle:@"Home" forState:UIControlStateNormal];
+    homeButton.layer.borderColor = [UIColor whiteColor].CGColor;
+    homeButton.layer.borderWidth = 2.0f;
+    [homeButton addTarget:self action:@selector(backtoHome) forControlEvents:UIControlEventTouchUpInside];
+    [gameOverView addSubview:homeButton];
+    
+    UIButton* resetButton = [[UIButton alloc]initWithFrame:CGRectMake(area.size.width/2-60, 300, 120, 40)];
+    resetButton.backgroundColor = [UIColor darkGrayColor];
+    [resetButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [resetButton setTitle:@"Play again" forState:UIControlStateNormal];
+    resetButton.layer.borderColor = [UIColor whiteColor].CGColor;
+    resetButton.layer.borderWidth = 2.0f;
+    [resetButton addTarget:self action:@selector(playAgain) forControlEvents:UIControlEventTouchUpInside];
+    [gameOverView addSubview:resetButton];
+    
+    [self.view addSubview:gameOverView];
+}
+
+-(void) backtoHome {
+    [self.presentingViewController.presentingViewController dismissViewControllerAnimated:YES completion:^{}];
+}
+
+-(void) playAgain{
+    [self->gameOverView removeFromSuperview];
 }
 
 @end
