@@ -147,6 +147,10 @@
 // Called when a drag on a maze object started
 - (IBAction) itemDragBegan:(id) sender withEvent:(UIEvent *) event {
     NSLog(@"Drag began");
+    if(!animationStarted && !animationComplete){
+        UIAlertView *noAnimation = [[UIAlertView alloc] initWithTitle: @"Start game first" message: @"To move the walls to the field, start the game." delegate: self cancelButtonTitle: @"Ok" otherButtonTitles: nil];
+        [noAnimation show];
+    }
     lastDragPoint = [[[event allTouches] anyObject] locationInView:self.view];
     touchedDown = YES;
     if (lastDragPoint.y > self.view.frame.size.height - 100){
