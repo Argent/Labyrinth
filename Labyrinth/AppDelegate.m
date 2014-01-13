@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "LevelInfo.h"
 #import "LevelsViewController.h"
+#import "LevelsMenuViewController.h"
 
 
 @implementation AppDelegate
@@ -21,7 +22,7 @@
     //self.rootViewController = [[LabyrinthViewController alloc]initWithNibName:nil bundle:nil];
     //self.rootViewController = [[LabyrinthEditorViewController alloc]initWithNibName:nil bundle:nil];
     self.rootViewController = [[StartMenuViewController alloc]initWithNibName:@"StartMenuViewController" bundle:nil];
-    //self.rootViewController = [[LevelsViewController alloc]initWithNibName:@"LevelsViewController" bundle:nil];
+    //self.rootViewController = [[LevelsMenuViewController alloc]initWithNibName:@"LevelsMenuViewController" bundle:nil];
     self.window.rootViewController = self.rootViewController;
     
     self.window.backgroundColor = [UIColor whiteColor];
