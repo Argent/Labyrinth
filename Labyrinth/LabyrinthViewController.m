@@ -79,6 +79,15 @@
             }];
         }];
         [menubar setStartPauseBlock:^(bool start) {
+            
+            [self initToolbarItems];
+            [self initToolbarObjects];
+            if (pathView) {
+                pathView.curvePath = nil;
+                [pathView removeFromSuperview];
+                pathView = nil;
+                animationComplete = YES;
+            }
             if (start){
                 if (!paused) {
                 MazeNode *startNode = nil;
@@ -147,7 +156,7 @@
 // Called when a drag on a maze object started
 - (IBAction) itemDragBegan:(id) sender withEvent:(UIEvent *) event {
     NSLog(@"Drag began");
-    if(!animationStarted && !animationComplete){
+    if(!animationStarted){
         UIAlertView *noAnimation = [[UIAlertView alloc] initWithTitle: @"Start game first" message: @"To move the walls to the field, start the game." delegate: self cancelButtonTitle: @"Ok" otherButtonTitles: nil];
         [noAnimation show];
     }
@@ -698,45 +707,9 @@
         [self addDragEventsToNode:wallNode];
     }
     
-    differentObjectsCounter = objNodes.count;
-    for(int i = 0; i < objNodes.count; i++){
-        for(int j = i+1; j < objNodes.count; j++){
-            if([GeometryHelper compareWallObject:(MazeObject*)objNodes[i] compareWith:(MazeObject*)objNodes[j]]){
-                differentObjectsCounter--;
-                break;
-            }
-            
-        }
-    }
-    int categoryCounter = 0;
-    for (int i = 0; i < objNodes.count; i++) {
-        if(i == 0){
-            ((MazeObject*)objNodes[i]).category = categoryCounter;
-        }else{
-            bool sameCategory = NO;
-            for (int j = i-1; j>= 0; j--) {
-                if([GeometryHelper compareWallObject:(MazeObject*)objNodes[j] compareWith:(MazeObject*)objNodes[i]]){
-                    ((MazeObject*)objNodes[i]).category = ((MazeObject*)objNodes[j]).category;
-                    sameCategory = YES;
-                }
-            }
-            if(!sameCategory){
-                categoryCounter++;
-                if(i < objNodes.count){
-                    ((MazeObject*)objNodes[i]).category = categoryCounter;
-                }
-            }
-        }
-    }
+    [self initToolbarObjects];
     
-    for (MazeObject* objects in objNodes) {
-        [GeometryHelper scaleToToolbar:objects withLength:@"height"];
-        [GeometryHelper scaleToToolbar:objects withLength:@"width"];
-    }
-    [self initToolbarItems];
-    for (MazeObject* objects in objNodes) {
-        [self.toolBarView addSubview:objects.containerView];
-    }
+    
      /*
     
     NSMutableArray *wallNodes = [NSMutableArray array];
@@ -860,6 +833,49 @@
     [self.toolBarView addSubview:obj5.containerView];
     [self.toolBarView addSubview:obj6.containerView];
      */
+}
+
+-(void)initToolbarObjects{
+    differentObjectsCounter = objNodes.count;
+    for(int i = 0; i < objNodes.count; i++){
+        for(int j = i+1; j < objNodes.count; j++){
+            if([GeometryHelper compareWallObject:(MazeObject*)objNodes[i] compareWith:(MazeObject*)objNodes[j]]){
+                differentObjectsCounter--;
+                break;
+            }
+            
+        }
+    }
+    int categoryCounter = 0;
+    for (int i = 0; i < objNodes.count; i++) {
+        if(i == 0){
+            ((MazeObject*)objNodes[i]).category = categoryCounter;
+        }else{
+            bool sameCategory = NO;
+            for (int j = i-1; j>= 0; j--) {
+                if([GeometryHelper compareWallObject:(MazeObject*)objNodes[j] compareWith:(MazeObject*)objNodes[i]]){
+                    ((MazeObject*)objNodes[i]).category = ((MazeObject*)objNodes[j]).category;
+                    sameCategory = YES;
+                }
+            }
+            if(!sameCategory){
+                categoryCounter++;
+                if(i < objNodes.count){
+                    ((MazeObject*)objNodes[i]).category = categoryCounter;
+                }
+            }
+        }
+    }
+    
+    for (MazeObject* objects in objNodes) {
+        [GeometryHelper scaleToToolbar:objects withLength:@"height"];
+        [GeometryHelper scaleToToolbar:objects withLength:@"width"];
+    }
+    [self initToolbarItems];
+    for (MazeObject* objects in objNodes) {
+        objects.toolbarItem = YES;
+        [self.toolBarView addSubview:objects.containerView];
+    }
 }
 
 -(void)initToolbar{
@@ -1110,6 +1126,7 @@
     [CATransaction begin];
     [CATransaction setCompletionBlock:^{
         if (!interrupted) {
+            [menubar resetButton];
             animationComplete = YES;
             
             for (int i = 0; i < movingPath.count; i++) {
