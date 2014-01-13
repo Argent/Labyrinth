@@ -13,6 +13,7 @@
 #define kStartKey @"start"
 #define kEndKey @"end"
 #define kHighScore @"highscore"
+#define kHighScoreCoins @"highscorecoins"
 #define kStepDuration @"stepduration"
 #define kBoardKey @"board"
 #define kWallsKey @"walls"
@@ -53,6 +54,7 @@
         
         self.stepDuration = [[dict objectForKey:kStepDuration]floatValue];
         self.highScore = [[dict objectForKey:kHighScore]intValue];
+        self.highScoreCoins = [[dict objectForKey:kHighScoreCoins] intValue];
         
     }
     return self;
@@ -84,6 +86,7 @@
     
     [dict setObject:[NSNumber numberWithFloat:self.stepDuration] forKey:kStepDuration];
     [dict setObject:[NSNumber numberWithInt:self.highScore] forKey:kHighScore];
+    [dict setObject:[NSNumber numberWithInt:self.highScoreCoins] forKey:kHighScoreCoins];
     
     return dict;
 }

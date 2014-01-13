@@ -7,9 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "LevelInfo.h"
 
 @interface LevelsCell : UICollectionViewCell
 @property (nonatomic, strong) UIImageView* imgView;
 @property (nonatomic, strong) UILabel* label;
+@property (nonatomic,strong) LevelInfo *info;
 
 @end

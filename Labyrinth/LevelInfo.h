@@ -15,6 +15,7 @@
 @property (nonatomic, strong) NSMutableDictionary *walls;
 @property (nonatomic) NSString *name;
 @property (nonatomic) int highScore;
+@property (nonatomic) int highScoreCoins;
 @property (nonatomic) float stepDuration;
 
 - (id)initWithMatrix:(NSArray*)matrix walls:(NSDictionary*)walls name:(NSString*)name;
