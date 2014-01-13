@@ -1054,33 +1054,77 @@
     
     int delIndex = 0;
     for (NSMutableArray *array in movingPath) {
+        
         if ([array[1] boolValue] == NO){
-            if ([array[0] CGPointValue].x == start.MatrixCoords.x && [array[0] CGPointValue].y == start.MatrixCoords.y){
+            if (CGPointEqualToPoint([array[0] CGPointValue], start.MatrixCoords)){
                 array[1] = [NSNumber numberWithBool:YES];
-                delIndex++;
+                //delIndex++;
             }
             break;
         }
+        
         delIndex++;
     }
     
-    if (movingPath.count > 0 && delIndex > 0){
-        bool same = YES;
-        for (int i = delIndex - 1; i < movingPath.count; i++) {
-            if (i - (delIndex-1) >= shortestPath.count){
-                same = NO;
+   
+    //NSLog(@"movingpath.count = %i", movingPath.count);
+    //NSLog(@"delindex = %i", delIndex);
+    //NSLog(@"nsrange: %@", [NSValue valueWithRange:NSMakeRange(delIndex, movingPath.count - delIndex)]);
+    
+    NSMutableArray *movingPathTmp = [NSMutableArray arrayWithArray:movingPath];
+    
+    if (delIndex > 0)
+        [movingPathTmp removeObjectsAtIndexes:[NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(delIndex, movingPathTmp.count - delIndex)]];
+    
+    for (int i = 0; i < shortestPath.count; i++) {
+        MazeNode *val = shortestPath[i];
+        if (i == 0){
+            [movingPathTmp addObject:[NSMutableArray arrayWithObjects:[NSValue valueWithCGPoint:val.MatrixCoords], [NSNumber numberWithBool:YES], nil]];
+        }else {
+            [movingPathTmp addObject:[NSMutableArray arrayWithObjects:[NSValue valueWithCGPoint:val.MatrixCoords], [NSNumber numberWithBool:NO], nil]];
+        }
+    }
+    
+    NSArray *lastArray;
+    int delIndex2 = -1;
+    for (int i = 0; i < movingPathTmp.count; i++) {
+        NSArray *arr = movingPathTmp[i];
+        
+        if (lastArray){
+            if ([arr[0] CGPointValue].x == [lastArray[0] CGPointValue].x &&
+                [arr[0] CGPointValue].y == [lastArray[0] CGPointValue].y ){
+                delIndex2 = i;
+                //NSLog(@"found duplicate");
+                //NSLog(@"%@", arr);
+                //NSLog(@"startpoint: %@", [NSValue valueWithCGPoint:start.MatrixCoords]);
                 break;
             }
+        }
+        
+        lastArray = arr;
+    }
+    
+    if (delIndex2 > -1)
+        [movingPathTmp removeObjectAtIndex:delIndex2];
+    
+    
+    //NSLog(@"movingpath.count = %i",movingPath.count);
+    //NSLog(@"movingpathTmp.count = %i",movingPathTmp.count);
+    
+    if (movingPath.count > 0 && movingPath.count == movingPathTmp.count){
+        bool same = YES;
+        for (int i = 0; i < movingPath.count; i++) {
             CGPoint p1 = [movingPath[i][0] CGPointValue];
-            CGPoint p2 = [shortestPath[i - (delIndex-1)] MatrixCoords];
-           // NSArray *ar = @[[NSValue valueWithCGPoint:p1], [NSValue valueWithCGPoint:p2]];
-           // NSLog(@"%@", ar);
-            if (!(p1.x == p2.x && p1.y == p2.y)){
+            CGPoint p2 = [movingPathTmp[i][0] CGPointValue];
+            //NSArray *ar = @[[NSValue valueWithCGPoint:p1], [NSValue valueWithCGPoint:p2]];
+            // NSLog(@"start: %@", [NSValue valueWithCGPoint:start.MatrixCoords]);
+            // NSLog(@"%@", ar);
+            if (!CGPointEqualToPoint(p1, p2)){
                 same = NO;
                 break;
             }
         }
-        //NSLog(@"%@", same ? @"path is equal" : @"path is not equal");
+        NSLog(@"%@", same ? @"path is equal" : @"path is not equal");
         if (same)
             return;
         else {
@@ -1095,9 +1139,22 @@
         }
     }
     
-    [movingPath removeObjectsInRange:NSMakeRange(delIndex, movingPath.count - delIndex)];
+    movingPath = movingPathTmp;
     
     UIBezierPath *bezierDrawingPath = [UIBezierPath bezierPath];
+    
+    for (int i = 0; i < movingPath.count; i++) {
+        NSArray *array = movingPath[i];
+        MazeNode *node = matrix[(int)[array[0] CGPointValue].x][(int)[array[0] CGPointValue].y];
+        if (i == 0){
+            [bezierDrawingPath moveToPoint:node.center];
+        }else {
+            [bezierDrawingPath addLineToPoint:node.center];
+        }
+    }
+    
+    
+    /*
     for (int i = 0; i < ((movingPath.count > 0?(movingPath.count -1):0) + shortestPath.count); i++) {
         if (i == 0 && movingPath.count > 0){
             NSArray *array = movingPath[i];
@@ -1118,6 +1175,8 @@
             //NSLog(@"(%.1f,%.1f)",node.MatrixCoords.x,node.MatrixCoords.y);
         }
     }
+     */
+     
     /*
      pathView.curvePath = nil;
      [pathView setNeedsDisplay];
@@ -1130,30 +1189,12 @@
     //[containerView addSubview:movingView];
     [pathView setNeedsDisplay];
     
-
+/*
     for (MazeNode *val in shortestPath) {
         [movingPath addObject:[NSMutableArray arrayWithObjects:[NSValue valueWithCGPoint:val.MatrixCoords], [NSNumber numberWithBool:NO], nil]];
     }
-    
-    NSArray *lastArray;
-    int delIndex2 = -1;
-    for (int i = 0; i < movingPath.count; i++) {
-        NSArray *arr = movingPath[i];
-        
-        if (lastArray){
-            if ([arr[0] CGPointValue].x == [lastArray[0] CGPointValue].x &&
-                [arr[0] CGPointValue].y == [lastArray[0] CGPointValue].y ){
-                delIndex2 = i;
-                break;
-            }
-        }
-        
-        lastArray = arr;
-    }
-    
-    if (delIndex2 > -1)
-        [movingPath removeObjectAtIndex:delIndex2];
-    
+    */
+ 
     animationComplete = NO;
 
     
@@ -1270,7 +1311,7 @@
                     NSLog(@"error: %@",error);
                 }
             });
-            usleep(pathAnimation.duration / shortestPath.count / 8.0 * 1000 * 1000);
+            usleep(pathAnimation.duration / shortestPath.count / 10.0 * 1000 * 1000);
         }
     });
     

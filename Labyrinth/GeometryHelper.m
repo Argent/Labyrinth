@@ -353,7 +353,7 @@
         [coords addObject:[NSValue valueWithCGPoint:matrixCoords]];
     }
     
-    NSLog(@"coords: %@",coords);
+    //NSLog(@"coords: %@",coords);
     return coords;
 }
 
