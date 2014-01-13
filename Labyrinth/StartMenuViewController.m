@@ -11,6 +11,7 @@
 #import "LabyrinthEditorViewController.h"
 #import "LabyrinthViewController.h"
 #import "LevelsViewController.h"
+#import "LevelsMenuViewController.h"
 
 @interface StartMenuViewController ()
 
@@ -55,14 +56,14 @@
 
 - (IBAction)startGameButtonPressed:(UIButton *)sender {
     // LabyrinthViewController *vc = [[LabyrinthViewController alloc]initWithNibName:nil bundle:nil];
-    LevelsViewController *vc = [[LevelsViewController alloc]initWithNibName:nil bundle:nil];
+    LevelsMenuViewController *vc = [[LevelsMenuViewController alloc]initWithNibName:nil bundle:nil];
     vc.startEditor = NO;
     [self presentViewController:vc animated:YES completion:nil];
 }
 
 - (IBAction)editorButtonPressed:(UIButton *)sender {
   //  LabyrinthEditorViewController *vc = [[LabyrinthEditorViewController alloc]initWithNibName:nil bundle:nil];
-     LevelsViewController *vc = [[LevelsViewController alloc]initWithNibName:@"LevelsViewController" bundle:nil];
+     LevelsMenuViewController *vc = [[LevelsMenuViewController alloc]initWithNibName:nil bundle:nil];
     vc.startEditor = YES;
     
     [self presentViewController:vc animated:YES completion:nil];
