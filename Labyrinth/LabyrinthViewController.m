@@ -139,8 +139,8 @@
         }];
         [self.view addSubview:menubar];
         
-        //UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapGestureCaptured:)];
-        //[self.scrollView addGestureRecognizer:singleTap];
+        UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapGestureCaptured:)];
+        [self.scrollView addGestureRecognizer:singleTap];
         
 
         [self buildLevel:levelInfo];
@@ -200,30 +200,43 @@
                 }
                 
                 for (MazeNode *node in mazeControl.mazeObject.gridNodes) {
+                    NSValue *value = [NSValue valueWithCGPoint:node.MatrixCoords];
+                    //NSLog(@"value ist: %@",value);
+                    
                     node.object = nil;
                 }
                 [mazeControl.mazeObject.gridNodes removeAllObjects];
                 
                 if (!animationComplete && animationStarted){
-                    CGPoint playerCoords = [GeometryHelper pixelToHex:[movingView.layer.presentationLayer position] gridSize:gridSize];
-                    //NSLog(@"Matrix: (%.2f,%.2f)",playerCoords.x, playerCoords.y);
+                    //CGPoint playerCoords = [GeometryHelper pixelToHex:[movingView.layer.presentationLayer position] gridSize:gridSize];
+     
+                   
+                   // NSLog(@"#1");
+                    CGPoint playerCoords;
+                    for (int i = 0; i < movingPath.count; i++) {
+                        NSMutableArray *array = movingPath[i];
+                        if ([array[1] boolValue] == NO){
+                            if (i > 0)
+                                playerCoords = [movingPath[i-1][0] CGPointValue];
+                            else
+                                playerCoords = [array[0] CGPointValue];
+                            break;
+                        }
+                    }
+                    //if (!coordsFound)
+                    //    return;
+                   // NSLog(@"Matrix: (%.2f,%.2f)",playerCoords.x, playerCoords.y);
+                    //NSLog(@"%@", [NSValue valueWithCGPoint:playerCoords]);
+                   // NSLog(@"#2");
                     if (![matrix[(int)playerCoords.x][(int)playerCoords.y] isKindOfClass:[MazeNode class]]){
                         NSLog(@"player position is not a maze node?!");
                         
                         return;
                     }
                     
-                    MazeNode *endNode = nil;
-                    for (int x = 0; x < matrix.count; x++) {
-                        for (int y = 0; y < ((NSArray*)matrix[0]).count; y++) {
-                            MazeNode *tmpNode = matrix[x][y];
-                            if (![tmpNode isEqual:[NSNull null]] && [tmpNode isKindOfClass:[MazeNode class]]) {
-                                if (tmpNode.object != nil && tmpNode.object.type == END)
-                                    endNode = tmpNode;
-                            }
-                        }
-                    }
+                   // NSLog(@"#3");
                     
+                    MazeNode *endNode = [self getEndNode];
                     [self recalculateAnimationFromStart:matrix[(int)playerCoords.x][(int)playerCoords.y] toEnd:endNode withStepDuration:1];
                     
                 }
@@ -428,6 +441,11 @@
             point.y -= scrollViewOffset.y;
             point = CGPointMake(point.x* 1/self.scrollView.zoomScale , point.y* 1/self.scrollView.zoomScale );
             [containerView addSubview:mazeControl.mazeObject.containerView];
+            for (MazeNode *node in mazeControl.mazeObject.gridNodes) {
+                NSValue *value = [NSValue valueWithCGPoint:node.MatrixCoords];
+               // NSLog(@"value dropped ist: %@",value);
+            }
+            
             UIView *imgView = mazeControl.mazeObject.containerView;
             if ([imgView isKindOfClass:[UIView class]]){
                 ((UIView*)imgView).transform = CGAffineTransformMakeScale(1.0, 1.0);
@@ -472,10 +490,24 @@
                 ((MazeNode*) matrix[(int)coords.x][(int)coords.y]).object = mazeControl.mazeObject;
                 [mazeControl.mazeObject.gridNodes addObject:matrix[(int)coords.x][(int)coords.y] ];
             }
+           // NSLog(@"alignedCoord: %@",alignedCoords);
             
             
             if (!animationComplete && animationStarted){
-                CGPoint playerCoords = [GeometryHelper pixelToHex:[movingView.layer.presentationLayer position] gridSize:gridSize];
+                //CGPoint playerCoords = [GeometryHelper pixelToHex:[movingView.layer.presentationLayer position] gridSize:gridSize];
+                
+                CGPoint playerCoords;
+                for (int i = 0; i < movingPath.count; i++) {
+                    NSMutableArray *array = movingPath[i];
+                    if ([array[1] boolValue] == NO){
+                        if (i > 0)
+                            playerCoords = [movingPath[i-1][0] CGPointValue];
+                        else
+                            playerCoords = [array[0] CGPointValue];
+                        break;
+                    }
+                }
+            
                 if (![matrix[(int)playerCoords.x][(int)playerCoords.y] isKindOfClass:[MazeNode class]]){
                     NSLog(@"player position is not a maze node?!");
                     for (NSValue *val in alignedCoords) {
@@ -485,18 +517,9 @@
                     [mazeControl.mazeObject.gridNodes removeAllObjects];
                     return;
                 }
-               // NSLog(@"Matrix: (%.2f,%.2f)",playerCoords.x, playerCoords.y);
+                //NSLog(@"player coords: (%.0f,%.0f)",playerCoords.x, playerCoords.y);
                 
-                MazeNode *endNode = nil;
-                for (int x = 0; x < matrix.count; x++) {
-                    for (int y = 0; y < ((NSArray*)matrix[0]).count; y++) {
-                        MazeNode *tmpNode = matrix[x][y];
-                        if (![tmpNode isEqual:[NSNull null]] && [tmpNode isKindOfClass:[MazeNode class]]) {
-                            if (tmpNode.object != nil && tmpNode.object.type == END)
-                                endNode = tmpNode;
-                        }
-                    }
-                }
+                MazeNode *endNode = [self getEndNode];
                 
                 [GeometryHelper solveMazeFrom:matrix[(int)playerCoords.x][(int)playerCoords.y] To:endNode Matrix:matrix];
                 NSArray *path = [GeometryHelper getShortestPathFrom:matrix[(int)playerCoords.x][(int)playerCoords.y] To:endNode];
@@ -948,7 +971,9 @@
     //NSLog(@"Touch Point: (x:%.2f,y:%.2f)", touchPoint.x, touchPoint.y);
     
     CGPoint matrixCoords = [GeometryHelper pixelToHex:touchPoint gridSize:gridSize];
-    //NSLog(@"Touch Matrix: (x:%.2f,y:%.2f)", matrixCoords.x, matrixCoords.y);
+    NSLog(@"touch down: (x:%.0f,y:%.0f)", matrixCoords.x, matrixCoords.y);
+    
+    return;
     
     //CGPoint pixelCoords = [GeometryHelper hexToPixel:matrixCoords];
     // NSLog(@"Touch Point calculated: (x:%.2f,y:%.2f)", pixelCoords.x, pixelCoords.y);
@@ -1035,11 +1060,25 @@
         [movingView.layer removeAnimationForKey:@"movingAnimation"];
     }*/
     
+    
+    
+    
     [GeometryHelper solveMazeFrom:start To:end Matrix:matrix];
     NSArray *shortestPath = [GeometryHelper getShortestPathFrom:start To:end];
-    NSLog(@"shortest path: %i steps", shortestPath.count);
+   // NSLog(@"shortest path: %i steps", shortestPath.count);
     if (shortestPath.count == 0)
         return;
+    
+    bool foundWall = NO;
+    for (MazeNode* node in shortestPath) {
+        //MazeNode *node = matrix[(int)[arr[0] CGPointValue].x][(int)[arr[0] CGPointValue].y];
+        if(node.isWall) {
+            NSLog(@"isWall at position: %@", [NSValue valueWithCGPoint:node.MatrixCoords]);
+            //  NSLog(@"repeating");
+            foundWall = YES;
+        }
+    }
+    
     
     UIBezierPath *bezierMovingPath = [UIBezierPath bezierPath];
     for (int i = 0; i < shortestPath.count; i++) {
@@ -1057,7 +1096,7 @@
         
         if ([array[1] boolValue] == NO){
             if (CGPointEqualToPoint([array[0] CGPointValue], start.MatrixCoords)){
-                array[1] = [NSNumber numberWithBool:YES];
+                //array[1] = [NSNumber numberWithBool:YES];
                 //delIndex++;
             }
             break;
@@ -1139,8 +1178,8 @@
         }
     }
     
-    movingPath = movingPathTmp;
-    
+    movingPath = [NSMutableArray arrayWithArray:movingPathTmp];
+
     UIBezierPath *bezierDrawingPath = [UIBezierPath bezierPath];
     
     for (int i = 0; i < movingPath.count; i++) {
@@ -1210,7 +1249,7 @@
                 [menubar resetButton];
             }
             
-            animationComplete = YES;
+            //animationComplete = YES;
             
             for (int i = 0; i < movingPath.count; i++) {
                 if ([movingPath[i][1] boolValue] == NO || i == movingPath.count -1){
@@ -1245,11 +1284,17 @@
                     int coins = 0;
                     int i = 0;
                     
+                    //NSMutableArray *tmpAry = [NSMutableArray array];
                     
                     for (NSMutableArray *array in movingPath) {
+                        //[tmpAry addObject:[NSValue valueWithCGPoint:[array[0] CGPointValue]]];
+                        
                         if ([array[1] boolValue] == NO){
-                            if ([array[0] CGPointValue].x == matrixPoint.x && [array[0] CGPointValue].y == matrixPoint.y){
+                            if (CGPointEqualToPoint([array[0] CGPointValue], matrixPoint)){
                                 array[1] = [NSNumber numberWithBool:YES];
+                                
+                               // NSLog(@"moved to point: %@",array[0]);
+                                
                                 if (previousPath.count > 0 && !CGPointEqualToPoint([previousPath[previousPath.count - 1]CGPointValue], matrixPoint))
                                     [previousPath addObject:[NSValue valueWithCGPoint:matrixPoint]];
                                 else if (previousPath.count == 0)
@@ -1260,13 +1305,16 @@
                             steps++;
                         }
                         
-                        if (![matrix[(int)[array[0] CGPointValue].x][(int)[array[0] CGPointValue].y] isEqual:[NSNull null]] &&
-                            [matrix[(int)[array[0] CGPointValue].x][(int)[array[0] CGPointValue].y] isKindOfClass:[MazeNode class]] &&((MazeNode*)matrix[(int)[array[0] CGPointValue].x][(int)[array[0] CGPointValue].y]).object && ((MazeNode*)matrix[(int)[array[0] CGPointValue].x][(int)[array[0] CGPointValue].y]).object.type == COIN){
+                        MazeNode *node = matrix[(int)[array[0] CGPointValue].x][(int)[array[0] CGPointValue].y];
+                        if (![node isEqual:[NSNull null]] &&
+                            [node isKindOfClass:[MazeNode class]] && node.object && node.object.type == COIN){
                             coins++;
                         }
                         
                         i++;
                     }
+                    
+                    //NSLog(@"%@",tmpAry);
                     
                     /*
                     for (int i = 0; i < previousPath.count; i++) {
@@ -1421,6 +1469,20 @@
 
 -(void) playAgain{
     [self->gameOverView removeFromSuperview];
+}
+
+-(MazeNode*)getEndNode{
+    MazeNode *endNode = nil;
+    for (int x = 0; x < matrix.count; x++) {
+        for (int y = 0; y < ((NSArray*)matrix[0]).count; y++) {
+            MazeNode *tmpNode = matrix[x][y];
+            if (![tmpNode isEqual:[NSNull null]] && [tmpNode isKindOfClass:[MazeNode class]]) {
+                if (tmpNode.object != nil && tmpNode.object.type == END)
+                    endNode = tmpNode;
+            }
+        }
+    }
+    return endNode;
 }
 
 @end

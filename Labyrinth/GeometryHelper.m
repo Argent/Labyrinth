@@ -76,7 +76,7 @@
     NSMutableArray *path = [NSMutableArray array];
     [path addObject:startPoint];
     MazeNode *currentNode = startPoint;
-    while (!(currentNode.MatrixCoords.x == endPoint.MatrixCoords.x && currentNode.MatrixCoords.y == endPoint.MatrixCoords.y)) {
+    while (!CGPointEqualToPoint(currentNode.MatrixCoords, endPoint.MatrixCoords)) {
         MazeNode *minStepsNode = nil;
         for (MazeNode *neighbour in currentNode.neighbours) {
             if (neighbour.steps > -1) {
@@ -128,7 +128,7 @@
         }
     }
     
-    NSLog(@"solved");
+  //  NSLog(@"solved");
     
 }
 
