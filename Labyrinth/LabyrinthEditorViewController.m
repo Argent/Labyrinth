@@ -21,6 +21,7 @@
     NSString *name;
     CGPoint scrollViewOffset;
     CGSize gridSize;
+    float stepDuration;
     
     bool paint;
     CGPoint lastPaintCoord;
@@ -43,6 +44,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         paint = YES;
+        stepDuration = 0.5;
         scrollViewOffset = CGPointMake(0.0, 0.0);
         [self initGrid];
         [self initToolbarBottom];
@@ -544,6 +546,13 @@
     
 }
 
+-(void)setLevelSpeed {
+    UIAlertView *alertName= [[UIAlertView alloc] initWithTitle:@"Levelspeed" message:@"Enter seconds per hex:" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Save",nil];
+    alertName.alertViewStyle = UIAlertViewStylePlainTextInput;
+    alertName.tag=2;
+    [alertName show];
+}
+
 
 -(void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex{
     
@@ -556,9 +565,8 @@
         
         else if (buttonIndex == 2){
             [self alertLevelName];
-        }}
-    
-    if (alertView.tag == 1){
+        }
+    }else if (alertView.tag == 1){
         
         if(buttonIndex == 1){
             
@@ -567,6 +575,18 @@
             self.levelID=-1;
             [self save];
         }
+    }else if (alertView.tag == 2){
+        UITextField *nameTextField = [alertView textFieldAtIndex:0];
+        NSString *value=nameTextField.text;
+        NSScanner *scanner = [NSScanner scannerWithString:value];
+        
+        float number;
+        BOOL ok = [scanner scanFloat:&number];
+        if (ok){
+            NSLog(@"%f", number);
+            stepDuration = number;
+        }
+
     }
 }
 
@@ -580,7 +600,7 @@
     }
     
     LevelInfo *info=[[LevelInfo alloc]initWithMatrix:matrix walls:self.wallList name:name];
-
+    info.stepDuration = stepDuration;
     [[LevelManager sharedManager] saveLevel:info forID:self.levelID];
     self.levelID=[LevelManager sharedManager].levels.count-1;
     NSLog(@"levelID: %i", self.levelID );
@@ -715,7 +735,7 @@
 }
 
 -(IBAction)showActionSheet:(id)sender {
-    UIActionSheet *popupQuery = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save Level", @"Clear Level", @"Load Level", @"Home", nil];
+    UIActionSheet *popupQuery = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save Level", @"Clear Level", @"Load Level",@"Set Speed" ,@"Home", nil];
     popupQuery.actionSheetStyle = UIActionSheetStyleBlackOpaque;
     [popupQuery showInView:self.view];
 }
@@ -731,17 +751,21 @@
         case 2:
             [self levelsView];
             break;
-        case 4:
-            break;
         case 3:
-            [self dismissViewControllerAnimated:YES completion:^{
+            [self setLevelSpeed];
+            break;
+        case 5:
+            break;
+        case 4:
+             [self.presentingViewController.presentingViewController dismissViewControllerAnimated:YES completion:^{}];
+            /*[self dismissViewControllerAnimated:NO completion:^{
                 if(self.homeBlock){
                     self.homeBlock();
                 }
-            }];
+            }];*/
             
             break;
-
+        
             
     }
 }

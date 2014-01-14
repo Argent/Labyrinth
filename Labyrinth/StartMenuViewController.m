@@ -48,6 +48,11 @@
     // Do any additional setup after loading the view from its nib.
 }
 
+-(void)viewDidAppear:(BOOL)animated {
+        [[UIApplication sharedApplication] setStatusBarHidden:YES];
+    [super viewDidAppear:animated];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -67,5 +72,9 @@
     vc.startEditor = YES;
     
     [self presentViewController:vc animated:YES completion:nil];
+}
+
+- (BOOL)prefersStatusBarHidden {
+    return YES;
 }
 @end

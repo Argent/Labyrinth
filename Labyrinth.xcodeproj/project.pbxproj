@@ -17,6 +17,7 @@
 		023414791881E509002F458A /* LevelsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 023414781881E509002F458A /* LevelsCell.m */; };
 		26CB1E94187D932F002D163F /* back_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 26CB1E93187D932F002D163F /* back_arrow.png */; };
 		26CB1E96187DA66F002D163F /* menu_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 26CB1E95187DA66F002D163F /* menu_white.png */; };
+		B51536D71885900000D61FAF /* home_button_white.png in Resources */ = {isa = PBXBuildFile; fileRef = B51536D61885900000D61FAF /* home_button_white.png */; };
 		B547D8E3186214D400680E42 /* StartMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B547D8E1186214D400680E42 /* StartMenuViewController.m */; };
 		B547D8E4186214D400680E42 /* StartMenuViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B547D8E2186214D400680E42 /* StartMenuViewController.xib */; };
 		B55596D618474D1500CC3A13 /* hex_gray.png in Resources */ = {isa = PBXBuildFile; fileRef = B55596D518474D1500CC3A13 /* hex_gray.png */; };
@@ -80,6 +81,7 @@
 		023414781881E509002F458A /* LevelsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LevelsCell.m; path = ../LevelsCell.m; sourceTree = "<group>"; };
 		26CB1E93187D932F002D163F /* back_arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = back_arrow.png; sourceTree = "<group>"; };
 		26CB1E95187DA66F002D163F /* menu_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = menu_white.png; sourceTree = "<group>"; };
+		B51536D61885900000D61FAF /* home_button_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = home_button_white.png; sourceTree = "<group>"; };
 		B547D8E0186214D400680E42 /* StartMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StartMenuViewController.h; sourceTree = "<group>"; };
 		B547D8E1186214D400680E42 /* StartMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StartMenuViewController.m; sourceTree = "<group>"; };
 		B547D8E2186214D400680E42 /* StartMenuViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StartMenuViewController.xib; sourceTree = "<group>"; };
@@ -225,6 +227,7 @@
 				B58CA7C6184BA46C00C06874 /* UIBezierView.m */,
 				B590F352185885B700BDFDE1 /* TwoFingerScrollView.h */,
 				B590F353185885B700BDFDE1 /* TwoFingerScrollView.m */,
+				B51536D61885900000D61FAF /* home_button_white.png */,
 				26CB1E95187DA66F002D163F /* menu_white.png */,
 				B5F41F81184797FF00B36789 /* toolbar.png */,
 				B5847A58187EE35F00C71E6D /* empty.png */,
@@ -365,6 +368,7 @@
 				26CB1E94187D932F002D163F /* back_arrow.png in Resources */,
 				B58CA7C41849337500C06874 /* hex_red.png in Resources */,
 				B5CED24D1844BC10004BC7CE /* Images.xcassets in Resources */,
+				B51536D71885900000D61FAF /* home_button_white.png in Resources */,
 				B5589F00185A3D65002EB496 /* hex_small_red.png in Resources */,
 				B5ACF816185783CF007F58DD /* hex_empty.png in Resources */,
 				023414041878488E002F458A /* Walls.plist in Resources */,
