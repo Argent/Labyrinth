@@ -14,12 +14,11 @@
 #import "LabyrinthEditorViewController.h"
 
 @interface LevelsMenuViewController ()
-@property (nonatomic, strong) IBOutlet UICollectionView *collectionView;
-@property (nonatomic, strong) NSMutableArray *levels;
-@property (nonatomic, strong) NSMutableArray* dataArray;
-
-
-
+{
+LevelsCell* highlightedCell;
+UILabel* currentGameLabel;
+UILabel* currentHighscoreLabel;
+}
 
 @end
 
@@ -30,11 +29,9 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         
-       
-        
-        LevelManager *manager =[LevelManager sharedManager];
-        self.levels = manager.levels;
-       //[self setupDataForCollectionView];
+       // LevelManager *manager =[LevelManager sharedManager];
+       // self.levels = manager.levels;
+     
     }
     return self;
 }
@@ -42,8 +39,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-  //  [self setupDataForCollectionView];
     
   
      
@@ -56,20 +51,36 @@
     [flowLayout setScrollDirection:UICollectionViewScrollDirectionHorizontal];
     
     
-    self.collectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height/2, self.view.frame.size.width, 200) collectionViewLayout:flowLayout];
+    self.collectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height/2-100, self.view.frame.size.width, 200) collectionViewLayout:flowLayout];
     
     [self.collectionView setCollectionViewLayout:flowLayout];
     [self.collectionView registerClass:[LevelsCell class] forCellWithReuseIdentifier:@"LevelsCell"];
-    [self.collectionView setContentOffset:CGPointMake(100, 0)];
-    self.collectionView.pagingEnabled=YES;
+    [self.collectionView setContentOffset:CGPointMake(0,100)];
+    self.collectionView.pagingEnabled=NO;
     [self.collectionView setShowsHorizontalScrollIndicator:NO];
     self.collectionView.scrollEnabled=YES;
     
     self.collectionView.backgroundColor=[UIColor darkGrayColor];
+    self.view.backgroundColor = [UIColor darkGrayColor];
     
     self.collectionView.delegate=self;
     self.collectionView.dataSource=self;
     [self.view addSubview:self.collectionView];
+    
+    currentGameLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height/2+60, self.view.frame.size.width,30)];
+    
+    currentGameLabel.textColor=[UIColor whiteColor];
+    currentGameLabel.textAlignment=NSTextAlignmentCenter;
+    
+    currentHighscoreLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height/2+90, self.view.frame.size.width,30)];
+    currentHighscoreLabel.textColor=[UIColor whiteColor];
+    currentHighscoreLabel.textAlignment=NSTextAlignmentCenter;
+    currentHighscoreLabel.text=@"Highscore Platzhalter";
+
+    
+    [self.view addSubview: currentGameLabel];
+    [self.view addSubview: currentHighscoreLabel];
+    
     
 
  
@@ -91,7 +102,8 @@
 }
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return [self.levels count]; }
+    return [self.levels count];
+}
 
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
 
@@ -101,7 +113,7 @@
    
     
     if (self.startEditor){
-        if (indexPath.row==0 /*|| indexPath.section==self.dataArray.count-1*/){
+        if (indexPath.row==0){
             cell.label.text = @"add new";
         } else {
             cell.label.text = [NSString stringWithFormat:@"%@",[[self.levels objectAtIndex:indexPath.row - 1] objectForKey:@"name"]];
@@ -110,8 +122,22 @@
         cell.label.text = [NSString stringWithFormat:@"%@", [[self.levels objectAtIndex:indexPath.row] objectForKey:@"name"]];
     }
     
-    return cell;
+    if (indexPath == [collectionView indexPathForItemAtPoint:[collectionView convertPoint:CGPointMake(self.view.frame.size.width/2,self.view.frame.size.height/2) fromView:nil]]) {
+        highlightedCell.transform = CGAffineTransformMakeScale(1.0f, 1.0f);
+        cell.transform = CGAffineTransformMakeScale(1.1f, 1.1f);
         
+        if (!self.startEditor){
+        currentGameLabel.text = [NSString stringWithFormat:@"%@", [[self.levels objectAtIndex:indexPath.row] objectForKey:@"name"]];
+        }
+        else {
+        currentGameLabel.text = [NSString stringWithFormat:@"%@", [[self.levels objectAtIndex:indexPath.row-1] objectForKey:@"name"]];
+            
+        }
+       highlightedCell = cell;
+    }
+    
+    return cell;
+    
     }
 
 
@@ -143,23 +169,27 @@
 }
 
 
-
-/*- (UIEdgeInsets)collectionView:
-(UICollectionView *)cv layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
-       return UIEdgeInsetsMake(0,50, 0, 20);
-}*/
-/*-(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    CGPoint relativeCenterPoint = [self.collectionView convertPoint:CGPointMake(self.view.frame.size.width/2,self.view.frame.size.height/2) fromView:nil]; // Using nil converts from the window coordinates.
     
-    CGPoint point = self.collectionView.contentOffset;
-    
-    float newPoint = point.x/self.collectionView.frame.size.width;
-    
-    [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:newPoint inSection:0] atScrollPosition:UICollectionViewScrollPositionLeft animated:YES];
-    
-    
-    
-    
-    
-}*/
+    NSIndexPath* indexPath = [self.collectionView indexPathForItemAtPoint:relativeCenterPoint];
+    LevelsCell* cell = (LevelsCell*)[self.collectionView cellForItemAtIndexPath:indexPath];
+    if(cell){
+        if (!self.startEditor){
+            currentGameLabel.text = [NSString stringWithFormat:@"%@", [[self.levels objectAtIndex:indexPath.row] objectForKey:@"name"]];
+        }
+        else {
+            currentGameLabel.text = [NSString stringWithFormat:@"%@", [[self.levels objectAtIndex:indexPath.row-1] objectForKey:@"name"]];
+        }
+        [UIView animateWithDuration:0.1 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseOut
+                         animations: ^{
+                             highlightedCell.transform = CGAffineTransformMakeScale(1.0f, 1.0f);
+                             cell.transform = CGAffineTransformMakeScale(1.1f, 1.1f);
+                             highlightedCell = cell;
+                         }
+                         completion:^(BOOL finished) {
+                         }];
+    }
+}
 
 @end
