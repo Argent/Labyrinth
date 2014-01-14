@@ -30,6 +30,7 @@
 
         self.walls=[walls mutableCopy];
         self.name=name;
+        self.stepDuration = 0.5;
         
         self.board=[self generateBoardFromMatrix:matrix];
         
@@ -52,7 +53,12 @@
         
         self.name = [dict objectForKey:kName];
         
-        self.stepDuration = [[dict objectForKey:kStepDuration]floatValue];
+        if ([dict objectForKey:kStepDuration])
+            self.stepDuration = [[dict objectForKey:kStepDuration]floatValue];
+        else
+            self.stepDuration = 0.5;
+        if (self.stepDuration == 0)
+            self.stepDuration = 0.5;
         self.highScore = [[dict objectForKey:kHighScore]intValue];
         self.highScoreCoins = [[dict objectForKey:kHighScoreCoins] intValue];
         

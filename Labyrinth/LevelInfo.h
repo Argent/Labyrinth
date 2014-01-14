@@ -18,6 +18,8 @@
 @property (nonatomic) int highScoreCoins;
 @property (nonatomic) float stepDuration;
 
+@property (nonatomic) int ID;
+
 - (id)initWithMatrix:(NSArray*)matrix walls:(NSDictionary*)walls name:(NSString*)name;
 - (id)initWithDictionary:(NSDictionary*)dict;
 - (NSDictionary*) getDictionary;

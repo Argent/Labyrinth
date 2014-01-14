@@ -16,6 +16,7 @@
 #import "GeometryHelper.h"
 #import "UILabyrinthMenu.h"
 #import "LevelInfo.h"
+#import "LevelManager.h"
 
 
 @interface LabyrinthViewController () {
@@ -112,9 +113,9 @@
                     }
                 }
                 
-                [self animatePathFromStart:startNode toEnd:endNode withStepDuration:1];
+                [self animatePathFromStart:startNode toEnd:endNode withStepDuration:levelInfo.stepDuration];
                 }else {
-                    movingView.layer.speed = 1.0;
+                    movingView.layer.speed = levelInfo.stepDuration;
                     movingView.layer.timeOffset = 0.0;
                     movingView.layer.beginTime = 0.0;
                 }
@@ -139,8 +140,8 @@
         }];
         [self.view addSubview:menubar];
         
-        UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapGestureCaptured:)];
-        [self.scrollView addGestureRecognizer:singleTap];
+        //UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapGestureCaptured:)];
+        //[self.scrollView addGestureRecognizer:singleTap];
         
 
         [self buildLevel:levelInfo];
@@ -237,7 +238,7 @@
                    // NSLog(@"#3");
                     
                     MazeNode *endNode = [self getEndNode];
-                    [self recalculateAnimationFromStart:matrix[(int)playerCoords.x][(int)playerCoords.y] toEnd:endNode withStepDuration:1];
+                    [self recalculateAnimationFromStart:matrix[(int)playerCoords.x][(int)playerCoords.y] toEnd:endNode withStepDuration:levelInfo.stepDuration];
                     
                 }
             }
@@ -537,7 +538,7 @@
                         mazeControl.mazeObject.containerView.frame = rect;
                     }
                     
-                    [self recalculateAnimationFromStart:matrix[(int)playerCoords.x][(int)playerCoords.y] toEnd:endNode withStepDuration:1];
+                    [self recalculateAnimationFromStart:matrix[(int)playerCoords.x][(int)playerCoords.y] toEnd:endNode withStepDuration:levelInfo.stepDuration];
                 }
 
             } else {
@@ -1012,7 +1013,7 @@
                 }
             }
             
-            [self animatePathFromStart:node toEnd:endNode withStepDuration:1];
+            [self animatePathFromStart:node toEnd:endNode withStepDuration:levelInfo.stepDuration];
             
         }
         
@@ -1236,9 +1237,9 @@
  
     animationComplete = NO;
 
-    
+    NSLog(@"duration: %.2f", duration);
     CAKeyframeAnimation *pathAnimation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
-    pathAnimation.duration = shortestPath.count * 1.5;
+    pathAnimation.duration = shortestPath.count * duration;
     pathAnimation.path = bezierMovingPath.CGPath;
     pathAnimation.calculationMode = kCAAnimationLinear;
     
@@ -1459,6 +1460,10 @@
     resetButton.layer.borderWidth = 2.0f;
     [resetButton addTarget:self action:@selector(playAgain) forControlEvents:UIControlEventTouchUpInside];
     [gameOverView addSubview:resetButton];
+    
+    levelInfo.highScore = menubar.steps;
+    levelInfo.highScoreCoins = menubar.coins;
+    [[LevelManager sharedManager] saveLevel:levelInfo forID:levelInfo.ID];
     
     [self.view addSubview:gameOverView];
 }

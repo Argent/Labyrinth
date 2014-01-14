@@ -154,7 +154,9 @@
             ((LabyrinthEditorViewController*)vc).levelID=-1;
         }
     }else {
-        vc = [[LabyrinthViewController alloc]initWithNibName:nil bundle:nil andLevelInfo:[[LevelInfo alloc]initWithDictionary:self.levels[indexPath.row]] ];
+        LevelInfo *levelinfo = [[LevelInfo alloc]initWithDictionary:self.levels[indexPath.row]];
+        levelinfo.ID = indexPath.row;
+        vc = [[LabyrinthViewController alloc]initWithNibName:nil bundle:nil andLevelInfo:levelinfo];
         [(LabyrinthViewController*)vc setHomeBlock:^{
             [self dismissViewControllerAnimated:NO completion:nil];
         }];
