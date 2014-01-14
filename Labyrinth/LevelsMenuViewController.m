@@ -38,8 +38,6 @@
 {
     [super viewDidLoad];
     
-  //  [self setupDataForCollectionView];
-    
   
     
     self.levels = [LevelManager sharedManager].levels;
@@ -60,6 +58,7 @@
     self.collectionView.scrollEnabled=YES;
     
     self.collectionView.backgroundColor=[UIColor darkGrayColor];
+    self.view.backgroundColor = [UIColor darkGrayColor];
     
     self.collectionView.delegate=self;
     self.collectionView.dataSource=self;
@@ -99,7 +98,8 @@
 }
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return [self.levels count]; }
+    return [self.levels count];
+}
 
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     
@@ -108,7 +108,7 @@
     LevelsCell *cell = [self.collectionView dequeueReusableCellWithReuseIdentifier:cellIdentifier forIndexPath:indexPath];
     cell.info = nil;
     if (self.startEditor){
-        if (indexPath.row==0 /*|| indexPath.section==self.dataArray.count-1*/){
+        if (indexPath.row==0){
             cell.label.text = @"add new";
         } else {
              cell.info = [[LevelInfo alloc]initWithDictionary:self.levels[indexPath.row - 1]];
