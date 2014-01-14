@@ -16,8 +16,5 @@
 @property (nonatomic, strong) NSMutableArray* dataArray;
 
 @property (nonatomic) BOOL startEditor;
-@property (nonatomic, strong) IBOutlet UICollectionView *collectionView;
-@property (nonatomic, strong) NSMutableArray *levels;
-@property (nonatomic, strong) NSMutableArray* dataArray;
 
 @end
