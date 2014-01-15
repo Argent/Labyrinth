@@ -607,6 +607,11 @@
     
 }
 
+-(void)deleteLevel{
+    if (self.levelID > 0)
+        [[LevelManager sharedManager] saveLevel:nil forID:self.levelID - 1];
+}
+
 
 
 -(void)levelsView {
@@ -735,7 +740,7 @@
 }
 
 -(IBAction)showActionSheet:(id)sender {
-    UIActionSheet *popupQuery = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save Level", @"Clear Level", @"Load Level",@"Set Speed" ,@"Home", nil];
+    UIActionSheet *popupQuery = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save Level", @"Clear Level", @"Load Level",@"Set Speed" ,@"Delete Level",@"Home", nil];
     popupQuery.actionSheetStyle = UIActionSheetStyleBlackOpaque;
     [popupQuery showInView:self.view];
 }
@@ -754,9 +759,13 @@
         case 3:
             [self setLevelSpeed];
             break;
-        case 5:
-            break;
         case 4:
+            [self deleteLevel];
+            [self.presentingViewController.presentingViewController dismissViewControllerAnimated:YES completion:^{}];
+            break;
+        case 6:
+            break;
+        case 5:
              [self.presentingViewController.presentingViewController dismissViewControllerAnimated:YES completion:^{}];
             /*[self dismissViewControllerAnimated:NO completion:^{
                 if(self.homeBlock){

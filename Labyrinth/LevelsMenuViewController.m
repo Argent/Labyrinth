@@ -138,7 +138,10 @@
     if (cell.info){
         NSArray *array = [self createGridWithSize: CGSizeMake(cell.info.board.count +2 , ((NSArray*)cell.info.board[0]).count +2)];
         [self buildLevel:cell.info withMatrix:array[1]];
-        [cell addSubview:array[0]];
+        UIImage *img = [self imageWithView:array[0]];
+        cell.imgView.image = img;
+    }else {
+        cell.imgView.image = nil;
     }
     
     if (indexPath == [self.collectionView indexPathForItemAtPoint:[self.collectionView convertPoint:centerPoint fromView:nil]]) {
@@ -383,6 +386,18 @@
     //scrollViewOffset.y = contentsFrame.origin.y;
     
     ((UIView *)scrollView.subviews[0]).frame = contentsFrame;
+}
+
+- (UIImage *) imageWithView:(UIView *)view
+{
+    UIGraphicsBeginImageContextWithOptions(view.bounds.size, view.opaque, 0.0);
+    [view.layer renderInContext:UIGraphicsGetCurrentContext()];
+    
+    UIImage * img = UIGraphicsGetImageFromCurrentImageContext();
+    
+    UIGraphicsEndImageContext();
+    
+    return img;
 }
 
 

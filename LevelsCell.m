@@ -29,6 +29,10 @@
         
         [self.contentView addSubview:_label];
         
+        self.imgView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, self.contentView.frame.size.width, self.contentView.frame.size.height)];
+        
+        [self.contentView addSubview:self.imgView];
+        
         
         /* UIView *backgroundView = [[UIView alloc]initWithFrame:self.bounds];
          backgroundView.layer.borderColor = [[UIColor whiteColor]CGColor];
