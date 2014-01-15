@@ -647,10 +647,7 @@
 
 +(bool)compareWallObject:(MazeObject *)object1 compareWith:(MazeObject *)object2{
     if((object1.type != object2.type) ||
-       (object1.objectNodes.count != object2.objectNodes.count) ||
-       (object1.containerView.frame.size.height != object2.containerView.frame.size.height) ||
-       (object1.containerView.frame.size.width != object2.containerView.frame.size.width)
-       ){
+       (object1.objectNodes.count != object2.objectNodes.count)){
         return NO;
     }else{
         int sameCoord = 0;

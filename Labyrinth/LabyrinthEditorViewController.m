@@ -68,7 +68,7 @@
         self.toolBarView.backgroundColor = [UIColor clearColor];
     }else{
         self.toolBarView2 = [[UIScrollView alloc]initWithFrame:CGRectMake(0, yPosition, self.view.frame.size.width, toolbarHeight)];
-        self.toolBarView2.contentSize = CGSizeMake(self.view.frame.size.width * 2, toolbarHeight);
+        self.toolBarView2.contentSize = CGSizeMake(self.view.frame.size.width * 3 - 25, toolbarHeight);
         self.toolBarView2.backgroundColor = [UIColor clearColor];
     }
     UIImage *backgroundImg = [UIImage imageNamed:@"toolbar.png"];
@@ -77,7 +77,7 @@
     
     if(top){
         imgView.transform = CGAffineTransformMakeRotation(M_PI);
-        imgView.frame = CGRectMake(0 - 100, 0, self.toolBarView2.contentSize.width + 200, self.toolBarView.contentSize.height);
+        imgView.frame = CGRectMake(0 - 100, 0, self.toolBarView2.contentSize.width + 500, self.toolBarView.contentSize.height);
         [self.toolBarView2 addSubview:imgView];
         [self.view addSubview:self.toolBarView2];
     }else{
@@ -101,29 +101,75 @@
     // Object contrainers
     NSMutableArray *wallNodes = [NSMutableArray array];
     NSMutableArray *objNodes = [NSMutableArray array];
+    
     MazeObject *obj1 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
     [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(0,0)]];
-    [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(-1,1)]];
-    [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(0,1)]];
+    [wallNodes addObject:[obj1 generateAndAddNodeRelative:CGPointMake(1,0)]];
     [objNodes addObject:obj1];
     MazeObject *obj2 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
     [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,0)]];
-    [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,1)]];
-    [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(0,2)]];
+    [wallNodes addObject:[obj2 generateAndAddNodeRelative:CGPointMake(1,1)]];
     [objNodes addObject:obj2];
     MazeObject *obj3 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
     [wallNodes addObject:[obj3 generateAndAddNodeRelative:CGPointMake(0,0)]];
-    [wallNodes addObject:[obj3 generateAndAddNodeRelative:CGPointMake(1,0)]];
+    [wallNodes addObject:[obj3 generateAndAddNodeRelative:CGPointMake(0,1)]];
     [objNodes addObject:obj3];
+    MazeObject *obj10 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+    [wallNodes addObject:[obj10 generateAndAddNodeRelative:CGPointMake(0,0)]];
+    [wallNodes addObject:[obj10 generateAndAddNodeRelative:CGPointMake(1,0)]];
+    [wallNodes addObject:[obj10 generateAndAddNodeRelative:CGPointMake(2,0)]];
+    [objNodes addObject:obj10];
+    MazeObject *obj4 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+    [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(0,0)]];
+    [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(0,1)]];
+    [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(0,2)]];
+    [objNodes addObject:obj4];
+    MazeObject *obj5 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+    [wallNodes addObject:[obj5 generateAndAddNodeRelative:CGPointMake(0,0)]];
+    [wallNodes addObject:[obj5 generateAndAddNodeRelative:CGPointMake(1,1)]];
+    [wallNodes addObject:[obj5 generateAndAddNodeRelative:CGPointMake(0,2)]];
+    [objNodes addObject:obj5];
+    MazeObject *obj11 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+    [wallNodes addObject:[obj11 generateAndAddNodeRelative:CGPointMake(0,0)]];
+    [wallNodes addObject:[obj11 generateAndAddNodeRelative:CGPointMake(1,0)]];
+    [wallNodes addObject:[obj11 generateAndAddNodeRelative:CGPointMake(2,0)]];
+    [wallNodes addObject:[obj11 generateAndAddNodeRelative:CGPointMake(3,0)]];
+    [objNodes addObject:obj11];
+    MazeObject *obj6 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+    [wallNodes addObject:[obj6 generateAndAddNodeRelative:CGPointMake(0,0)]];
+    [wallNodes addObject:[obj6 generateAndAddNodeRelative:CGPointMake(-1,1)]];
+    [wallNodes addObject:[obj6 generateAndAddNodeRelative:CGPointMake(0,1)]];
+    [wallNodes addObject:[obj6 generateAndAddNodeRelative:CGPointMake(1,-1)]];
+    [objNodes addObject:obj6];
+    MazeObject *obj7 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+    [wallNodes addObject:[obj7 generateAndAddNodeRelative:CGPointMake(0,0)]];
+    [wallNodes addObject:[obj7 generateAndAddNodeRelative:CGPointMake(1,1)]];
+    [wallNodes addObject:[obj7 generateAndAddNodeRelative:CGPointMake(2,1)]];
+    [wallNodes addObject:[obj7 generateAndAddNodeRelative:CGPointMake(0,-1)]];
+    [objNodes addObject:obj7];
+    MazeObject *obj8 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+    [wallNodes addObject:[obj8 generateAndAddNodeRelative:CGPointMake(0,0)]];
+    [wallNodes addObject:[obj8 generateAndAddNodeRelative:CGPointMake(-1,1)]];
+    [wallNodes addObject:[obj8 generateAndAddNodeRelative:CGPointMake(0,1)]];
+    [wallNodes addObject:[obj8 generateAndAddNodeRelative:CGPointMake(1,-1)]];
+    [wallNodes addObject:[obj8 generateAndAddNodeRelative:CGPointMake(-2,2)]];
+    [objNodes addObject:obj8];
+    MazeObject *obj9 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
+    [wallNodes addObject:[obj9 generateAndAddNodeRelative:CGPointMake(0,0)]];
+    [wallNodes addObject:[obj9 generateAndAddNodeRelative:CGPointMake(-1,0)]];
+    [wallNodes addObject:[obj9 generateAndAddNodeRelative:CGPointMake(1,1)]];
+    [wallNodes addObject:[obj9 generateAndAddNodeRelative:CGPointMake(-1,-1)]];
+    [wallNodes addObject:[obj9 generateAndAddNodeRelative:CGPointMake(-2,-2)]];
+    [objNodes addObject:obj9];
+    
+    /*
+    
     MazeObject *obj4 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
     [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(0,0)]];
     [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(0,1)]];
     [wallNodes addObject:[obj4 generateAndAddNodeRelative:CGPointMake(-1,2)]];
     [objNodes addObject:obj4];
-    MazeObject *obj5 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
-    [wallNodes addObject:[obj5 generateAndAddNodeRelative:CGPointMake(0,0)]];
-    [wallNodes addObject:[obj5 generateAndAddNodeRelative:CGPointMake(1,1)]];
-    [objNodes addObject:obj5];
+    
     MazeObject *obj6 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
     [wallNodes addObject:[obj6 generateAndAddNodeRelative:CGPointMake(0,0)]];
     [wallNodes addObject:[obj6 generateAndAddNodeRelative:CGPointMake(0,1)]];
@@ -136,6 +182,7 @@
     [wallNodes addObject:[obj7 generateAndAddNodeRelative:CGPointMake(-1,1)]];
     [wallNodes addObject:[obj7 generateAndAddNodeRelative:CGPointMake(-1,2)]];
     [objNodes addObject:obj7];
+     
     MazeObject *obj8 = [MazeObject objectWithType:WALL andCenter:CGPointMake(0,0)];
     [wallNodes addObject:[obj8 generateAndAddNodeRelative:CGPointMake(0,0)]];
     [wallNodes addObject:[obj8 generateAndAddNodeRelative:CGPointMake(0,1)]];
@@ -144,6 +191,7 @@
     [wallNodes addObject:[obj8 generateAndAddNodeRelative:CGPointMake(2,3)]];
     [wallNodes addObject:[obj8 generateAndAddNodeRelative:CGPointMake(2,4)]];
     [objNodes addObject:obj8];
+     */
     for (MazeObject* objects in objNodes) {
         [GeometryHelper scaleToToolbar:objects withLength:@"height"];
         [GeometryHelper scaleToToolbar:objects withLength:@"width"];
@@ -152,7 +200,7 @@
     toolbarItemsLabel = [NSMutableArray array];
     objCounts = [NSMutableArray array];
     int itemSize = [SettingsStore sharedStore].toolbarHeight-30;
-    for(int i = 0; i < 8; i++){
+    for(int i = 0; i < 11; i++){
         objCounts[i] = [NSNumber numberWithInt:0];
         
         toolbarItems[i] = [[UIView alloc] initWithFrame:CGRectMake(50+10+i*(itemSize+10), self.toolBarView2.frame.size.height/2-itemSize/2-10, itemSize, itemSize)];
@@ -171,7 +219,7 @@
         [label setFont:[UIFont boldSystemFontOfSize:12]];
         label.textAlignment = NSTextAlignmentCenter;
         ((MazeObject*) objNodes[i]).containerView.center = CGPointMake(50+((UIView*)toolbarItems[i]).frame.size.width/2+10+i*(itemSize+10), ((UIView*)toolbarItems[i]).frame.size.height/2+self.toolBarView.frame.size.height/2-itemSize/2-10);
-        [label setText:[NSString stringWithFormat:@"1"]];
+        [label setText:[NSString stringWithFormat:@"0"]];
         [toolbarItemsLabel addObject:label];
         [((UIView*)toolbarItems[i]) addSubview:label];
         [plus setBackgroundColor:[UIColor clearColor]];
@@ -206,17 +254,36 @@
     [self plusMinusObjects:NO andType:plusMinusType];
 }
 -(void)plusMinusObjects:(bool)plus andType:(UIButton*) buttonType {
-    for(int i = 4; i < 9; i++){
-        if(buttonType.tag == i){
-            int tmpCount = [((UILabel*)toolbarItemsLabel[i-4]).text intValue];
-            if(!plus && tmpCount > 0){
-                tmpCount--;
-            }else if (plus){
-                tmpCount++;
-            }
-            [(UILabel*)toolbarItemsLabel[i-4] setText:[NSString stringWithFormat:@"%@", [NSNumber numberWithInt:tmpCount]]];
+    int labelValue = [((UILabel*)toolbarItemsLabel[buttonType.tag-4]).text intValue];
+    
+    int counter = 0;
+    for (UILabel* label in toolbarItemsLabel) {
+        if([label.text intValue] != 0){
+            counter++;
         }
     }
+    if(counter < 4 || labelValue > 0){
+        for(int i = 4; i < 15; i++){
+            if(buttonType.tag == i){
+                int tmpCount = labelValue;
+                if(!plus && tmpCount > 0){
+                    tmpCount--;
+                }else if (plus){
+                    tmpCount++;
+                }
+                [(UILabel*)toolbarItemsLabel[i-4] setText:[NSString stringWithFormat:@"%@", [NSNumber numberWithInt:tmpCount]]];
+            }
+        }
+    }else{
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Too many wallobjects"
+                                                        message:@"Only 4 types of walls are allowed."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+        return;
+    }
+    
 }
 -(IBAction)backButtonPressed:(id)sender{
     [self dismissViewControllerAnimated:YES completion:nil];

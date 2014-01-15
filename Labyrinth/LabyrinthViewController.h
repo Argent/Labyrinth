@@ -15,7 +15,7 @@
 -(id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andLevelInfo:(LevelInfo*)levelinfo;
 
 @property (nonatomic,strong) UIScrollView *scrollView;
-@property (nonatomic,strong) UIScrollView *toolBarView;
+@property (nonatomic,strong) UIView *toolBarView;
 
 @property (nonatomic, strong) void(^homeBlock)(void);
 
