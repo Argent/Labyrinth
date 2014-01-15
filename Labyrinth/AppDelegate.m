@@ -16,6 +16,69 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    //get file paths
+    NSArray *documentPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [documentPaths objectAtIndex:0];
+    NSString *documentPlistPath = [documentsDirectory stringByAppendingPathComponent:@"levels.plist"];
+    NSString *bundlePath = [[NSBundle mainBundle] bundlePath];
+    NSString *bundlePlistPath = [bundlePath stringByAppendingPathComponent:@"levels.plist"];
+    NSError *error = nil;
+    
+    //if file exists in the documents directory, get it
+    if([[NSFileManager defaultManager] fileExistsAtPath:documentPlistPath]){
+        NSLog(@"file already exists");
+        NSDictionary *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:documentPlistPath error:&error];
+        NSDate *dateDocuments;
+        if (!error) {
+            dateDocuments = [attributes fileModificationDate];
+            NSLog(@"Date documents: %@", dateDocuments);
+        }else {
+            NSLog(@"Error description: %@ \n", [error localizedDescription]);
+            NSLog(@"Error reason: %@", [error localizedFailureReason]);
+        }
+        
+        NSError *error2;
+        attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:bundlePlistPath error:&error2];
+        NSDate *dateBundle;
+        if (!error2){
+            dateBundle = [attributes fileModificationDate];
+            NSLog(@"Date bundle: %@", dateBundle);
+        }else {
+            NSLog(@"Error description: %@ \n", [error localizedDescription]);
+            NSLog(@"Error reason: %@", [error localizedFailureReason]);
+        }
+        
+        if (dateBundle && dateDocuments) {
+            if ([dateBundle compare:dateDocuments] > 0){
+                error = nil;
+                NSLog(@"bundle file newer");
+                if ([[NSFileManager defaultManager]removeItemAtPath:documentPlistPath error:&error]){
+                    NSLog(@"removed older file from documents dir");
+                    BOOL success = [[NSFileManager defaultManager] copyItemAtPath:bundlePlistPath toPath:documentPlistPath error:&error];
+                    if (!success){
+                        NSLog(@"Error description: %@ \n", [error localizedDescription]);
+                        NSLog(@"Error reason: %@", [error localizedFailureReason]);
+                    }else {
+                        NSLog(@"copied newer item");
+                    }
+                }
+            }else {
+                NSLog(@"documents file newer");
+            }
+        }
+    }
+    //if file does not exist, create it from existing plist
+    else {
+        
+        BOOL success = [[NSFileManager defaultManager] copyItemAtPath:bundlePlistPath toPath:documentPlistPath error:&error];
+        if (!success){
+            NSLog(@"Error description: %@ \n", [error localizedDescription]);
+            NSLog(@"Error reason: %@", [error localizedFailureReason]);
+        }
+        
+    }
+    
+    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     
