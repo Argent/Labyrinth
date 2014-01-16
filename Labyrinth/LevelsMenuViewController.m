@@ -161,6 +161,11 @@
     
 }
 
+-(void)viewWillAppear:(BOOL)animated{
+    self.levels = [LevelManager sharedManager].levels;
+    [self.collectionView reloadData];
+    [super viewWillAppear:animated];
+}
 
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
