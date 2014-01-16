@@ -30,7 +30,7 @@
 +(NSMutableArray *)generateMatrixWithWidth:(int)width Height:(int)height withImageName:(NSString*)name inContainerView:(UIView*)containerView;
 +(NSDictionary*)cropMatrix:(NSArray*)matrix;
 +(bool)compareWallObject:(MazeObject *)object1 compareWith:(MazeObject *)object2;
-+(MazeObject*)scaleToToolbar:(MazeObject *)object withLength:(NSString*)length;
++(MazeObject*)scaleToToolbar:(MazeObject *)object withLength:(NSString*)length andRectSize:(float)size;
 +(void)connectMatrix:(NSArray*)matrix;
 
 @end

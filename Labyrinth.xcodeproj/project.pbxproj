@@ -11,14 +11,13 @@
 		022F3F51185F263800D54DBE /* LevelInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 022F3F50185F263800D54DBE /* LevelInfo.m */; };
 		023414041878488E002F458A /* Walls.plist in Resources */ = {isa = PBXBuildFile; fileRef = 023414031878488E002F458A /* Walls.plist */; };
 		023414051878488E002F458A /* Walls.plist in Resources */ = {isa = PBXBuildFile; fileRef = 023414031878488E002F458A /* Walls.plist */; };
-		023414111878AA01002F458A /* LevelsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 023414101878AA01002F458A /* LevelsViewController.m */; };
-		023414131878B058002F458A /* LevelsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 023414121878B058002F458A /* LevelsViewController.xib */; };
 		023414711881DD50002F458A /* LevelsMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0234146F1881DD50002F458A /* LevelsMenuViewController.m */; };
 		023414791881E509002F458A /* LevelsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 023414781881E509002F458A /* LevelsCell.m */; };
 		26CB1E94187D932F002D163F /* back_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 26CB1E93187D932F002D163F /* back_arrow.png */; };
 		26CB1E96187DA66F002D163F /* menu_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 26CB1E95187DA66F002D163F /* menu_white.png */; };
 		B51536D71885900000D61FAF /* home_button_white.png in Resources */ = {isa = PBXBuildFile; fileRef = B51536D61885900000D61FAF /* home_button_white.png */; };
 		B51536D91886EFCA00D61FAF /* levels.plist in Resources */ = {isa = PBXBuildFile; fileRef = B51536D81886EFCA00D61FAF /* levels.plist */; };
+		B51536DB1888186300D61FAF /* StartMenuViewController~ipad.xib in Resources */ = {isa = PBXBuildFile; fileRef = B51536DA1888186300D61FAF /* StartMenuViewController~ipad.xib */; };
 		B547D8E3186214D400680E42 /* StartMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B547D8E1186214D400680E42 /* StartMenuViewController.m */; };
 		B547D8E4186214D400680E42 /* StartMenuViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B547D8E2186214D400680E42 /* StartMenuViewController.xib */; };
 		B55596D618474D1500CC3A13 /* hex_gray.png in Resources */ = {isa = PBXBuildFile; fileRef = B55596D518474D1500CC3A13 /* hex_gray.png */; };
@@ -73,9 +72,6 @@
 		022F3F4F185F263800D54DBE /* LevelInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelInfo.h; sourceTree = "<group>"; };
 		022F3F50185F263800D54DBE /* LevelInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LevelInfo.m; sourceTree = "<group>"; };
 		023414031878488E002F458A /* Walls.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Walls.plist; sourceTree = "<group>"; };
-		0234140F1878AA01002F458A /* LevelsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LevelsViewController.h; path = ../LevelsViewController.h; sourceTree = "<group>"; };
-		023414101878AA01002F458A /* LevelsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LevelsViewController.m; path = ../LevelsViewController.m; sourceTree = "<group>"; };
-		023414121878B058002F458A /* LevelsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LevelsViewController.xib; sourceTree = "<group>"; };
 		0234146E1881DD50002F458A /* LevelsMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelsMenuViewController.h; sourceTree = "<group>"; };
 		0234146F1881DD50002F458A /* LevelsMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LevelsMenuViewController.m; sourceTree = "<group>"; };
 		023414771881E509002F458A /* LevelsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LevelsCell.h; path = ../LevelsCell.h; sourceTree = "<group>"; };
@@ -84,6 +80,7 @@
 		26CB1E95187DA66F002D163F /* menu_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = menu_white.png; sourceTree = "<group>"; };
 		B51536D61885900000D61FAF /* home_button_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = home_button_white.png; sourceTree = "<group>"; };
 		B51536D81886EFCA00D61FAF /* levels.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = levels.plist; sourceTree = "<group>"; };
+		B51536DA1888186300D61FAF /* StartMenuViewController~ipad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "StartMenuViewController~ipad.xib"; sourceTree = "<group>"; };
 		B547D8E0186214D400680E42 /* StartMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StartMenuViewController.h; sourceTree = "<group>"; };
 		B547D8E1186214D400680E42 /* StartMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StartMenuViewController.m; sourceTree = "<group>"; };
 		B547D8E2186214D400680E42 /* StartMenuViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StartMenuViewController.xib; sourceTree = "<group>"; };
@@ -201,11 +198,9 @@
 				B547D8E0186214D400680E42 /* StartMenuViewController.h */,
 				B547D8E1186214D400680E42 /* StartMenuViewController.m */,
 				B547D8E2186214D400680E42 /* StartMenuViewController.xib */,
+				B51536DA1888186300D61FAF /* StartMenuViewController~ipad.xib */,
 				B5CED2691844BD29004BC7CE /* LabyrinthViewController.h */,
 				B5CED26A1844BD29004BC7CE /* LabyrinthViewController.m */,
-				0234140F1878AA01002F458A /* LevelsViewController.h */,
-				023414101878AA01002F458A /* LevelsViewController.m */,
-				023414121878B058002F458A /* LevelsViewController.xib */,
 				B5ACF81718578476007F58DD /* LabyrinthEditorViewController.h */,
 				B5ACF81818578476007F58DD /* LabyrinthEditorViewController.m */,
 				0234146E1881DD50002F458A /* LevelsMenuViewController.h */,
@@ -363,7 +358,6 @@
 				B5F41F7E18478BC900B36789 /* hex_brown.png in Resources */,
 				B55596D618474D1500CC3A13 /* hex_gray.png in Resources */,
 				B5F41F82184797FF00B36789 /* toolbar.png in Resources */,
-				023414131878B058002F458A /* LevelsViewController.xib in Resources */,
 				B5847A59187EE35F00C71E6D /* empty.png in Resources */,
 				B5CED2451844BC10004BC7CE /* InfoPlist.strings in Resources */,
 				26CB1E96187DA66F002D163F /* menu_white.png in Resources */,
@@ -375,6 +369,7 @@
 				B5589F00185A3D65002EB496 /* hex_small_red.png in Resources */,
 				B5ACF816185783CF007F58DD /* hex_empty.png in Resources */,
 				023414041878488E002F458A /* Walls.plist in Resources */,
+				B51536DB1888186300D61FAF /* StartMenuViewController~ipad.xib in Resources */,
 				B5847A55187D866F00C71E6D /* hex_darkbrown.png in Resources */,
 				B51536D91886EFCA00D61FAF /* levels.plist in Resources */,
 				B547D8E4186214D400680E42 /* StartMenuViewController.xib in Resources */,
@@ -412,7 +407,6 @@
 				B5C283B518452080005A02B1 /* NSMutableArray+QueueAdditions.m in Sources */,
 				023414711881DD50002F458A /* LevelsMenuViewController.m in Sources */,
 				022F3F4E185F252400D54DBE /* LevelManager.m in Sources */,
-				023414111878AA01002F458A /* LevelsViewController.m in Sources */,
 				B5C283B818452571005A02B1 /* MazeNode.m in Sources */,
 				B5CB8A991848633F00CB8EA2 /* UIMazeControl.m in Sources */,
 				B58CA7C7184BA46C00C06874 /* UIBezierView.m in Sources */,
@@ -538,7 +532,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Labyrinth/Labyrinth-Prefix.pch";
 				INFOPLIST_FILE = "Labyrinth/Labyrinth-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -551,7 +547,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Labyrinth/Labyrinth-Prefix.pch";
 				INFOPLIST_FILE = "Labyrinth/Labyrinth-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

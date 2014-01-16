@@ -193,8 +193,8 @@
     [objNodes addObject:obj8];
      */
     for (MazeObject* objects in objNodes) {
-        [GeometryHelper scaleToToolbar:objects withLength:@"height"];
-        [GeometryHelper scaleToToolbar:objects withLength:@"width"];
+        [GeometryHelper scaleToToolbar:objects withLength:@"height" andRectSize:60];
+        [GeometryHelper scaleToToolbar:objects withLength:@"width" andRectSize:60];
     }
     NSMutableArray *toolbarItems = [NSMutableArray array];
     toolbarItemsLabel = [NSMutableArray array];

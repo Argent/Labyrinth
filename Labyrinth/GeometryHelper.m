@@ -667,8 +667,8 @@
     return NO;
 }
 
-+(MazeObject *)scaleToToolbar:(MazeObject *)object withLength:(NSString *)length{
-    float itemSize = [SettingsStore sharedStore].toolbarHeight-40;
++(MazeObject *)scaleToToolbar:(MazeObject *)object withLength:(NSString *)length andRectSize:(float)height{
+    float itemSize = height;
     float size = 1;
     if([length isEqualToString:@"width"]){
         size = object.containerView.frame.size.width;

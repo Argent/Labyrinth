@@ -327,8 +327,8 @@
             int itemSize = [SettingsStore sharedStore].toolbarHeight-30 ;
             
             // scaling the wall for the toolbar
-            [GeometryHelper scaleToToolbar:mazeControl.mazeObject withLength:@"height"];
-            [GeometryHelper scaleToToolbar:mazeControl.mazeObject withLength:@"width"];
+            [GeometryHelper scaleToToolbar:mazeControl.mazeObject withLength:@"height" andRectSize:self.view.frame.size.height / 8];
+            [GeometryHelper scaleToToolbar:mazeControl.mazeObject withLength:@"width" andRectSize:self.view.frame.size.height / 8];
             [mazeControl.mazeObject removeOverlay];
             
             // calculate the center point
@@ -475,6 +475,7 @@
 
 - (void)viewDidLoad
 {
+    NSLog(@"%.0f", self.view.frame.size.height);
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
 }
@@ -719,8 +720,8 @@
         for (MazeNode *node in objects.gridNodes) {
             node.object = nil;
         }
-        [GeometryHelper scaleToToolbar:objects withLength:@"height"];
-        [GeometryHelper scaleToToolbar:objects withLength:@"width"];
+        [GeometryHelper scaleToToolbar:objects withLength:@"height" andRectSize:self.view.frame.size.height / 8];
+        [GeometryHelper scaleToToolbar:objects withLength:@"width" andRectSize:self.view.frame.size.height / 8];
     }
     [self initToolbarItems];
     
@@ -742,7 +743,9 @@
 
 // init the toolbar
 -(void)initToolbar{
-    int toolbarHeight = [SettingsStore sharedStore].toolbarHeight;
+    //NSLog(@"%.0f", self.view.frame.size.height / 4.8);
+    int toolbarHeight = self.view.frame.size.height / 4.8;
+    //int toolbarHeight = [SettingsStore sharedStore].toolbarHeight;
     self.toolBarView = [[UIView alloc]initWithFrame:CGRectMake(-5, self.view.frame.size.height - toolbarHeight, self.view.frame.size.width, toolbarHeight)];
     self.toolBarView.backgroundColor = [UIColor clearColor];
     UIImage *backgroundImg = [UIImage imageNamed:@"toolbar.png"];
@@ -754,9 +757,13 @@
 
 // draw the borders for the categories and sets the centerpoints of the wallobjects
 -(void)initToolbarItems{
+    //NSLog(@"%.0f", self.view.frame.size.height / 6.9);
+    
     toolbarItems = [NSMutableArray array];
     toolbarItemsLabel = [NSMutableArray array];
-    int itemSize = [SettingsStore sharedStore].toolbarHeight-30 ;
+    //int toolbarHeight = self.view.frame.size.height / 6.9;
+     //int itemSize = [SettingsStore sharedStore].toolbarHeight - 30;
+    int itemSize = self.view.frame.size.height / 6.9 ;
     for(int i = 0; i < differentObjectsCounter; i++){
         objCounts[i] = [NSNumber numberWithInt:0];
         
@@ -1132,8 +1139,10 @@
     gameOverView = [[UIView alloc]initWithFrame:area];
     gameOverView.backgroundColor = [UIColor colorWithWhite:0.333 alpha:0.750];
     
+    float yOffset = MAX((self.view.frame.size.height - 480 ) / 2,0);
+    
     // game over label
-    UILabel* gameOverLabel =[[UILabel alloc]initWithFrame:CGRectMake(0, 50, area.size.width, 50)];
+    UILabel* gameOverLabel =[[UILabel alloc]initWithFrame:CGRectMake(0, yOffset +50, area.size.width, 50)];
     [gameOverLabel setText:@"Game over!"];
     [gameOverLabel setTextColor:[UIColor whiteColor]];
     [gameOverLabel setTextAlignment:NSTextAlignmentCenter];
@@ -1143,7 +1152,7 @@
     // check if the highscore needs to be updated
     if(menubar.steps > levelInfo.highScore){
         // new highscore label
-        UILabel* newHighscore =[[UILabel alloc]initWithFrame:CGRectMake(140, 35, 250, 45)];
+        UILabel* newHighscore =[[UILabel alloc]initWithFrame:CGRectMake(self.view.frame.size.width / 2.28, yOffset +35, 250, 45)];
         [newHighscore setText:@"NEW HIGHSCORE"];
         [newHighscore setTextColor:[UIColor whiteColor]];
         [newHighscore setBackgroundColor:[UIColor redColor]];
@@ -1154,7 +1163,7 @@
     }
     
     // label for steps
-    UILabel* descriptionLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 150, area.size.width, 50)];
+    UILabel* descriptionLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, yOffset + 150, area.size.width, 50)];
     [descriptionLabel setTextAlignment:NSTextAlignmentCenter];
     NSString *description = [NSString stringWithFormat:@"Steps: %i",menubar.steps];
     [descriptionLabel setFont: [UIFont fontWithName:@"System Bold" size:22.0]];
@@ -1163,7 +1172,7 @@
     [gameOverView addSubview:descriptionLabel];
     
     // label for coins
-    UILabel* descriptionLabel2 = [[UILabel alloc]initWithFrame:CGRectMake(0, 200, area.size.width, 50)];
+    UILabel* descriptionLabel2 = [[UILabel alloc]initWithFrame:CGRectMake(0, yOffset + 200, area.size.width, 50)];
     [descriptionLabel2 setTextAlignment:NSTextAlignmentCenter];
     NSString *description2 = [NSString stringWithFormat:@"Coins: %i",menubar.coins];
     [descriptionLabel2 setFont: [UIFont fontWithName:@"System Bold" size:22.0]];
@@ -1172,7 +1181,7 @@
     [gameOverView addSubview:descriptionLabel2];
     
     // button to get to the startscreen
-    UIButton* homeButton = [[UIButton alloc]initWithFrame:CGRectMake(area.size.width/2-60, 390, 120, 40)];
+    UIButton* homeButton = [[UIButton alloc]initWithFrame:CGRectMake(area.size.width/2-60,  yOffset + 390, 120, 40)];
     homeButton.backgroundColor = [UIColor darkGrayColor];
     [homeButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [homeButton setTitle:@"Home" forState:UIControlStateNormal];
@@ -1182,7 +1191,7 @@
     [gameOverView addSubview:homeButton];
     
     // button to play the game again
-    UIButton* resetButton = [[UIButton alloc]initWithFrame:CGRectMake(area.size.width/2-60, 300, 120, 40)];
+    UIButton* resetButton = [[UIButton alloc]initWithFrame:CGRectMake(area.size.width/2-60, yOffset + 300, 120, 40)];
     resetButton.backgroundColor = [UIColor darkGrayColor];
     [resetButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [resetButton setTitle:@"Play again" forState:UIControlStateNormal];

@@ -43,16 +43,21 @@
   //  [self setupDataForCollectionView];
     [self loadImages];
     
+   // NSLog(@"view height: %.0f", (self.view.frame.size.height / 2.4));
+    float itemHeight = self.view.frame.size.height / 2.4;
+    float collViewHeight = self.view.frame.size.height / 2.0;
+    
+    
     UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
-    [flowLayout setItemSize:CGSizeMake(200, 200)];
+    [flowLayout setItemSize:CGSizeMake(itemHeight, itemHeight)];
     [flowLayout setScrollDirection:UICollectionViewScrollDirectionHorizontal];
     
     
-    self.collectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height/2 - 120, self.view.frame.size.width, 240) collectionViewLayout:flowLayout];
+    self.collectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height/2 - collViewHeight/2, self.view.frame.size.width, collViewHeight) collectionViewLayout:flowLayout];
     
     [self.collectionView setCollectionViewLayout:flowLayout];
     [self.collectionView registerClass:[LevelsCell class] forCellWithReuseIdentifier:@"LevelsCell"];
-    [self.collectionView setContentOffset:CGPointMake(200, 0)];
+    [self.collectionView setContentOffset:CGPointMake(itemHeight, 0)];
     //self.collectionView.pagingEnabled=YES;
     [self.collectionView setShowsHorizontalScrollIndicator:NO];
     self.collectionView.scrollEnabled=YES;
@@ -65,14 +70,14 @@
     
     centerPoint = CGPointMake(self.collectionView.frame.size.width / 2.0, self.collectionView.frame.origin.y + (self.collectionView.frame.size.height / 2.0));
 
-    levelNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, self.collectionView.frame.origin.y  + 250 , self.collectionView.frame.size.width, 50)];
+    levelNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, self.collectionView.frame.origin.y  + collViewHeight , self.collectionView.frame.size.width, 50)];
     [levelNameLabel setFont:[UIFont boldSystemFontOfSize:18.0]];
     [levelNameLabel setTextColor:[UIColor whiteColor]];
     [levelNameLabel setTextAlignment:NSTextAlignmentCenter];
     [levelNameLabel setText:@"no levels available"];
     [self.view addSubview:levelNameLabel];
  
-    highscoreLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, self.collectionView.frame.origin.y  + 280 , self.collectionView.frame.size.width, 50)];
+    highscoreLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, self.collectionView.frame.origin.y  + collViewHeight + 30 , self.collectionView.frame.size.width, 50)];
     [highscoreLabel setFont:[UIFont systemFontOfSize:18.0]];
     [highscoreLabel setTextColor:[UIColor whiteColor]];
     [highscoreLabel setTextAlignment:NSTextAlignmentCenter];
@@ -81,7 +86,7 @@
     
     //self.collectionView.h
     
-    UIButton *backButton = [[UIButton alloc]initWithFrame:CGRectMake(15, 15, 40, 40)];
+    UIButton *backButton = [[UIButton alloc]initWithFrame:CGRectMake(15, 15, itemHeight / 5, itemHeight / 5)];
     backButton.backgroundColor = [UIColor colorWithWhite:0.244 alpha:1.000];
     [backButton setImage:[UIImage imageNamed:@"home_button_white.png"] forState:UIControlStateNormal];
     [backButton addTarget:self action:@selector(backButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
@@ -213,7 +218,9 @@
 
 - (UIEdgeInsets)collectionView:
 (UICollectionView *)cv layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
-       return UIEdgeInsetsMake(0,50, 0, 50);
+    float itemHeight = self.view.frame.size.height / 2.4;
+    
+       return UIEdgeInsetsMake(0,itemHeight / 2, 0, itemHeight / 2);
 }
 
 
@@ -280,7 +287,9 @@
     float hex_height = [SettingsStore sharedStore].hexSize * 2;
     float hex_width = sqrt(3) / 2.0 * hex_height;
     
-    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(1, 1, 194, 194)];
+    float itemHeight = self.view.frame.size.height / 2.4;
+    
+    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(1, 1, itemHeight, itemHeight)];
     
     // Custom initialization
     view.backgroundColor = [UIColor whiteColor];
