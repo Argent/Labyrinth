@@ -20,6 +20,7 @@
     UICollectionViewCell* highlightedCell;
     UILabel *levelNameLabel;
     UILabel *highscoreLabel;
+    NSMutableArray *levelImages;
 }
 @end
 
@@ -30,7 +31,6 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         
-        self.levels = [LevelManager sharedManager].levels;
         self.view.backgroundColor = [UIColor darkGrayColor];
     }
     return self;
@@ -41,11 +41,7 @@
     [super viewDidLoad];
     
   //  [self setupDataForCollectionView];
-    
-  
-    
-    self.levels = [LevelManager sharedManager].levels;
-    
+    [self loadImages];
     
     UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
     [flowLayout setItemSize:CGSizeMake(200, 200)];
@@ -136,10 +132,10 @@
     }
     
     if (cell.info){
-        NSArray *array = [self createGridWithSize: CGSizeMake(cell.info.board.count +2 , ((NSArray*)cell.info.board[0]).count +2)];
-        [self buildLevel:cell.info withMatrix:array[1]];
-        UIImage *img = [self imageWithView:array[0]];
-        cell.imgView.image = img;
+        if (self.startEditor)
+            cell.imgView.image = levelImages[indexPath.row -1];
+        else
+            cell.imgView.image = levelImages[indexPath.row];
     }else {
         cell.imgView.image = nil;
     }
@@ -162,9 +158,26 @@
 }
 
 -(void)viewWillAppear:(BOOL)animated{
-    self.levels = [LevelManager sharedManager].levels;
-    [self.collectionView reloadData];
+    [self loadImages];
     [super viewWillAppear:animated];
+}
+
+-(void)loadImages{
+    self.levels = [LevelManager sharedManager].levels;
+    if (!levelImages)
+        levelImages = [NSMutableArray array];
+    [levelImages removeAllObjects];
+    for (NSDictionary *levelsDic in self.levels) {
+        LevelInfo *info = [[LevelInfo alloc]initWithDictionary:levelsDic];
+        
+        NSArray *array = [self createGridWithSize: CGSizeMake(info.board.count +2 , ((NSArray*)info.board[0]).count +2)];
+        [self buildLevel:info withMatrix:array[1]];
+        UIImage *img = [self imageWithView:array[0]];
+        
+        [levelImages addObject:img];
+    }
+    
+    [self.collectionView reloadData];
 }
 
 
