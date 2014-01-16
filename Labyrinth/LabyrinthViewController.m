@@ -729,6 +729,14 @@
         [objects removeOverlay];
         objects.toolbarItem = YES;
         [self.toolBarView addSubview:objects.containerView];
+        
+        for (MazeNode *wallNode in objects.objectNodes) {
+            [self removeDragEventsFromNode:wallNode];
+        }
+        
+        for (MazeNode *wallNode in objects.objectNodes) {
+            [self addDragEventsToNode:wallNode];
+        }
     }
 }
 

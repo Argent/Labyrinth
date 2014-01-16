@@ -31,7 +31,7 @@
         [self.startButton setTitle:@"Play" forState:UIControlStateNormal];
         [self.startButton addTarget:self action:@selector(startButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:self.startButton];
-        self.stopButton = [[UIButton alloc]initWithFrame:CGRectMake(5, 0, 60, 40)];
+        self.stopButton = [[UIButton alloc]initWithFrame:CGRectMake(5, 8, 60, 25)];
         [self.stopButton setTitle:@"   Back" forState:UIControlStateNormal];
         [self.stopButton setBackgroundImage:[UIImage imageNamed:@"back_arrow.png"] forState:UIControlStateNormal];
         [self.stopButton setTitleColor:[UIColor colorWithRed:0.224 green:0.504 blue:0.915 alpha:1.000] forState:UIControlStateNormal];
